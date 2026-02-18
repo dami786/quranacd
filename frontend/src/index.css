@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Poppins', sans-serif;
+  @apply text-gray-800 bg-white antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+.animate-delay-400 { animation-delay: 400ms; }
+.animate-delay-500 { animation-delay: 500ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Google Translate - box ke andar, dropdown kaam kare */
+.translate-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  padding: 6px 12px;
+  overflow: visible;
+  position: relative;
+  z-index: 1000;
+}
+.translate-box-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+}
+.translate-trigger-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+}
+.translate-trigger-btn:hover {
+  text-decoration: underline;
+}
+.translate-box-widget {
+  font-size: 13px;
+  overflow: visible;
+  min-width: 120px;
+}
+.translate-widget-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.translate-widget-overlay * {
+  pointer-events: auto;
+}
+.translate-box-widget .goog-te-gadget {
+  margin: 0 !important;
+  border: none !important;
+  font-family: inherit !important;
+  color: #fff !important;
+}
+.translate-box-widget .goog-te-gadget-simple {
+  background: transparent !important;
+  border: none !important;
+  padding: 2px 6px !important;
+  min-height: 28px;
+  min-width: 100px;
+  display: inline-flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+}
+.translate-box-widget .goog-te-menu-value,
+.translate-box-widget .goog-te-menu-value span,
+.translate-box-widget a {
+  color: #fff !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+}
+.translate-box-widget .goog-logo-link {
+  display: none !important;
+}
+/* Sirf neeche wala banner hide, widget mat chhedo */
+.goog-te-banner-frame,
+body > div.goog-te-banner-frame,
+#goog-gt-tt {
+  display: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+.goog-te-menu-frame,
+.goog-te-balloon-frame,
+iframe.goog-te-menu-frame {
+  z-index: 999999 !important;
+}
+.goog-te-menu2 {
+  background: #fff !important;
+  color: #333 !important;
+}
+body .goog-te-banner-frame {
+  display: none !important;
+}
