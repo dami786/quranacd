@@ -17,9 +17,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const isAuthRequest = err.config?.url?.includes('/auth/login') || err.config?.url?.includes('/auth/register');
+    if (err.response?.status === 401 && !isAuthRequest) {
       localStorage.removeItem('token');
       localStorage.removeItem('isSuperAdmin');
+      localStorage.removeItem('hasInquiry');
       window.location.href = '/login';
     }
     return Promise.reject(err);
@@ -37,6 +39,17 @@ export const getItemById = (id) => api.get(`/items/${id}`);
 export const createItem = (data) => api.post('/items', data);
 export const updateItem = (id, data) => api.put(`/items/${id}`, data);
 export const deleteItem = (id) => api.delete(`/items/${id}`);
+
+// Trials / Free trial & query submissions (POST public, GET superadmin)
+export const submitTrial = (data) => api.post('/trials', data);
+export const getTrials = () => api.get('/trials');
+export const getMyTrial = () => api.get('/trials/me');
+export const updateTrialStatus = (id, status) => api.patch(`/trials/${id}`, { status });
+export const deleteTrial = (id) => api.delete(`/trials/${id}`);
+
+// Donations (POST public, GET superadmin)
+export const submitDonation = (data) => api.post('/donations', data);
+export const getDonations = () => api.get('/donations');
 
 // Resolve course image URL (uploaded files are at /uploads/...)
 export const getImageUrl = (image) => {

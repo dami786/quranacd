@@ -32,16 +32,16 @@ export default function StepsSection() {
   return (
     <section className="py-12 md:py-16 bg-white">
       <div className="max-w-container mx-auto px-5">
-        {/* Heading - Learn Quran Online & Pak Quran Academy (website green) */}
+        {/* Heading - Learn Quran Online & Babul Quran (website green) */}
         <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-6 text-gray-800 animate-fade-in-up">
           <span className="text-primary">Learn Quran Online</span>
           {' with '}
-          <span className="text-primary">Pak Quran Academy</span>
+          <span className="text-primary">Babul Quran</span>
           {' in the USA'}
         </h2>
         {/* Paragraph - centered, justified */}
         <p className="max-w-3xl mx-auto text-center text-gray-600 text-base md:text-lg leading-relaxed mb-12 text-justify animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-          Are you looking for a convenient and effective way to <strong className="text-gray-800">Learn Quran Online</strong>? Pak Quran Academy is here to provide you with an exceptional online Quran learning experience. We understand the importance of accessing quality Islamic education, regardless of your location. That's why we offer comprehensive online Quran courses tailored to meet the needs of learners in the USA.
+          Are you looking for a convenient and effective way to <strong className="text-gray-800">Learn Quran Online</strong>? Babul Quran is here to provide you with an exceptional online Quran learning experience. We understand the importance of accessing quality Islamic education, regardless of your location. That's why we offer comprehensive online Quran courses tailored to meet the needs of learners in the USA.
         </p>
         {/* 3 Step Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
@@ -58,7 +58,7 @@ export default function StepsSection() {
               <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3">{title}</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{description}</p>
               <Link
-                to="/contact"
+                to={cta === 'Quick Admission' ? '/contact?source=enrollment' : '/contact'}
                 className="inline-block w-full max-w-[200px] py-3 px-5 rounded-lg font-semibold text-white text-center transition-all bg-primary-dark hover:bg-primary hover:scale-[1.02]"
               >
                 {cta}

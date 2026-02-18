@@ -4,17 +4,35 @@ import { FaBookOpen } from 'react-icons/fa';
 import { HiArrowLeft, HiAcademicCap } from 'react-icons/hi';
 import { getItemById, getImageUrl } from '../services/api';
 import { Button } from '../components/Buttons';
+import { manualCourses } from '../data/courses';
 
 export default function Details() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isManual, setIsManual] = useState(false);
 
   useEffect(() => {
     if (!id) return;
+    const index = parseInt(id, 10);
+    if (!Number.isNaN(index) && index >= 0 && index < manualCourses.length) {
+      const course = manualCourses[index];
+      setItem({
+        title: course.titleEn,
+        description: course.description,
+        image: course.image,
+        price: null,
+      });
+      setIsManual(true);
+      setLoading(false);
+      return;
+    }
     getItemById(id)
-      .then((res) => setItem(res.data))
+      .then((res) => {
+        setItem(res.data);
+        setIsManual(false);
+      })
       .catch((err) => setError(err.response?.data?.message || 'Course not found.'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -38,13 +56,15 @@ export default function Details() {
     );
   }
 
+  const imageUrl = isManual ? item.image : getImageUrl(item.image);
+
   return (
     <div className="min-h-screen bg-white py-14">
       <div className="max-w-container mx-auto px-5">
         <div className="max-w-2xl mx-auto">
-          {item.image ? (
+          {imageUrl ? (
             <img
-              src={getImageUrl(item.image)}
+              src={imageUrl}
               alt={item.title}
               className="w-full h-64 object-cover rounded-xl mb-6 shadow-card animate-fade-in-up"
             />
@@ -61,11 +81,11 @@ export default function Details() {
           )}
           <p className="text-gray-600 leading-relaxed whitespace-pre-wrap animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.description}</p>
           <div className="mt-8 flex gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
-            <Button to="/contact" variant="primary" className="inline-flex items-center gap-2">
+            <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
               <HiAcademicCap className="w-4 h-4" /> Enroll Now
             </Button>
-            <Button to="/" variant="outlinePrimary" className="inline-flex items-center gap-2">
-              <HiArrowLeft className="w-4 h-4" /> Back to Home
+            <Button to="/#courses" variant="outlinePrimary" className="inline-flex items-center gap-2">
+              <HiArrowLeft className="w-4 h-4" /> Back to Courses
             </Button>
           </div>
         </div>

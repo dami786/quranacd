@@ -1,18 +1,38 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser } from 'react-icons/hi';
+import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser, HiInbox, HiHeart } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
 import { ItemFormModal } from '../components/Modals';
-import { getItems, createItem, updateItem, deleteItem } from '../services/api';
+import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations } from '../services/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
+  const [trials, setTrials] = useState([]);
+  const [trialsLoading, setTrialsLoading] = useState(true);
+  const [donations, setDonations] = useState([]);
+  const [donationsLoading, setDonationsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [submitLoading, setSubmitLoading] = useState(false);
+
+  const fetchTrials = () => {
+    setTrialsLoading(true);
+    getTrials()
+      .then((res) => setTrials(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setTrials([]))
+      .finally(() => setTrialsLoading(false));
+  };
+
+  const fetchDonations = () => {
+    setDonationsLoading(true);
+    getDonations()
+      .then((res) => setDonations(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setDonations([]))
+      .finally(() => setDonationsLoading(false));
+  };
 
   const fetchItems = () => {
     setLoading(true);
@@ -41,6 +61,8 @@ export default function Dashboard() {
       return;
     }
     fetchItems();
+    fetchTrials();
+    fetchDonations();
   }, [navigate]);
 
   const handleCreate = (data) => {
@@ -79,6 +101,19 @@ export default function Dashboard() {
     setModalOpen(true);
   };
 
+  const handleTrialStatus = (id, status) => {
+    updateTrialStatus(id, status)
+      .then(() => fetchTrials())
+      .catch((err) => alert(err.response?.data?.message || 'Failed to update.'));
+  };
+
+  const handleDeleteTrial = (id) => {
+    if (!window.confirm('Delete this inquiry?')) return;
+    deleteTrial(id)
+      .then(() => fetchTrials())
+      .catch((err) => alert(err.response?.data?.message || 'Failed to delete.'));
+  };
+
   return (
     <div className="min-h-screen bg-bg-alt py-14">
       <div className="max-w-container mx-auto px-5">
@@ -103,6 +138,215 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Free Trial Inquiries - jinhon ne Free Trial pe click karke form bheja */}
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <HiInbox className="w-6 h-6 text-primary" /> Free Trial Inquiries
+          </h2>
+          {trialsLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+                ))}
+              </div>
+            </div>
+          ) : (() => {
+            const freeTrialList = trials.filter((t) => t.source !== 'enrollment');
+            return freeTrialList.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+                No free trial inquiries yet.
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-bg-alt border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 hidden sm:table-cell">Phone</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 hidden md:table-cell">Course</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 max-w-[100px]">Message</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Status</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {freeTrialList.map((t) => (
+                      <tr key={t._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                        <td className="px-4 py-3 text-gray-800 font-medium">{t.name}</td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${t.email}`} className="text-primary hover:underline">{t.email}</a>
+                        </td>
+                        <td className="px-4 py-3 hidden sm:table-cell text-gray-600">{t.phone || '–'}</td>
+                        <td className="px-4 py-3 hidden md:table-cell text-gray-600">{t.course || '–'}</td>
+                        <td className="px-4 py-3 text-gray-600 max-w-[100px]" title={t.message || ''}>
+                          <span className="line-clamp-1">{t.message || '–'}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                            t.status === 'pro' ? 'bg-green-100 text-green-800' :
+                            t.status === 'free_trial' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {t.status === 'pro' ? 'Pro' : t.status === 'free_trial' ? 'Free Trial' : 'Pending'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                          {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '–'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1.5">
+                            <button type="button" onClick={() => handleTrialStatus(t._id, 'free_trial')} className="px-2.5 py-1 rounded bg-amber-100 text-amber-800 text-xs font-medium hover:bg-amber-200 transition-colors">
+                              Free Trial
+                            </button>
+                            <button type="button" onClick={() => handleTrialStatus(t._id, 'pro')} className="px-2.5 py-1 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200 transition-colors">
+                              Pro
+                            </button>
+                            <button type="button" onClick={() => handleDeleteTrial(t._id)} className="px-2.5 py-1 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200 transition-colors">
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+        </section>
+
+        {/* Enrollment / Get Admission - jinhon ne Get Admission / course enroll ke liye bheja */}
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <HiInbox className="w-6 h-6 text-primary" /> Enrollment / Get Admission
+          </h2>
+          {trialsLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+                ))}
+              </div>
+            </div>
+          ) : (() => {
+            const enrollmentList = trials.filter((t) => t.source === 'enrollment');
+            return enrollmentList.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+                No enrollment inquiries yet.
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-bg-alt border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 hidden sm:table-cell">Phone</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 hidden md:table-cell">Course</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 max-w-[100px]">Message</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Status</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {enrollmentList.map((t) => (
+                      <tr key={t._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                        <td className="px-4 py-3 text-gray-800 font-medium">{t.name}</td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${t.email}`} className="text-primary hover:underline">{t.email}</a>
+                        </td>
+                        <td className="px-4 py-3 hidden sm:table-cell text-gray-600">{t.phone || '–'}</td>
+                        <td className="px-4 py-3 hidden md:table-cell text-gray-600">{t.course || '–'}</td>
+                        <td className="px-4 py-3 text-gray-600 max-w-[100px]" title={t.message || ''}>
+                          <span className="line-clamp-1">{t.message || '–'}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                            t.status === 'pro' ? 'bg-green-100 text-green-800' :
+                            t.status === 'free_trial' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {t.status === 'pro' ? 'Pro' : t.status === 'free_trial' ? 'Free Trial' : 'Pending'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                          {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '–'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1.5">
+                            <button type="button" onClick={() => handleTrialStatus(t._id, 'free_trial')} className="px-2.5 py-1 rounded bg-amber-100 text-amber-800 text-xs font-medium hover:bg-amber-200 transition-colors">
+                              Free Trial
+                            </button>
+                            <button type="button" onClick={() => handleTrialStatus(t._id, 'pro')} className="px-2.5 py-1 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200 transition-colors">
+                              Pro
+                            </button>
+                            <button type="button" onClick={() => handleDeleteTrial(t._id)} className="px-2.5 py-1 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200 transition-colors">
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+        </section>
+
+        {/* Donations - Zakat & Donation form submissions */}
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <HiHeart className="w-6 h-6 text-primary" /> Donations
+          </h2>
+          {donationsLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+                ))}
+              </div>
+            </div>
+          ) : donations.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+              No donations yet.
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-bg-alt border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Phone</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Amount (PKR)</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Donate for</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {donations.map((d) => (
+                    <tr key={d._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                      <td className="px-4 py-3 text-gray-800 font-medium">{d.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{d.phone || '–'}</td>
+                      <td className="px-4 py-3 text-gray-800 font-medium">{d.amount}</td>
+                      <td className="px-4 py-3 text-gray-600">{d.donateType || '–'}</td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                        {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '–'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (

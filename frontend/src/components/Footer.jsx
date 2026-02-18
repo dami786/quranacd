@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom';
 import { FaPhone, FaWhatsapp, FaEnvelope, FaBookOpen, FaMap } from 'react-icons/fa';
+import { manualCourses } from '../data/courses';
 
-const quickLinks = [
-  { to: '/#courses', label: 'Learn Noorani Qaida Online' },
-  { to: '/#courses', label: 'Learn Quran Reciting' },
-  { to: '/#courses', label: 'Learn Quran Memorization' },
-  { to: '/#courses', label: 'Learn Quran with Tajweed' },
-  { to: '/#courses', label: 'Learn Quran with Tafseer' },
-];
+const courseLinks = manualCourses.map((course, index) => ({
+  to: `/details/${index}`,
+  label: course.titleEn,
+}));
 
 const usefulLinks = [
   { to: '/about', label: 'About' },
@@ -25,14 +23,14 @@ export default function Footer() {
               <FaBookOpen className="text-primary-light" /> About
             </h4>
             <p className="text-sm leading-relaxed opacity-90">
-              At Pak Quran Academy, we provide convenient and flexible online Quran classes for
+              At Babul Quran, we provide convenient and flexible online Quran classes for
               learners of all ages and backgrounds. Our tailored programs cater to individual needs.
             </p>
           </div>
           <div className="opacity-0 animate-fade-in-up animate-delay-200" style={{ animationFillMode: 'forwards' }}>
-            <h4 className="text-white font-semibold text-lg mb-3">Quick Links</h4>
+            <h4 className="text-white font-semibold text-lg mb-3">Courses</h4>
             <ul className="space-y-2">
-              {quickLinks.map(({ to, label }) => (
+              {courseLinks.map(({ to, label }) => (
                 <li key={label}>
                   <Link to={to} className="hover:text-primary-light transition-colors inline-flex items-center gap-2">
                     <span className="text-primary-light/70">→</span> {label}
@@ -70,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="pt-6 border-t border-white/10 text-center text-sm opacity-80">
-          Copyright © {new Date().getFullYear()} - with Pak Quran Academy.
+          Copyright © {new Date().getFullYear()} - with Babul Quran.
         </div>
       </div>
     </footer>

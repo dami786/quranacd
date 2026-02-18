@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { HiUserAdd } from 'react-icons/hi';
 import { Input } from '../components/Forms';
 import { Button } from '../components/Buttons';
-import { registerUser } from '../services/api';
+import { registerUser, getMyTrial } from '../services/api';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,9 +22,20 @@ export default function Register() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('isSuperAdmin', res.data.isSuperAdmin ? 'true' : 'false');
         window.dispatchEvent(new Event('auth-change'));
+        return getMyTrial();
+      })
+      .then((res) => {
+        localStorage.setItem('hasInquiry', res?.data ? 'true' : 'false');
+        window.dispatchEvent(new Event('inquiry-change'));
         navigate('/profile');
       })
       .catch((err) => {
+        if (err.response?.status === 404 && err.config?.url?.includes('trials/me')) {
+          localStorage.setItem('hasInquiry', 'false');
+          window.dispatchEvent(new Event('inquiry-change'));
+          navigate('/profile');
+          return;
+        }
         setError(err.response?.data?.message || 'Registration failed.');
       })
       .finally(() => setLoading(false));
@@ -37,7 +48,7 @@ export default function Register() {
           <HiUserAdd className="w-7 h-7 text-primary" /> Register
         </h1>
         <p className="text-gray-600 text-sm text-center mb-6">
-          Create your Pak Quran Academy account
+          Create your Babul Quran account
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Name" name="name" required placeholder="Your name" />

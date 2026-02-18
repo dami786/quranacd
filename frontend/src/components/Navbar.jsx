@@ -2,20 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HiMail, HiPhone, HiMenu, HiX, HiChevronDown, HiHome, HiUser, HiAcademicCap } from 'react-icons/hi';
 import { Button } from './Buttons';
+import { manualCourses } from '../data/courses';
+
+const courseMenuItems = manualCourses.map((course, index) => ({
+  to: `/details/${index}`,
+  label: course.titleEn,
+}));
 
 const leftMenuLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About Us' },
   {
     label: 'Courses',
-    children: [
-      { to: '/#courses', label: 'Noorani Qaida' },
-      { to: '/#courses', label: 'Recite Quran Online' },
-      { to: '/#courses', label: 'Quran with Tajweed' },
-      { to: '/#courses', label: 'Quran with Tafseer' },
-      { to: '/#courses', label: 'Quran Memorization' },
-      { to: '/#courses', label: 'Islamic Studies' },
-    ],
+    children: courseMenuItems,
   },
   { to: '/#teachers', label: 'Teachers' },
   { to: '/#fee', label: 'Fee Structure' },
@@ -28,18 +27,22 @@ export default function Navbar() {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [token, setToken] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
 
   useEffect(() => {
     const updateAuth = () => {
       setToken(localStorage.getItem('token'));
       setIsSuperAdmin(localStorage.getItem('isSuperAdmin') === 'true');
+      setHasInquiry(localStorage.getItem('hasInquiry') === 'true');
     };
     updateAuth();
     window.addEventListener('storage', updateAuth);
     window.addEventListener('auth-change', updateAuth);
+    window.addEventListener('inquiry-change', updateAuth);
     return () => {
       window.removeEventListener('storage', updateAuth);
       window.removeEventListener('auth-change', updateAuth);
+      window.removeEventListener('inquiry-change', updateAuth);
     };
   }, []);
 
@@ -150,7 +153,7 @@ export default function Navbar() {
               <HiMenu className="w-6 h-6 text-gray-700" />
             </button>
             <Link to="/" className="text-xl font-bold text-primary whitespace-nowrap hover:text-primary-dark transition-colors">
-              Pak Quran Academy
+              Babul Quran
             </Link>
           </div>
 
@@ -164,27 +167,25 @@ export default function Navbar() {
             <Link to="/#courses" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors flex items-center gap-1.5">
               <HiAcademicCap className="w-4 h-4" /> Courses
             </Link>
-            {token ? (
-              <>
-                <Link to="/profile" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors flex items-center gap-1.5">
-                  <HiUser className="w-4 h-4" /> Profile
-                </Link>
-                {isSuperAdmin && (
-                  <Link to="/dashboard" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
-                    Dashboard
-                  </Link>
-                )}
-              </>
-            ) : (
-              <Link to="/login" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
-                Login
+            {token && isSuperAdmin && (
+              <Link to="/dashboard" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
+                Dashboard
               </Link>
             )}
           </nav>
 
-          <div className="flex-shrink-0">
-            <Button to="/contact" variant="free">
-              FREE TRIAL
+          <div className="flex-shrink-0 flex items-center gap-2">
+            {token ? (
+              <Link to="/profile" className="p-2.5 rounded-full hover:bg-bg-alt hover:text-primary text-gray-700 transition-colors border border-gray-200" aria-label="Profile">
+                <HiUser className="w-5 h-5" />
+              </Link>
+            ) : (
+              <Link to="/login" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors border border-gray-200">
+                Login
+              </Link>
+            )}
+            <Button to={token && hasInquiry ? '/contact?source=enrollment' : '/contact?source=free_trial'} variant="free">
+              {token && hasInquiry ? 'Get Admission' : 'FREE TRIAL'}
             </Button>
           </div>
         </div>

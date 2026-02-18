@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Button } from './Buttons';
 
-// Pexels se free Quran-reading images (Quran parhna / mosque theme)
+// Hero images from public/images (istockphoto)
 const slides = [
   {
-    image: 'https://images.pexels.com/photos/16150270/pexels-photo-16150270.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    image: '/images/istockphoto-1165713590-612x612.jpg',
     sub: 'Learn the Quran, your way',
     title: "Discover your Own Path to Peace & Knowledge",
     tag: "Quran Learning Classes: We're the World's Best!",
   },
   {
-    image: 'https://images.pexels.com/photos/9325736/pexels-photo-9325736.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    image: '/images/istockphoto-1196261399-612x612.jpg',
     sub: 'The Quran: A Journey to the Heart of Islam',
     title: 'A Complete Online Quran Learning Experience',
     tag: 'Quran Learning Online: Classes for Everyone, Anywhere',

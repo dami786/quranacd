@@ -6,6 +6,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import dataRoutes from './routes/dataRoutes.js';
+import trialRoutes from './routes/trialRoutes.js';
+import donationRoutes from './routes/donationRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -19,6 +21,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/items', dataRoutes);
+app.use('/api/trials', trialRoutes);
+app.use('/api/donations', donationRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

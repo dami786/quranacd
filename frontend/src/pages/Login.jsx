@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { HiLogin } from 'react-icons/hi';
 import { Input } from '../components/Forms';
 import { Button } from '../components/Buttons';
-import { loginUser } from '../services/api';
+import { loginUser, getMyTrial } from '../services/api';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,9 +21,20 @@ export default function Login() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('isSuperAdmin', res.data.isSuperAdmin ? 'true' : 'false');
         window.dispatchEvent(new Event('auth-change'));
+        return getMyTrial();
+      })
+      .then((res) => {
+        localStorage.setItem('hasInquiry', res?.data ? 'true' : 'false');
+        window.dispatchEvent(new Event('inquiry-change'));
         navigate('/profile');
       })
       .catch((err) => {
+        if (err.response?.status === 404 && err.config?.url?.includes('trials/me')) {
+          localStorage.setItem('hasInquiry', 'false');
+          window.dispatchEvent(new Event('inquiry-change'));
+          navigate('/profile');
+          return;
+        }
         setError(err.response?.data?.message || 'Login failed.');
       })
       .finally(() => setLoading(false));
@@ -36,7 +47,7 @@ export default function Login() {
           <HiLogin className="w-7 h-7 text-primary" /> Login
         </h1>
         <p className="text-gray-600 text-sm text-center mb-6">
-          Sign in to your Pak Quran Academy account
+          Sign in to your Babul Quran account
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" name="email" type="email" required placeholder="your@email.com" />

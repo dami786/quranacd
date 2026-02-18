@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Input } from '../components/Forms';
 import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaComments } from 'react-icons/fa';
 import Hero from '../components/Hero';
 import StepsSection from '../components/StepsSection';
-import Cards from '../components/Cards';
 import { Button } from '../components/Buttons';
-import { getItems } from '../services/api';
+import { manualCourses } from '../data/courses';
+import { submitDonation } from '../services/api';
 
 const featureIcons = [
   { Icon: FaClock, iconLabel: 'Schedule' },
@@ -17,11 +17,12 @@ const featureIcons = [
 ];
 
 export default function Home() {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
+  const [donateType, setDonateType] = useState('Donate for Madrasa');
+  const [showDonationForm, setShowDonationForm] = useState(false);
+  const [donationLoading, setDonationLoading] = useState(false);
+  const [donationMessage, setDonationMessage] = useState({ type: '', text: '' });
 
   const faqAnswers = {
     'courses': 'We offer Noorani Qaida, Quran recitation, Tajweed, Tafseer, Memorization and Islamic Studies. All details and trial form are on the Courses and Contact pages.',
@@ -47,21 +48,6 @@ export default function Home() {
       { from: 'bot', text: a },
     ]);
   };
-
-  useEffect(() => {
-    let cancelled = false;
-    getItems()
-      .then((res) => {
-        if (!cancelled) setItems(res.data);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err.response?.data?.message || 'Failed to load courses.');
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => { cancelled = true; };
-  }, []);
 
   return (
     <>
@@ -111,7 +97,7 @@ export default function Home() {
               </h2>
               <p className="max-w-xl md:max-w-none mb-2 opacity-95">
                 Avail our Complimentary Trial Classes by Completing the Form to Learn Quran Online.
-                Experience the Three-Day Free Trial Offer from <strong>Pak Quran Academy</strong>. Enroll Now!
+                Experience the Three-Day Free Trial Offer from <strong>Babul Quran</strong>. Enroll Now!
               </p>
               <p className="font-semibold mb-5">3 Days Free Trial</p>
               <Button to="/contact" variant="light">
@@ -121,13 +107,13 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Why Choose Pak Quran Academy - redesigned */}
+      {/* Why Choose Babul Quran - redesigned */}
       <section id="about" className="py-16 md:py-20 bg-bg-alt overflow-hidden">
         <div className="max-w-container mx-auto px-5">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="inline-block text-primary font-semibold text-sm uppercase tracking-wider mb-3 animate-fade-in-up">Why Choose Us</span>
             <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-4 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-              Why Choose Pak Quran Academy?
+              Why Choose Babul Quran?
             </h2>
             <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-4 animate-fade-in-up animate-delay-200 opacity-0" style={{ animationFillMode: 'forwards' }} />
             <p className="text-gray-600 text-base md:text-lg animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
@@ -147,7 +133,7 @@ export default function Home() {
               return (
                 <div
                   key={title}
-                  className="group bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 opacity-0 animate-fade-in-up relative overflow-hidden"
+                  className="group bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 opacity-0 animate-fade-in-up relative overflow-hidden card-islamic-pattern"
                   style={{ animationDelay: `${150 + idx * 80}ms`, animationFillMode: 'forwards' }}
                 >
                   {/* Top accent line on hover */}
@@ -165,18 +151,6 @@ export default function Home() {
               );
             })}
           </div>
-        </div>
-      </section>
-      {/* Courses from API */}
-      <section id="courses" className="py-14 md:py-16 bg-white">
-        <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-3 animate-fade-in-up">
-            We Offer Various Courses to Learn Quran Online
-          </h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-            Our mission is to provide convenient Quranic education to individuals from all walks of life.
-          </p>
-          <Cards items={items} loading={loading} error={error} />
         </div>
       </section>
       {/* Reasons to Hire Us - image + text (jaise screenshot) */}
@@ -199,7 +173,7 @@ export default function Home() {
             {/* Right: content (sirf pehla paragraph image ke saath row mein) - bara paragraph */}
             <div className="space-y-4 text-gray-600 text-base md:text-lg leading-relaxed opacity-0 animate-fade-in-up animate-delay-150" style={{ animationFillMode: 'forwards' }}>
               <p>
-                At Pak Quran Academy, we take pride in our team of highly qualified and experienced teachers. They are
+                At Babul Quran, we take pride in our team of highly qualified and experienced teachers. They are
                 dedicated to providing you with personalized guidance and support on your Quranic journey. We understand
                 that everyone has different commitments. That&apos;s why we offer flexible learning options for the
                 students. Whether you&apos;re a working professional, a student, or a busy parent, you can choose the time
@@ -208,29 +182,25 @@ export default function Home() {
               </p>
             </div>
           </div>
-          {/* Neeche image ke baad content - image ki alignment (max-w-5xl) se, thora gap */}
+          {/* Neeche image ke baad - sirf courses subsection */}
           <div className="mt-8 max-w-5xl mx-auto space-y-4 text-gray-600 text-sm md:text-base leading-relaxed">
-            <p>
-              We emphasize the importance of Tajweed in our online Quran classes. Our expert teachers will guide you step
-              by step, helping you master the rules of Tajweed and enhance your recitation skills. At the heart of our
-              mission is safeguarding our students&apos; well-being and ensuring their privacy. Our online Quran classes are
-              conducted in a secure and private setting. We offer competitive and affordable pricing plans without
-              compromising on the quality of teaching. Invest in your spiritual growth without breaking the bank.
-            </p>
-            <p>
-              All our classes are <strong>one-to-one</strong>, so you get the full attention of your teacher. We also offer
-              a <strong>3-day free trial</strong> with no payment or credit card required—you can experience our teaching
-              style and schedule before committing. For families, we have special discounts on multiple enrollments. Our
-              curriculum is structured for beginners to advanced learners, including Noorani Qaida, Quran recitation,
-              Tajweed, Tafseer, and memorization. Upon completion, students receive a <strong>certificate of achievement</strong> from
-              Pak Quran Academy.
-            </p>
-            <p>
-              We serve students across the USA and worldwide. Our teachers are available in flexible time slots to match
-              your time zone. If you are not satisfied within the first month, we offer a <strong>money-back guarantee</strong>.
-              Join thousands of learners who have chosen Pak Quran Academy for their Quranic education—start your journey
-              today with a free trial.
-            </p>
+            {/* Courses subsection */}
+            <div className="mt-10 pt-8 border-t border-gray-200">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3">
+                We Offer Various Courses to Learn Quran Online
+              </h3>
+              <p className="mb-6">
+                Our mission is to provide convenient Quranic education to individuals from all walks of life. Whether you are a beginner or someone looking to enhance your existing knowledge, we have the perfect courses tailored to your needs.
+              </p>
+              <div className="space-y-5">
+                {manualCourses.map((course) => (
+                  <div key={course.titleEn}>
+                    <h4 className="font-bold text-gray-800 mb-1">{course.titleEn}</h4>
+                    <p>{course.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -241,7 +211,7 @@ export default function Home() {
           style={{ backgroundImage: 'url(/images/image.png)' }}
           aria-hidden
         />
-        <div className="absolute inset-0 bg-bg-alt/85" aria-hidden />
+        <div className="absolute inset-0 bg-bg-alt/60" aria-hidden />
         <div className="relative z-10 max-w-container mx-auto px-5">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 animate-fade-in-up flex items-center justify-center gap-2">
             <FaChalkboardTeacher className="w-8 h-8 text-primary" /> Meet Our Inspiring Online Quran Teacher Experts
@@ -260,6 +230,44 @@ export default function Home() {
           </Button>
         </div>
       </section>
+      {/* Courses from API - moved below Teachers */}
+      <section id="courses" className="py-14 md:py-16 bg-white">
+        <div className="max-w-container mx-auto px-5">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-3 animate-fade-in-up">
+            We Offer Various Courses to Learn Quran Online
+          </h2>
+          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            Our mission is to provide convenient Quranic education to individuals from all walks of life.
+          </p>
+          {/* Manual courses – detail ke sath */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {manualCourses.map((course, index) => (
+              <div
+                key={course.titleEn}
+                className="bg-bg-alt rounded-xl border border-gray-200 overflow-hidden hover:shadow-card-hover hover:border-primary/30 transition-all duration-300 opacity-0 animate-fade-in-up flex flex-col"
+                style={{ animationDelay: `${80 * index}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="h-40 w-full flex-shrink-0 overflow-hidden bg-gray-200">
+                  <img
+                    src={course.image}
+                    alt={course.titleEn}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="font-bold text-gray-800 text-lg mb-2">{course.titleEn}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-4 line-clamp-2">{course.description}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button to="/contact?source=enrollment" variant="primary" className="w-fit text-sm">
+                      Enroll Now
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       {/* Price */}
       <section id="fee" className="py-12 bg-white text-center">
         <div className="max-w-container mx-auto px-5">
@@ -272,7 +280,7 @@ export default function Home() {
           </p>
         </div>
       </section>
-      {/* Zakat & Donation - Madrasa bachon / Mosque building */}
+      {/* Zakat & Donation - pehle jaisa: cards, button click pe form */}
       <section id="zakat-donation" className="py-14 md:py-16 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex items-center justify-center gap-2 flex-wrap">
@@ -281,38 +289,131 @@ export default function Home() {
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
             Fulfill your Zakat and Sadaqah by supporting Islamic education and masjid development. Your contribution helps madrasa children and mosque building.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
-            <div
-              className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 opacity-0 animate-fade-in-up flex flex-col items-center text-center"
-              style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}
-            >
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-                <FaChild className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Madrasa Children</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                Support underprivileged children in madrasas with books, food, and quality Quranic education. Your Zakat and donations help them learn and grow.
-              </p>
-              <Button to="/contact" variant="primary" className="inline-flex items-center gap-2 w-full max-w-[200px] justify-center">
-                Donate for Madrasa
-              </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
+              <FaChild className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
+              <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Madrasa</h3>
+              <p className="text-gray-600 text-sm mb-6 flex-1">Support Islamic education for children. Your donation helps run our madrasa.</p>
+              <button
+                type="button"
+                onClick={() => { setDonateType('Donate for Madrasa'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
+                className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
+              >
+                Donate Now
+              </button>
             </div>
-            <div
-              className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 opacity-0 animate-fade-in-up flex flex-col items-center text-center"
-              style={{ animationDelay: '280ms', animationFillMode: 'forwards' }}
-            >
-              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-                <FaMosque className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Mosque Building</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                Contribute towards mosque construction, renovation, or maintenance. Your Sadaqah Jariyah helps build and sustain houses of Allah.
-              </p>
-              <Button to="/contact" variant="primary" className="inline-flex items-center gap-2 w-full max-w-[200px] justify-center">
-                Donate for Mosque
-              </Button>
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
+              <FaMosque className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
+              <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Mosque</h3>
+              <p className="text-gray-600 text-sm mb-6 flex-1">Contribute to mosque building and maintenance. May Allah accept your sadaqah.</p>
+              <button
+                type="button"
+                onClick={() => { setDonateType('Donate for Mosque'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
+                className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
+              >
+                Donate Now
+              </button>
             </div>
           </div>
+          {/* Donation form popup modal */}
+          {showDonationForm && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
+              onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
+              aria-modal="true"
+              role="dialog"
+            >
+              <div
+                className="bg-white rounded-2xl shadow-xl border border-gray-200 max-w-md w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                  <h3 className="text-lg font-bold text-gray-800">Donation Form</h3>
+                  <button
+                    type="button"
+                    onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                    aria-label="Close"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const name = form.name?.value?.trim();
+                    const phone = form.phone?.value?.trim();
+                    const amount = form.amount?.value?.trim();
+                    if (!name || !phone || !amount) return;
+                    setDonationMessage({ type: '', text: '' });
+                    setDonationLoading(true);
+                    submitDonation({ name, phone, amount, donateType })
+                      .then(() => {
+                        setDonationMessage({ type: 'success', text: 'Jazakallah! Your donation details have been received. Please send PKR ' + amount + ' to the EasyPaisa number below. We will confirm once received.' });
+                        form.reset();
+                        setTimeout(() => {
+                          setShowDonationForm(false);
+                          setDonationMessage({ type: '', text: '' });
+                        }, 2000);
+                      })
+                      .catch((err) => setDonationMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit. Please try again.' }))
+                      .finally(() => setDonationLoading(false));
+                  }}
+                  className="p-6 space-y-4"
+                >
+                  <Input label="Name" name="name" required placeholder="Your name" />
+                  <Input label="Phone Number" name="phone" type="tel" required placeholder="03XX XXXXXXX" />
+                  <Input label="Amount (PKR)" name="amount" type="number" min="1" required placeholder="e.g. 1000" />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Donate for</label>
+                    <select
+                      name="donateType"
+                      value={donateType}
+                      onChange={(e) => setDonateType(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    >
+                      <option value="Donate for Madrasa">Donate for Madrasa</option>
+                      <option value="Donate for Mosque">Donate for Mosque</option>
+                    </select>
+                  </div>
+                  {donateType === 'Donate for Madrasa' && (
+                    <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
+                      <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number for Madrasa:</p>
+                      <p className="text-xl font-bold text-primary">0312 4810000</p>
+                      <p className="text-xs text-gray-500 mt-1">Send your amount to this number and mention &quot;Madrasa Donation&quot; in the reference.</p>
+                    </div>
+                  )}
+                  {donateType === 'Donate for Mosque' && (
+                    <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
+                      <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number for Mosque:</p>
+                      <p className="text-xl font-bold text-primary">0312 4810000</p>
+                      <p className="text-xs text-gray-500 mt-1">Send your amount to this number and mention &quot;Mosque Donation&quot; in the reference.</p>
+                    </div>
+                  )}
+                  {donationMessage.text && (
+                    <p className={`text-sm ${donationMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{donationMessage.text}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={donationLoading}
+                      className="flex-1 py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors disabled:opacity-70"
+                    >
+                      {donationLoading ? 'Submitting...' : 'Submit'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
+                      className="px-4 py-3 rounded-lg border border-gray-300 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
           <p className="text-center text-sm text-gray-500 mt-6 animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
             Contact us to specify your intention (Zakat / Sadaqah) and we will guide you through a secure process.
           </p>
@@ -328,7 +429,7 @@ export default function Home() {
             We are offering a free online Quran class. Delve into a personalized one-to-one, 30-minute class,
             tailored to your level and goals, all at absolutely no cost!
           </p>
-          <Button to="/contact" variant="light">
+          <Button to="/contact?source=enrollment" variant="light">
             Quick Admission
           </Button>
         </div>

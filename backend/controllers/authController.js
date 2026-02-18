@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Trial from '../models/Trial.js';
 
 const generateToken = (id) => {
   return jwt.sign(
@@ -15,11 +16,12 @@ export const register = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please provide name, email and password.' });
     }
-    const exists = await User.findOne({ email });
+    const emailLower = String(email).trim().toLowerCase();
+    const exists = await User.findOne({ email: emailLower });
     if (exists) {
       return res.status(400).json({ message: 'User already exists with this email.' });
     }
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email: emailLower, password });
     const token = generateToken(user._id);
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
     res.status(201).json({
@@ -40,7 +42,8 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password.' });
     }
-    const user = await User.findOne({ email }).select('+password');
+    const emailLower = String(email).trim().toLowerCase();
+    const user = await User.findOne({ email: emailLower }).select('+password');
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
@@ -66,11 +69,21 @@ export const getProfile = async (req, res) => {
   try {
     const user = req.user;
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
+    const trial = await Trial.findOne({ email: (user.email || '').toLowerCase() }).lean();
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isSuperAdmin: !!isSuperAdmin,
+      enrollmentStatus: trial?.status || null,
+      inquiry: trial ? {
+        name: trial.name,
+        course: trial.course || '',
+        phone: trial.phone || '',
+        message: trial.message || '',
+        status: trial.status,
+        createdAt: trial.createdAt,
+      } : null,
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Server error.' });

@@ -6,11 +6,11 @@ export default function About() {
     <div className="min-h-screen bg-white">
       <section className="py-16 md:py-20 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center animate-fade-in-up flex items-center justify-center gap-3">
-          <FaMosque className="w-10 h-10 text-primary" /> About Pak Quran Academy
+          <FaMosque className="w-10 h-10 text-primary" /> About Babul Quran
         </h1>
         <div className="max-w-3xl mx-auto space-y-6 text-gray-600 leading-relaxed animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
           <p>
-            At Pak Quran Academy, we provide convenient and flexible online Quran classes for
+            At Babul Quran, we provide convenient and flexible online Quran classes for
             learners of all ages and backgrounds. Whether you are a beginner taking your first
             steps in Quranic studies or an advanced learner seeking to enhance your recitation
             skills, our tailored programs cater to individual needs.

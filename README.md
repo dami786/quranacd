@@ -1,6 +1,6 @@
 # Quran Academy - Full-Stack Web Application
 
-A full-stack web application that replicates the design and functionality of the Pak Quran Academy reference website. Built with **React (Vite)** + **Tailwind CSS** on the frontend and **Node.js** + **Express** + **MongoDB** on the backend. All data is served from MongoDB via REST APIs; no Local Storage is used for permanent data.
+A full-stack web application that replicates the design and functionality of the Babul Quran reference website. Built with **React (Vite)** + **Tailwind CSS** on the frontend and **Node.js** + **Express** + **MongoDB** on the backend. All data is served from MongoDB via REST APIs; no Local Storage is used for permanent data.
 
 ---
 

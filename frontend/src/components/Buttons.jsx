@@ -13,6 +13,8 @@ const variants = {
   free: 'bg-accent text-white border-accent hover:bg-amber-600 hover:border-amber-600',
   light:
     'bg-white text-primary border-white hover:bg-bg-alt hover:text-primary-dark',
+  danger:
+    'bg-red-500 text-white border-red-500 hover:bg-red-600 hover:border-red-600',
 };
 
 export function Button({ to, href, variant = 'primary', className = '', children, type = 'button', ...props }) {

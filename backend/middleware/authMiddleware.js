@@ -20,3 +20,11 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({ message: 'Not authorized. Invalid token.' });
   }
 };
+
+export const superAdminOnly = (req, res, next) => {
+  const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && req.user?.email === process.env.SUPER_ADMIN_EMAIL;
+  if (!isSuperAdmin) {
+    return res.status(403).json({ message: 'Forbidden. Superadmin only.' });
+  }
+  next();
+};
