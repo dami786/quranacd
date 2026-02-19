@@ -24,6 +24,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email.' });
     }
     const user = await User.create({ name, email: emailLower, password });
+    // console.log('New user registered:', user);
     const token = generateToken(user._id);
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
     res.status(201).json({

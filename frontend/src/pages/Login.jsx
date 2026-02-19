@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // useLocation add kiya
 import Seo from '../components/Seo';
 import { HiLogin } from 'react-icons/hi';
 import { Input } from '../components/Forms';
@@ -8,8 +8,14 @@ import { loginUser, getMyTrial } from '../services/api';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation(); // Location ko access karne ke liye
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Ye check karega ke user kahan se aaya tha, warna default '/profile' par bhej dega
+
+  // Sirf pathname ki bajaye mukammal path (query string ke sath) lein
+const from = location.state?.from ? (location.state.from.pathname + location.state.from.search) : '/profile';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,6 +23,7 @@ export default function Login() {
     setLoading(true);
     const email = e.target.email.value;
     const password = e.target.password.value;
+
     loginUser({ email, password })
       .then((res) => {
         localStorage.setItem('token', res.data.token);
@@ -27,13 +34,14 @@ export default function Login() {
       .then((res) => {
         localStorage.setItem('hasInquiry', res?.data ? 'true' : 'false');
         window.dispatchEvent(new Event('inquiry-change'));
-        navigate('/profile');
+        // Wapas usi page par bhejo jahan se user aaya tha
+        navigate(from, { replace: true });
       })
       .catch((err) => {
         if (err.response?.status === 404 && err.config?.url?.includes('trials/me')) {
           localStorage.setItem('hasInquiry', 'false');
           window.dispatchEvent(new Event('inquiry-change'));
-          navigate('/profile');
+          navigate(from, { replace: true }); // Catch block mein bhi redirect logic add kiya
           return;
         }
         setError(err.response?.data?.message || 'Login failed.');
