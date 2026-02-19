@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Production API URL – .env se aata hai, nahi to yahi use hota hai (e.g. Vercel pe)
+// Saari APIs hamesha Railway backend URL pe ( .env se ya yahi fallback ) – CORS backend pe allow hai
 const PRODUCTION_API = 'https://quranacd-production.up.railway.app/api';
 const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_API;
 
