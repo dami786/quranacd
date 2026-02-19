@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+// Production API URL – .env se aata hai, nahi to yahi use hota hai (e.g. Vercel pe)
+const PRODUCTION_API = 'https://quranacd-production.up.railway.app/api';
+const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_API;
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -57,7 +59,7 @@ export const getDonations = () => api.get('/donations');
 export const getImageUrl = (image) => {
   if (!image) return '';
   if (image.startsWith('http')) return image;
-  const base = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || '';
+  const base = API_BASE.replace(/\/api\/?$/, '');
   return base ? `${base}${image.startsWith('/') ? '' : '/'}${image}` : image;
 };
 

@@ -7,11 +7,13 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://quranacd-production.up.railway.app',
+        // target: 'http://localhost:5000',
         changeOrigin: true,
       },
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: 'https://quranacd-production.up.railway.app',
+        // target: 'http://localhost:5000',
         changeOrigin: true,
       },
     },
