@@ -3,7 +3,9 @@ import User from '../models/User.js';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quranacd');
+    // Railway pe variable MONGODB_URI ya MONGO_URI dono chalenge
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/quranacd';
+const conn = await mongoose.connect(mongoUri);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await createSuperAdminIfNeeded();
   } catch (error) {

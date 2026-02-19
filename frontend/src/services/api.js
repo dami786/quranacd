@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// Saari APIs hamesha Railway backend URL pe ( .env se ya yahi fallback ) – CORS backend pe allow hai
-const PRODUCTION_API = 'https://quranacd-production.up.railway.app/api';
-const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_API;
+// Saari APIs frontend .env ki VITE_API_URL pe chalti hain (yahi backend URL use hota hai)
+const API_BASE = import.meta.env.VITE_API_URL || 'https://quranacd-production.up.railway.app/api';
 
 const api = axios.create({
   baseURL: API_BASE,
