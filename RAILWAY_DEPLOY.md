@@ -1,9 +1,24 @@
 # Railway Backend Deploy – "Application failed to respond" fix
 
-## 1. Railway Service Settings
+## 1. Root Directory kahan set karein
 
-- **Root Directory:** `backend` (zaroor set karo – repo root pe package.json nahi hai)
-- **Build Command:** *(empty / default)* → Railway `backend` folder me `npm install` chalayega
+Railway me **Root Directory** option ye jagah pe milta hai:
+
+1. **Project** kholo → us **service** pe click karo (jo backend hona chahiye).
+2. Upar **Settings** tab pe jao (ya right side **Settings** panel).
+3. Scroll karo – **"Source"** ya **"Build"** section me dekho:
+   - **Root Directory** / **Source Directory** / **Monorepo Root** jaisa option ho sakta hai.
+   - Value daalo: **`backend`** (sirf ye word, slash ke bina ya `/backend` bhi chal sakta hai).
+4. Agar **Settings** me nahi dikh raha to:
+   - **Service** pe click karo → **Configure** / **Service Settings** (gear icon).
+   - Ya **Deploy** tab ke andar **Build** settings me ho sakta hai.
+
+**Agar ab bhi option nahi mile:** Naya service banao → **"+ New"** → **"GitHub Repo"** → repo select karo. Service banate waqt ya baad me **"Set root directory"** / **"Select directory"** option a sakta hai. Wahan `backend` select karo.
+
+## 2. Service Settings (jo set karna hai)
+
+- **Root Directory:** `backend` (zaroor – repo root pe package.json nahi hai)
+- **Build Command:** *(khali chhod do – default)*
 - **Start Command:** `npm start` ya `node server.js`
 
 ## 2. Variables (Railway → Service → Variables)

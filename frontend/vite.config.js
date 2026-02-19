@@ -8,22 +8,12 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'https://quranacd-production.up.railway.app',
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false,
-        configure: (proxy) => {
-          proxy.on('error', (err, req, res) => {
-            console.log('[proxy error]', req.url, err.message);
-          });
-          proxy.on('proxyReq', (proxyReq, req) => {
-            console.log('[proxy]', req.method, req.url, '-> Railway');
-          });
-        },
       },
       '/uploads': {
-        target: 'https://quranacd-production.up.railway.app',
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false,
       },
     },
   },

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Saari APIs frontend .env ki VITE_API_URL pe chalti hain (yahi backend URL use hota hai)
-const API_BASE = import.meta.env.VITE_API_URL || 'https://quranacd-production.up.railway.app/api';
+// Saari APIs .env ki VITE_API_URL pe
+const API_BASE = import.meta.env.VITE_API_URL || 'https://quranacd-production-ddd5.up.railway.app/api';
 
 const api = axios.create({
   baseURL: API_BASE,
