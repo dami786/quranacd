@@ -40,7 +40,7 @@ export default function Home() {
     'courses': 'We offer Noorani Qaida, Quran recitation, Tajweed, Tafseer, Memorization and Islamic Studies. All details and trial form are on the Courses and Contact pages.',
     'trial': 'You get 3 days of free one-to-one online Quran classes. Just fill the Contact form or WhatsApp us and we will schedule your trial.',
     'fee': 'Our standard fee is USD $30 per month for one-to-one classes (30 minutes, four classes per month).',
-    'contact': 'You can contact us via the Contact page form, email pakquranteaching@gmail.com or WhatsApp +92 312 4810000.',
+    'contact': 'You can contact us via the Contact page form, email babulquranacademy1@gmail.com or WhatsApp +92 312 4810000.',
   };
 
   const askBot = (type) => {
