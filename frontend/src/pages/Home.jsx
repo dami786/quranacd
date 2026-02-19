@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { Input } from '../components/Forms';
 import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaComments } from 'react-icons/fa';
@@ -8,7 +8,7 @@ import Hero from '../components/Hero';
 import StepsSection from '../components/StepsSection';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
-import { submitDonation } from '../services/api';
+import { submitDonation, getCourseImageUrl } from '../services/api';
 
 const featureIcons = [
   { Icon: FaClock, iconLabel: 'Schedule' },
@@ -100,8 +100,8 @@ export default function Home() {
             <div className="flex justify-center md:justify-start">
               <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-xl border border-white/20 ring-2 ring-white/10">
                 <img
-                  src="https://images.pexels.com/photos/16150270/pexels-photo-16150270.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Child reading Quran"
+                  src="/images/gh.jpg"
+                  alt="Quran on rehal – complimentary online Quran classes"
                   className="w-full h-64 md:h-80 object-cover"
                 />
               </div>
@@ -176,12 +176,12 @@ export default function Home() {
             Reasons to <span className="text-primary">Hire Us?</span>
           </h2>
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
-            {/* Left: Quran-related image (local) */}
+            {/* Left: Reasons to Hire Us image */}
             <div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
               <div className="rounded-3xl overflow-hidden shadow-card border border-gray-200">
                 <img
-                  src="/images/image.png"
-                  alt="Quran learning illustration"
+                  src="/images/hiring%20us.jpg"
+                  alt="Reasons to hire Babul Quran – qualified teachers and flexible learning"
                   className="w-full h-full max-h-[340px] object-cover"
                 />
               </div>
@@ -225,7 +225,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(/images/image.png)',
+            backgroundImage: 'url(/images/teacher.jpg)',
             filter: 'contrast(1.12) brightness(1.1)',
           }}
           aria-hidden
@@ -275,13 +275,20 @@ export default function Home() {
               >
                 <div className="h-40 w-full flex-shrink-0 overflow-hidden bg-gray-200">
                   <img
-                    src={course.image}
+                    src={getCourseImageUrl(course)}
                     alt={course.titleEn}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const img = e.target;
+                      if (img.src.endsWith('.png')) img.src = img.src.replace(/\.png$/, '.jpg');
+                      else img.src = '/images/image.png';
+                    }}
                   />
                 </div>
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-bold text-gray-800 text-lg mb-2">{course.titleEn}</h3>
+                  <Link to={`/details/${index}`} className="font-bold text-gray-800 text-lg mb-2 hover:text-primary transition-colors block">
+                    {course.titleEn}
+                  </Link>
                   <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-4 line-clamp-2">{course.description}</p>
                   <div className="flex flex-wrap items-center gap-2">
                     <Button to="/contact?source=enrollment" variant="primary" className="w-fit text-sm">
@@ -549,18 +556,18 @@ export default function Home() {
                 ))}
               </div>
               <div className="px-4 pb-3 pt-2 border-t border-gray-100">
-                <p className="text-[11px] text-gray-500 mb-1">Quick questions:</p>
+                <p className="text-[11px] hover:text-white text-gray-500 mb-1">Quick questions:</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('courses')}>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1 hover:text-white" onClick={() => askBot('courses')}>
                     Courses
                   </Button>
-                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('trial')}>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1 hover:text-white" onClick={() => askBot('trial')}>
                     Free Trial
                   </Button>
-                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('fee')}>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1 hover:text-white" onClick={() => askBot('fee')}>
                     Fee
                   </Button>
-                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('contact')}>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1 hover:text-white" onClick={() => askBot('contact')}>
                     Contact
                   </Button>
                 </div>

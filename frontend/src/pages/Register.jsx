@@ -22,6 +22,7 @@ export default function Register() {
       .then((res) => {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('isSuperAdmin', res.data.isSuperAdmin ? 'true' : 'false');
+        localStorage.setItem('userRole', res.data.role || 'user');
         window.dispatchEvent(new Event('auth-change'));
         return getMyTrial();
       })

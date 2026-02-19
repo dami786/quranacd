@@ -28,3 +28,13 @@ export const superAdminOnly = (req, res, next) => {
   }
   next();
 };
+
+/** Dashboard access: super admin (by email) OR role === 'admin' */
+export const adminOrSuperAdmin = (req, res, next) => {
+  const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && req.user?.email === process.env.SUPER_ADMIN_EMAIL;
+  const isAdmin = req.user?.role === 'admin';
+  if (!isSuperAdmin && !isAdmin) {
+    return res.status(403).json({ message: 'Forbidden. Admin access required.' });
+  }
+  next();
+};

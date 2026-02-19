@@ -159,7 +159,9 @@ export default function Navbar() {
   const [currentLang, setCurrentLang] = useState(() => getCurrentTranslateLabel());
   const [token, setToken] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'user');
   const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
+  const showDashboard = isSuperAdmin || userRole === 'admin';
 
   useEffect(() => setCurrentLang(getCurrentTranslateLabel()), []);
 
@@ -167,6 +169,7 @@ export default function Navbar() {
     const updateAuth = () => {
       setToken(localStorage.getItem('token'));
       setIsSuperAdmin(localStorage.getItem('isSuperAdmin') === 'true');
+      setUserRole(localStorage.getItem('userRole') || 'user');
       setHasInquiry(localStorage.getItem('hasInquiry') === 'true');
     };
     updateAuth();
@@ -307,7 +310,7 @@ export default function Navbar() {
             <Link to="/#courses" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors flex items-center gap-1.5">
               <HiAcademicCap className="w-4 h-4" /> Courses
             </Link>
-            {token && isSuperAdmin && (
+            {token && showDashboard && (
               <Link to="/dashboard" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
                 Dashboard
               </Link>
@@ -422,7 +425,7 @@ export default function Navbar() {
                 {token ? (
                   <>
                     <Link to="/profile" className="block px-4 py-3 rounded-lg bg-bg-alt text-primary font-medium text-center" onClick={closeLeftMenu}>Profile</Link>
-                    {isSuperAdmin && (
+                    {showDashboard && (
                       <Link to="/dashboard" className="block px-4 py-3 rounded-lg bg-primary text-white font-medium text-center" onClick={closeLeftMenu}>Dashboard</Link>
                     )}
                   </>

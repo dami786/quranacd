@@ -24,15 +24,16 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email.' });
     }
     const user = await User.create({ name, email: emailLower, password });
-    // console.log('New user registered:', user);
     const token = generateToken(user._id);
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
-    res.status(201).json({ 
+    const role = user.role || 'user';
+    res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       token,
       isSuperAdmin: !!isSuperAdmin,
+      role,
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Server error.' });
@@ -56,12 +57,14 @@ export const login = async (req, res) => {
     }
     const token = generateToken(user._id);
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
+    const role = user.role || 'user';
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       token,
       isSuperAdmin: !!isSuperAdmin,
+      role,
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Server error.' });
@@ -72,12 +75,14 @@ export const getProfile = async (req, res) => {
   try {
     const user = req.user;
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
+    const role = user.role || 'user';
     const trial = await Trial.findOne({ email: (user.email || '').toLowerCase() }).lean();
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       isSuperAdmin: !!isSuperAdmin,
+      role,
       enrollmentStatus: trial?.status || null,
       inquiry: trial ? {
         name: trial.name,
@@ -181,6 +186,32 @@ export const resetPasswordWithCode = async (req, res) => {
     await user.save();
     await PasswordReset.deleteOne({ _id: record._id });
     res.json({ message: 'Password has been reset. You can now login with your new password.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Server error.' });
+  }
+};
+
+/** GET /auth/users – list all users (superAdmin only). Returns name, email, role, _id */
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select('name email role _id').sort({ createdAt: -1 }).lean();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Server error.' });
+  }
+};
+
+/** PATCH /auth/users/:id/role – update user role (superAdmin only). Body: { role: 'user' | 'admin' } */
+export const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+    if (!role || !['user', 'admin'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Use "user" or "admin".' });
+    }
+    const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select('name email role _id');
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message || 'Server error.' });
   }

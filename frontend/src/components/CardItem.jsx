@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBookOpen, FaMicrophone, FaQuran, FaBook, FaBrain, FaMosque } from 'react-icons/fa';
 import { HiArrowRight } from 'react-icons/hi';
-import { getImageUrl } from '../services/api';
+import { getCourseImageUrl } from '../services/api';
 
 const iconMap = {
   default: FaBookOpen,
@@ -14,8 +15,11 @@ const iconMap = {
 };
 
 export default function CardItem({ item, showReadMore = true, index = 0 }) {
-  const { _id, title, description, image, price } = item;
+  const { _id, title, description, price } = item;
   const IconComponent = iconMap[title?.toLowerCase()?.split(' ')[0]] || iconMap.default;
+  const imageUrl = getCourseImageUrl(item);
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImg = imageUrl && !imageFailed;
 
   return (
     <div
@@ -23,15 +27,19 @@ export default function CardItem({ item, showReadMore = true, index = 0 }) {
       style={{ animationDelay: `${80 * index}ms`, animationFillMode: 'forwards' }}
     >
       <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-10 text-center">
-        {image ? (
+        {showImg ? (
           <img
-            src={getImageUrl(image)}
+            src={imageUrl}
             alt={title}
-            className="w-full h-40 object-cover mx-auto rounded-lg"
+            className="w-full h-40 object-cover mx-auto rounded-lg ring-2 ring-white/60 shadow-lg border-2 border-white/40"
+            onError={(e) => {
+              const img = e.target;
+              if (img.src.endsWith('.png')) img.src = img.src.replace(/\.png$/, '.jpg');
+              else setImageFailed(true);
+            }}
           />
-        ) : (
-          <IconComponent className="w-16 h-16 mx-auto text-white/90" aria-hidden />
-        )}
+        ) : null}
+        {!showImg && <IconComponent className="w-16 h-16 mx-auto text-white/90" aria-hidden />}
       </div>
       <div className="p-5">
         <h3 className="font-semibold text-gray-800 text-lg mb-2 line-clamp-2">{title}</h3>

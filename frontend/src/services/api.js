@@ -22,6 +22,7 @@ api.interceptors.response.use(
     if (err.response?.status === 401 && !isAuthRequest) {
       localStorage.removeItem('token');
       localStorage.removeItem('isSuperAdmin');
+      localStorage.removeItem('userRole');
       localStorage.removeItem('hasInquiry');
       window.location.href = '/login';
     }
@@ -35,6 +36,8 @@ export const loginUser = (data) => api.post('/auth/login', data);
 export const getProfile = () => api.get('/auth/profile');
 export const requestPasswordReset = (email) => api.post('/auth/forgot-password', { email });
 export const resetPasswordWithCode = (data) => api.post('/auth/reset-password', data);
+export const getUsers = () => api.get('/auth/users');
+export const updateUserRole = (id, role) => api.patch(`/auth/users/${id}/role`, { role });
 
 // Items (courses) - createItem/updateItem accept FormData (with optional image file) or plain object
 export const getItems = () => api.get('/items');
@@ -61,5 +64,18 @@ export const getImageUrl = (image) => {
   const base = API_BASE.replace(/\/api\/?$/, '');
   return base ? `${base}${image.startsWith('/') ? '' : '/'}${image}` : image;
 };
+
+/** Course image: local /images/ as-is; API upload getImageUrl; fail pe frontend default use karo */
+const DEFAULT_COURSE_IMAGE = '/images/image.png';
+export const getCourseImageUrl = (item) => {
+  const title = item?.title || item?.titleEn || '';
+  if (item?.image) {
+    if (item.image.startsWith('http') || item.image.startsWith('/images/')) return item.image;
+    return getImageUrl(item.image);
+  }
+  if (!title) return DEFAULT_COURSE_IMAGE;
+  return `/images/${encodeURIComponent(title)}.png`;
+};
+export const getDefaultCourseImage = () => DEFAULT_COURSE_IMAGE;
 
 export default api;

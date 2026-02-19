@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser, HiInbox, HiHeart } from 'react-icons/hi';
+import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
 import Seo from '../components/Seo';
 import { ItemFormModal } from '../components/Modals';
-import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations } from '../services/api';
+import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations, getUsers, updateUserRole } from '../services/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   const fetchTrials = () => {
     setTrialsLoading(true);
@@ -50,20 +52,39 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   };
 
+  const fetchUsers = () => {
+    setUsersLoading(true);
+    getUsers()
+      .then((res) => setUsers(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setUsers([]))
+      .finally(() => setUsersLoading(false));
+  };
+
+  const handleRoleChange = (userId, newRole) => {
+    updateUserRole(userId, newRole)
+      .then((res) => {
+        setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, role: res.data.role } : u)));
+      })
+      .catch((err) => alert(err.response?.data?.message || 'Failed to update role.'));
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
+    const userRole = localStorage.getItem('userRole') || 'user';
+    const canAccessDashboard = isSuperAdmin || userRole === 'admin';
     if (!token) {
       navigate('/login');
       return;
     }
-    if (!isSuperAdmin) {
+    if (!canAccessDashboard) {
       navigate('/profile');
       return;
     }
     fetchItems();
     fetchTrials();
     fetchDonations();
+    if (isSuperAdmin) fetchUsers();
   }, [navigate]);
 
   const handleCreate = (data) => {
@@ -140,6 +161,61 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Registered Users – super admin only: name, email, role dropdown */}
+        {localStorage.getItem('isSuperAdmin') === 'true' && (
+          <section className="mb-10">
+            <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <HiUserGroup className="w-6 h-6 text-primary" /> Registered Users
+            </h2>
+            {usersLoading ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+                  ))}
+                </div>
+              </div>
+            ) : users.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+                No registered users yet.
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-bg-alt border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Role</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u) => (
+                      <tr key={u._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                        <td className="px-4 py-3 text-gray-800 font-medium">{u.name}</td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${u.email}`} className="text-primary hover:underline">{u.email}</a>
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            value={u.role || 'user'}
+                            onChange={(e) => handleRoleChange(u._id, e.target.value)}
+                            className="rounded border border-gray-300 px-3 py-1.5 text-gray-800 bg-white focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                          >
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Free Trial Inquiries - jinhon ne Free Trial pe click karke form bheja */}
         <section className="mb-10">

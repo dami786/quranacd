@@ -22,6 +22,7 @@ export default function Profile() {
       .then((res) => {
         setUser(res.data);
         localStorage.setItem('isSuperAdmin', res.data.isSuperAdmin ? 'true' : 'false');
+        localStorage.setItem('userRole', res.data.role || 'user');
         window.dispatchEvent(new Event('auth-change'));
         return getMyTrial();
       })
@@ -50,6 +51,7 @@ export default function Profile() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('isSuperAdmin');
+    localStorage.removeItem('userRole');
     localStorage.removeItem('hasInquiry');
     window.dispatchEvent(new Event('auth-change'));
     navigate('/');
@@ -78,6 +80,8 @@ export default function Profile() {
   }
 
   const isSuperAdmin = user.isSuperAdmin === true;
+  const isAdmin = user.role === 'admin';
+  const showDashboardLink = isSuperAdmin || isAdmin;
   const initial = (user.name || user.email || 'U').charAt(0).toUpperCase();
 
   return (
@@ -104,7 +108,7 @@ export default function Profile() {
           <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-6 animate-fade-in-up">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h2>
             <div className="flex flex-wrap gap-3">
-              {isSuperAdmin && (
+              {showDashboardLink && (
                 <Button to="/dashboard" variant="primary" className="inline-flex items-center gap-2">
                   <HiAcademicCap className="w-4 h-4" /> Dashboard
                 </Button>

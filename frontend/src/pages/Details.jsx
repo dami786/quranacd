@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaBookOpen } from 'react-icons/fa';
 import { HiArrowLeft, HiAcademicCap } from 'react-icons/hi';
 import Seo from '../components/Seo';
-import { getItemById, getImageUrl } from '../services/api';
+import { getItemById, getCourseImageUrl } from '../services/api';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
 
@@ -21,6 +21,7 @@ export default function Details() {
       const course = manualCourses[index];
       setItem({
         title: course.titleEn,
+        titleEn: course.titleEn,
         description: course.description,
         image: course.image,
         price: null,
@@ -57,7 +58,7 @@ export default function Details() {
     );
   }
 
-  const imageUrl = isManual ? item.image : getImageUrl(item.image);
+  const imageUrl = getCourseImageUrl(item);
   const metaDesc = item.description ? (item.description.slice(0, 155) + (item.description.length > 155 ? '...' : '')) : `Learn ${item.title} with Babul Quran. Online Quran classes.`;
 
   return (
