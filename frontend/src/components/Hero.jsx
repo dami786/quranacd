@@ -66,7 +66,7 @@ export default function Hero() {
               <Button to="/contact" variant="primary">
                 Register Now
               </Button>
-              <Button to="/contact" variant="outline">
+              <Button to="/contact" variant="outline" className="hover:bg-white/20 hover:text-gray-900">
                 Start Free Trial
               </Button>
             </div>
