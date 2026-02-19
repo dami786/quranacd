@@ -105,20 +105,23 @@ function generateCode() {
 }
 
 async function sendResetEmail(to, code) {
-  const user = (process.env.EMAIL_USER || '').trim();
-  const pass = (process.env.EMAIL_PASS || '').trim();
+  const host = (process.env.SMTP_HOST || '').trim();
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const user = (process.env.SMTP_USER || process.env.EMAIL_USER || '').trim();
+  const pass = (process.env.SMTP_PASS || process.env.EMAIL_PASS || '').trim();
   if (!user || !pass) {
-    console.log('[Password reset] Email not configured. Use this code for', to, ':', code);
+    console.log('[Password reset] Email not configured (SMTP_USER/SMTP_PASS). Use this code for', to, ':', code);
     return;
   }
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    host: host || 'smtp.gmail.com',
+    port: port || 587,
+    secure: port === 465,
     auth: {
       user,
       pass,
     },
+    ...(port === 587 && { requireTLS: true }),
   });
   const mailOptions = {
     from: `"Babul Quran" <${user}>`,
