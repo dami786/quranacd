@@ -27,7 +27,7 @@ export const register = async (req, res) => {
     // console.log('New user registered:', user);
     const token = generateToken(user._id);
     const isSuperAdmin = process.env.SUPER_ADMIN_EMAIL && user.email === process.env.SUPER_ADMIN_EMAIL;
-    res.status(201).json({
+    res.status(201).json({ 
       _id: user._id,
       name: user.name,
       email: user.email,
