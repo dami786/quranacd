@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBookOpen } from 'react-icons/fa';
 import { HiArrowLeft, HiAcademicCap } from 'react-icons/hi';
+import Seo from '../components/Seo';
 import { getItemById, getImageUrl } from '../services/api';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
@@ -57,9 +58,11 @@ export default function Details() {
   }
 
   const imageUrl = isManual ? item.image : getImageUrl(item.image);
+  const metaDesc = item.description ? (item.description.slice(0, 155) + (item.description.length > 155 ? '...' : '')) : `Learn ${item.title} with Babul Quran. Online Quran classes.`;
 
   return (
     <div className="min-h-screen bg-white py-14">
+      <Seo title={item.title} description={metaDesc} image={imageUrl || undefined} />
       <div className="max-w-container mx-auto px-5">
         <div className="max-w-2xl mx-auto">
           {imageUrl ? (

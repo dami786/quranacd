@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Seo from '../components/Seo';
 import { HiUserAdd } from 'react-icons/hi';
 import { Input } from '../components/Forms';
 import { Button } from '../components/Buttons';
@@ -43,6 +44,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-bg-alt flex items-center justify-center py-12 px-4">
+      <Seo title="Register" description="Create your Babul Quran account. Register for online Quran classes and free trial." />
       <div className="w-full max-w-md bg-white rounded-xl shadow-card border border-gray-200 p-8 animate-scale-in">
         <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center flex items-center justify-center gap-2">
           <HiUserAdd className="w-7 h-7 text-primary" /> Register

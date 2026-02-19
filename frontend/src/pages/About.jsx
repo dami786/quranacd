@@ -1,9 +1,14 @@
 import { Button } from '../components/Buttons';
+import Seo from '../components/Seo';
 import { FaMosque, FaHeart } from 'react-icons/fa';
 
 export default function About() {
   return (
     <div className="min-h-screen bg-white">
+      <Seo
+        title="About Us"
+        description="Learn about Babul Quran – online Quran academy. Qualified teachers, flexible schedule, Noorani Qaida, Tajweed, Hifz. Quality Islamic education for all ages."
+      />
       <section className="py-16 md:py-20 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center animate-fade-in-up flex items-center justify-center gap-3">
           <FaMosque className="w-10 h-10 text-primary" /> About Babul Quran

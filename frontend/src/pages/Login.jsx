@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Seo from '../components/Seo';
 import { HiLogin } from 'react-icons/hi';
 import { Input } from '../components/Forms';
 import { Button } from '../components/Buttons';
@@ -42,6 +43,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-bg-alt flex items-center justify-center py-12 px-4">
+      <Seo title="Login" description="Login to your Babul Quran account. Access your profile and course information." />
       <div className="w-full max-w-md bg-white rounded-xl shadow-card border border-gray-200 p-8 animate-scale-in">
         <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center flex items-center justify-center gap-2">
           <HiLogin className="w-7 h-7 text-primary" /> Login
@@ -52,6 +54,9 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" name="email" type="email" required placeholder="your@email.com" />
           <Input label="Password" name="password" type="password" required placeholder="••••••••" />
+          <p className="text-sm text-right">
+            <Link to="/forgot-password" className="text-primary hover:underline">Forgot password?</Link>
+          </p>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" variant="primary" className="w-full" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}

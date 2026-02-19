@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import Seo from '../components/Seo';
 import { Input } from '../components/Forms';
 import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaComments } from 'react-icons/fa';
 import Hero from '../components/Hero';
@@ -17,12 +19,21 @@ const featureIcons = [
 ];
 
 export default function Home() {
+  const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [donateType, setDonateType] = useState('Donate for Madrasa');
   const [showDonationForm, setShowDonationForm] = useState(false);
   const [donationLoading, setDonationLoading] = useState(false);
   const [donationMessage, setDonationMessage] = useState({ type: '', text: '' });
+
+  // Mobile: scroll to #courses when nav link /#courses is used
+  useEffect(() => {
+    if (location.hash === '#courses') {
+      const el = document.getElementById('courses');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location.hash]);
 
   const faqAnswers = {
     'courses': 'We offer Noorani Qaida, Quran recitation, Tajweed, Tafseer, Memorization and Islamic Studies. All details and trial form are on the Courses and Contact pages.',
@@ -51,6 +62,10 @@ export default function Home() {
 
   return (
     <>
+      <Seo
+        title="Learn Quran Online | Free Trial"
+        description="Babul Quran offers online Quran classes with qualified teachers. Free 3-day trial, flexible schedule, Noorani Qaida, Tajweed, Hifz & more. Enroll now."
+      />
       <Hero />
       {/* Learn Quran Online - 3 Steps (same as reference) */}
       <StepsSection />
@@ -457,9 +472,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Chatbot widget - bottom right */}
+      {/* Chatbot widget - bottom right; mobile: above bottom nav & buttons */}
       {chatOpen && (
-        <div className="fixed bottom-20 right-6 w-80 max-w-[90vw] bg-white rounded-2xl shadow-card border border-gray-200 z-40 flex flex-col overflow-hidden">
+        <div className="fixed bottom-24 right-4 md:bottom-20 md:right-6 w-80 max-w-[90vw] bg-white rounded-2xl shadow-card border border-gray-200 z-50 flex flex-col overflow-hidden">
           <div className="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FaComments className="w-4 h-4" />
@@ -531,24 +546,24 @@ export default function Home() {
           </div>
         </div>
       )}
-      {/* WhatsApp float - left bottom */}
+      {/* WhatsApp float - left bottom; mobile: above fixed bottom nav */}
       <a
         href="https://wa.me/923124810000"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-40 transition-all hover:scale-105 hover:shadow-card-hover"
+        className="fixed bottom-20 left-4 md:bottom-6 md:left-6 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 md:px-5 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:scale-105 hover:shadow-card-hover text-sm md:text-base"
         aria-label="WhatsApp"
       >
-        <FaWhatsapp className="w-5 h-5" /> WhatsApp us
+        <FaWhatsapp className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">WhatsApp us</span>
       </a>
-      {/* Chatbot toggle button - bottom right */}
+      {/* Chatbot toggle button - bottom right; mobile: above fixed bottom nav */}
       <button
         type="button"
         onClick={() => setChatOpen((o) => !o)}
-        className="fixed bottom-6 right-6 bg-primary text-white px-4 py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-40 transition-all hover:bg-primary-dark hover:scale-105 hover:shadow-card-hover"
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 bg-primary text-white px-4 py-2.5 md:px-4 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:bg-primary-dark hover:scale-105 hover:shadow-card-hover text-sm md:text-base"
         aria-label="Open chatbot"
       >
-        <FaComments className="w-5 h-5" /> Chat with us
+        <FaComments className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">Chat with us</span>
       </button>
     </>
   );

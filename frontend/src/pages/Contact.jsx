@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import Seo from '../components/Seo';
 import { FaPaperPlane, FaEnvelope } from 'react-icons/fa';
 import { Input, Textarea, Select } from '../components/Forms';
 import { Button } from '../components/Buttons';
@@ -52,6 +53,10 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Seo
+        title="Contact"
+        description="Contact Babul Quran for free trial or enrollment. Send your inquiry for online Quran classes. We'll help you schedule classes and get started."
+      />
       <section className="py-14 md:py-16 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 text-center animate-fade-in-up flex items-center justify-center gap-2">
           <FaEnvelope className="w-9 h-9 text-primary" /> {sourceFromUrl === 'enrollment' ? 'Enroll / Get Admission' : 'Get in Touch'}

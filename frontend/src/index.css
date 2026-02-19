@@ -24,44 +24,72 @@ html {
   }
 }
 
-/* Google Translate - box ke andar, dropdown kaam kare */
+/* Language dropdown - fixed height taake scrollbar hamesha dikhe */
+.language-dropdown-scroll {
+  max-height: 260px;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+.language-dropdown-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #64748b #e2e8f0;
+}
+.language-dropdown-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.language-dropdown-scroll::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 0 4px 4px 0;
+}
+.language-dropdown-scroll::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border-radius: 5px;
+}
+.language-dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+/* Firefox: scrollbar hamesha dikhane ke liye */
+@-moz-document url-prefix() {
+  .language-dropdown-scroll {
+    overflow-y: scroll;
+  }
+}
+
+/* Google Translate - sirf language naam + dropdown icon, dropdown readable */
 .translate-box {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 8px 14px;
   overflow: visible;
   position: relative;
   z-index: 1000;
 }
-.translate-box-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #fff;
-  white-space: nowrap;
-}
 .translate-trigger-btn {
   background: transparent;
   border: none;
-  color: #fff;
-  font-size: 13px;
+  color: #fff !important;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   border-radius: 4px;
 }
 .translate-trigger-btn:hover {
-  text-decoration: underline;
+  opacity: 0.95;
+}
+.translate-trigger-btn span {
+  color: #fff !important;
 }
 .translate-box-widget {
-  font-size: 13px;
+  font-size: 14px;
   overflow: visible;
-  min-width: 120px;
+  min-width: 100px;
 }
 .translate-widget-overlay {
   position: absolute;
@@ -85,24 +113,25 @@ html {
 .translate-box-widget .goog-te-gadget-simple {
   background: transparent !important;
   border: none !important;
-  padding: 2px 6px !important;
+  padding: 0 !important;
   min-height: 28px;
-  min-width: 100px;
   display: inline-flex !important;
   align-items: center !important;
   cursor: pointer !important;
+  color: #fff !important;
 }
 .translate-box-widget .goog-te-menu-value,
 .translate-box-widget .goog-te-menu-value span,
 .translate-box-widget a {
   color: #fff !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
   text-decoration: none !important;
 }
 .translate-box-widget .goog-logo-link {
   display: none !important;
 }
-/* Sirf neeche wala banner hide, widget mat chhedo */
+/* Neeche wala banner hide */
 .goog-te-banner-frame,
 body > div.goog-te-banner-frame,
 #goog-gt-tt {
@@ -110,14 +139,35 @@ body > div.goog-te-banner-frame,
   height: 0 !important;
   overflow: hidden !important;
 }
+/* Dropdown iframe - clip mat karo, saari list dikhe */
 .goog-te-menu-frame,
 .goog-te-balloon-frame,
 iframe.goog-te-menu-frame {
   z-index: 999999 !important;
+  min-height: 300px !important;
+  height: auto !important;
+  max-height: 70vh !important;
 }
+/* Dropdown container - sirf wrapper, andar ka content Google ka rehne do */
 .goog-te-menu2 {
   background: #fff !important;
-  color: #333 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  overflow: visible !important;
+}
+/* Force dropdown ke andar text visible (agar same page par ho) */
+.goog-te-menu2 td,
+.goog-te-menu2 a,
+.goog-te-menu2 span {
+  color: #1a1a1a !important;
+  background-color: #fff !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.goog-te-menu2 a:hover {
+  background-color: #e8f4f3 !important;
 }
 body .goog-te-banner-frame {
   display: none !important;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser, HiInbox, HiHeart } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
+import Seo from '../components/Seo';
 import { ItemFormModal } from '../components/Modals';
 import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations } from '../services/api';
 
@@ -116,6 +117,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-bg-alt py-14">
+      <Seo title="Dashboard" description="Babul Quran admin dashboard." noIndex />
       <div className="max-w-container mx-auto px-5">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2 animate-fade-in-up">

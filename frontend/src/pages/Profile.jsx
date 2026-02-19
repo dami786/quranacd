@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiLogout, HiAcademicCap, HiBookOpen, HiMail } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
+import Seo from '../components/Seo';
 import { getProfile, getMyTrial } from '../services/api';
 
 export default function Profile() {
@@ -81,6 +82,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-bg-alt pb-14">
+      <Seo title="My Profile" description="Your Babul Quran profile. View your account and enrollment status." />
       {/* Profile header – avatar + name */}
       <div className="bg-gradient-to-br from-primary to-primary-dark text-white py-12 md:py-16">
         <div className="max-w-container mx-auto px-5">

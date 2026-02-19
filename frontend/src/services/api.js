@@ -32,6 +32,8 @@ api.interceptors.response.use(
 export const registerUser = (data) => api.post('/auth/register', data);
 export const loginUser = (data) => api.post('/auth/login', data);
 export const getProfile = () => api.get('/auth/profile');
+export const requestPasswordReset = (email) => api.post('/auth/forgot-password', { email });
+export const resetPasswordWithCode = (data) => api.post('/auth/reset-password', data);
 
 // Items (courses) - createItem/updateItem accept FormData (with optional image file) or plain object
 export const getItems = () => api.get('/items');
