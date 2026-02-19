@@ -16,8 +16,6 @@ const leftMenuLinks = [
     label: 'Courses',
     children: courseMenuItems,
   },
-  { to: '/#teachers', label: 'Teachers' },
-  { to: '/#fee', label: 'Fee Structure' },
   { to: '/#zakat-donation', label: 'Zakat & Donation' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -271,9 +269,9 @@ export default function Navbar() {
             )}
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <a href="mailto:pakquranteaching@gmail.com" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+            <a href="mailto:babulquranacademy1@gmail.com" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
               <HiMail className="w-4 h-4 flex-shrink-0" />
-              <span className="hidden sm:inline">pakquranteaching@gmail.com</span>
+              <span className="hidden sm:inline">babulquranacademy1@gmail.com</span>
             </a>
             <a href="tel:+923124810000" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
               <HiPhone className="w-4 h-4 flex-shrink-0" />
