@@ -28,6 +28,7 @@ const from = location.state?.from ? (location.state.from.pathname + location.sta
       .then((res) => {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('isSuperAdmin', res.data.isSuperAdmin ? 'true' : 'false');
+        localStorage.setItem('userRole', res.data.role || 'user');
         window.dispatchEvent(new Event('auth-change'));
         return getMyTrial();
       })

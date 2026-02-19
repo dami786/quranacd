@@ -1,10 +1,10 @@
 import express from 'express';
 import { submitDonation, getDonations } from '../controllers/donationController.js';
-import { protect, superAdminOnly } from '../middleware/authMiddleware.js';
+import { protect, adminOrSuperAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.post('/', submitDonation);
-router.get('/', protect, superAdminOnly, getDonations);
+router.get('/', protect, adminOrSuperAdmin, getDonations);
 
 export default router;

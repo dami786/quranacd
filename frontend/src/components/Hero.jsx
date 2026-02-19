@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Button } from './Buttons';
 
-// Hero images from public/images (istockphoto)
+// Hero images from public/images (use 1920px+ wide for sharp display)
 const slides = [
   {
-    image: '/images/istockphoto-1165713590-612x612.jpg',
+    image: '/images/hero%202.jpg',
     sub: 'Learn the Quran, your way',
     title: "Discover your Own Path to Peace & Knowledge",
     tag: "Quran Learning Classes: We're the World's Best!",
   },
   {
-    image: '/images/istockphoto-1196261399-612x612.jpg',
+    image: '/images/hero%202.jpg',
     sub: 'The Quran: A Journey to the Heart of Islam',
     title: 'A Complete Online Quran Learning Experience',
     tag: 'Quran Learning Online: Classes for Everyone, Anywhere',
+  },
+  {
+    image: '/images/hero%204.jpg',
+    sub: 'A Journey to the Heart of Islam',
+    title: 'Learn with Dedication & Serenity',
+    tag: 'Online Quran classes for children and families – start your free trial.',
   },
 ];
 
@@ -36,19 +42,22 @@ export default function Hero() {
             i === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
-          {/* Background image - clearer visibility */}
+          {/* Background image – GPU layer + crisp scaling to reduce pixelation */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${slide.image})`,
               filter: 'contrast(1.08) brightness(1.06)',
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+              imageRendering: 'auto',
             }}
           />
-          {/* Gradient shade: upar halka, neeche thora dark – text readable, image bhi nazar aaye */}
+          {/* Gradient shade: teal/blue overlay – zyada visible, text readable */}
           <div
             className="absolute inset-0 z-[1]"
             style={{
-              background: 'linear-gradient(to bottom, rgba(15, 118, 110, 0.25) 0%, rgba(15, 118, 110, 0.45) 50%, rgba(19, 78, 74, 0.7) 100%)',
+              background: 'linear-gradient(to bottom, rgba(15, 118, 110, 0.42) 0%, rgba(15, 118, 110, 0.58) 50%, rgba(19, 78, 74, 0.82) 100%)',
             }}
           />
           {/* Content */}

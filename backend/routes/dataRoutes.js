@@ -6,15 +6,15 @@ import {
   updateItem,
   deleteItem,
 } from '../controllers/dataController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, adminOrSuperAdmin } from '../middleware/authMiddleware.js';
 import { upload } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
 router.get('/', getItems);
 router.get('/:id', getItemById);
-router.post('/', protect, upload.single('image'), createItem);
-router.put('/:id', protect, upload.single('image'), updateItem);
-router.delete('/:id', protect, deleteItem);
+router.post('/', protect, adminOrSuperAdmin, upload.single('image'), createItem);
+router.put('/:id', protect, adminOrSuperAdmin, upload.single('image'), updateItem);
+router.delete('/:id', protect, adminOrSuperAdmin, deleteItem);
 
 export default router;
