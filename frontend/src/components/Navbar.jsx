@@ -233,8 +233,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Bar - Translate box + email & phone */}
-      <div className="bg-primary-dark text-white py-2 text-sm">
+      {/* Top Bar - Translate box + email & phone (choti height taake upar wala shade kam) */}
+      <div className="bg-primary-dark text-white py-1.5 text-sm">
         <div className="max-w-container mx-auto px-5 flex flex-wrap items-center justify-center md:justify-between gap-4">
           {/* Translator - box ke andar; button click pe Google dropdown open */}
           <div className="relative">

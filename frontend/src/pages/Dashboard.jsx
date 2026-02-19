@@ -396,20 +396,22 @@ export default function Dashboard() {
                   >
                     <HiViewGrid className="w-4 h-4" /> View
                   </Link>
-                  <button
+                  <Button
                     type="button"
+                    variant="light"
+                    className="px-3 py-2 text-sm border border-gray-300"
                     onClick={() => openEdit(item)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg font-medium text-sm hover:bg-gray-100 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <HiPencil className="w-4 h-4" /> Edit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="danger"
+                    className="px-3 py-2 text-sm border border-red-200"
                     onClick={() => handleDelete(item._id)}
-                    className="px-3 py-2 border border-red-200 text-red-600 rounded-lg font-medium text-sm hover:bg-red-50 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <HiTrash className="w-4 h-4" /> Delete
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}

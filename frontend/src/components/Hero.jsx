@@ -36,16 +36,19 @@ export default function Hero() {
             i === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
         >
-          {/* Background image */}
+          {/* Background image - clearer visibility */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${slide.image})` }}
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              filter: 'contrast(1.08) brightness(1.06)',
+            }}
           />
-          {/* Halka sa shade / overlay - text readable ho */}
+          {/* Gradient shade: upar halka, neeche thora dark – text readable, image bhi nazar aaye */}
           <div
             className="absolute inset-0 z-[1]"
             style={{
-              background: 'linear-gradient(to bottom, rgba(15, 118, 110, 0.75) 0%, rgba(19, 78, 74, 0.85) 100%)',
+              background: 'linear-gradient(to bottom, rgba(15, 118, 110, 0.25) 0%, rgba(15, 118, 110, 0.45) 50%, rgba(19, 78, 74, 0.7) 100%)',
             }}
           />
           {/* Content */}

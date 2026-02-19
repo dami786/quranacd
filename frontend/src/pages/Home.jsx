@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { Input } from '../components/Forms';
@@ -219,23 +220,33 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Teachers - bg image + overlay */}
+      {/* Teachers - Quran bg image clear; gradient overlay se upar wala white shade kam */}
       <section id="teachers" className="py-14 text-center relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/images/image.png)' }}
+          style={{
+            backgroundImage: 'url(/images/image.png)',
+            filter: 'contrast(1.12) brightness(1.1)',
+          }}
           aria-hidden
         />
-        <div className="absolute inset-0 bg-bg-alt/60" aria-hidden />
+        {/* Peechy bg par sahi shade – balanced gradient, text clear, image halki nazar aaye */}
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.52) 0%, rgba(30, 41, 59, 0.48) 35%, rgba(30, 41, 59, 0.5) 65%, rgba(15, 23, 42, 0.55) 100%)',
+          }}
+          aria-hidden
+        />
         <div className="relative z-10 max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 animate-fade-in-up flex items-center justify-center gap-2">
-            <FaChalkboardTeacher className="w-8 h-8 text-primary" /> Meet Our Inspiring Online Quran Teacher Experts
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex items-center justify-center gap-2">
+            <FaChalkboardTeacher className="w-11 h-11 md:w-8 md:h-8 text-primary flex-shrink-0" /> Meet Our Inspiring Online Quran Teacher Experts
           </h2>
-          <p className="max-w-2xl mx-auto text-gray-600 mb-4">
+          <p className="max-w-2xl mx-auto text-white/95 mb-4">
             Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts.
             Our instructors are committed to nurturing your spiritual growth.
           </p>
-          <p className="max-w-2xl mx-auto text-gray-600 mb-6 bg-white p-4 rounded-lg border-l-4 border-primary">
+          <p className="max-w-2xl mx-auto text-gray-700 mb-6 bg-white p-4 rounded-lg border-l-4 border-primary">
             <strong>Four Classes per Month – Steady Progress, Lasting Impact</strong>
             <br />
             Consistency is the key to success. With four classes scheduled per month, you'll experience steady advancement.
@@ -309,25 +320,27 @@ export default function Home() {
               <FaChild className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
               <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Madrasa</h3>
               <p className="text-gray-600 text-sm mb-6 flex-1">Support Islamic education for children. Your donation helps run our madrasa.</p>
-              <button
+              <Button
                 type="button"
+                variant="primary"
+                className="w-full py-3"
                 onClick={() => { setDonateType('Donate for Madrasa'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
-                className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
               >
                 Donate Now
-              </button>
+              </Button>
             </div>
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
               <FaMosque className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
               <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Mosque</h3>
               <p className="text-gray-600 text-sm mb-6 flex-1">Contribute to mosque building and maintenance. May Allah accept your sadaqah.</p>
-              <button
+              <Button
                 type="button"
+                variant="primary"
+                className="w-full py-3"
                 onClick={() => { setDonateType('Donate for Mosque'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
-                className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
               >
                 Donate Now
-              </button>
+              </Button>
             </div>
           </div>
           {/* Donation form popup modal */}
@@ -410,20 +423,22 @@ export default function Home() {
                     <p className={`text-sm ${donationMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{donationMessage.text}</p>
                   )}
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       type="submit"
+                      variant="primary"
+                      className="flex-1 py-3"
                       disabled={donationLoading}
-                      className="flex-1 py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors disabled:opacity-70"
                     >
                       {donationLoading ? 'Submitting...' : 'Submit'}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="light"
+                      className="px-4 py-3 border border-gray-300"
                       onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
-                      className="px-4 py-3 rounded-lg border border-gray-300 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                       Close
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -472,99 +487,89 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Chatbot widget - bottom right; mobile: above bottom nav & buttons */}
-      {chatOpen && (
-        <div className="fixed bottom-24 right-4 md:bottom-20 md:right-6 w-80 max-w-[90vw] bg-white rounded-2xl shadow-card border border-gray-200 z-50 flex flex-col overflow-hidden">
-          <div className="px-4 py-3 bg-primary text-white flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FaComments className="w-4 h-4" />
-              <span className="font-semibold text-sm">Quran Academy Chatbot</span>
-            </div>
-            <button
+      {/* WhatsApp + Chatbot: body pe portal – hamesha viewport pe fixed, scroll ke sath nahi chalenge */}
+      {createPortal(
+        <>
+          <a
+            href="https://wa.me/923124810000"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-20 left-4 md:bottom-6 md:left-6 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 md:px-5 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:scale-105 hover:shadow-card-hover text-sm md:text-base"
+            aria-label="WhatsApp"
+          >
+            <FaWhatsapp className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">WhatsApp us</span>
+          </a>
+          <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
+            <Button
               type="button"
-              onClick={() => setChatOpen(false)}
-              className="text-white/80 hover:text-white text-sm"
+              variant="primary"
+              onClick={() => setChatOpen((o) => !o)}
+              className="px-4 py-2.5 md:px-4 md:py-3 rounded-full shadow-card text-sm md:text-base"
+              aria-label="Open chatbot"
             >
-              ✕
-            </button>
+              <FaComments className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">Chat with us</span>
+            </Button>
           </div>
-          <div className="px-4 py-3 space-y-2 text-xs text-gray-700 max-h-64 overflow-y-auto">
-            {chatMessages.length === 0 && (
-              <p className="text-gray-600">
-                Ask anything about our academy, courses, fee or free trial. Select a quick question below to begin.
-              </p>
-            )}
-            {chatMessages.map((m, idx) => (
-              <div
-                key={idx}
-                className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`px-3 py-2 rounded-xl max-w-[80%] ${
-                    m.from === 'user'
-                      ? 'bg-primary text-white rounded-br-sm'
-                      : 'bg-gray-100 text-gray-800 rounded-bl-sm'
-                  }`}
+          {chatOpen && (
+            <div className="fixed bottom-24 right-4 md:bottom-20 md:right-6 w-80 max-w-[90vw] bg-white rounded-2xl shadow-card border border-gray-200 z-50 flex flex-col overflow-hidden">
+              <div className="px-4 py-3 bg-primary text-white flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FaComments className="w-4 h-4" />
+                  <span className="font-semibold text-sm">Quran Academy Chatbot</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setChatOpen(false)}
+                  className="text-white/80 hover:text-white text-sm"
                 >
-                  {m.text}
+                  ✕
+                </button>
+              </div>
+              <div className="px-4 py-3 space-y-2 text-xs text-gray-700 max-h-64 overflow-y-auto">
+                {chatMessages.length === 0 && (
+                  <p className="text-gray-600">
+                    Ask anything about our academy, courses, fee or free trial. Select a quick question below to begin.
+                  </p>
+                )}
+                {chatMessages.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`px-3 py-2 rounded-xl max-w-[80%] ${
+                        m.from === 'user'
+                          ? 'bg-primary text-white rounded-br-sm'
+                          : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                      }`}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 pb-3 pt-2 border-t border-gray-100">
+                <p className="text-[11px] text-gray-500 mb-1">Quick questions:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('courses')}>
+                    Courses
+                  </Button>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('trial')}>
+                    Free Trial
+                  </Button>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('fee')}>
+                    Fee
+                  </Button>
+                  <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1" onClick={() => askBot('contact')}>
+                    Contact
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="px-4 pb-3 pt-2 border-t border-gray-100">
-            <p className="text-[11px] text-gray-500 mb-1">Quick questions:</p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => askBot('courses')}
-                className="px-2 py-1 rounded-full bg-bg-alt text-xs text-gray-800 hover:bg-primary hover:text-white transition-colors"
-              >
-                Courses
-              </button>
-              <button
-                type="button"
-                onClick={() => askBot('trial')}
-                className="px-2 py-1 rounded-full bg-bg-alt text-xs text-gray-800 hover:bg-primary hover:text-white transition-colors"
-              >
-                Free Trial
-              </button>
-              <button
-                type="button"
-                onClick={() => askBot('fee')}
-                className="px-2 py-1 rounded-full bg-bg-alt text-xs text-gray-800 hover:bg-primary hover:text-white transition-colors"
-              >
-                Fee
-              </button>
-              <button
-                type="button"
-                onClick={() => askBot('contact')}
-                className="px-2 py-1 rounded-full bg-bg-alt text-xs text-gray-800 hover:bg-primary hover:text-white transition-colors"
-              >
-                Contact
-              </button>
             </div>
-          </div>
-        </div>
+          )}
+        </>,
+        document.body
       )}
-      {/* WhatsApp float - left bottom; mobile: above fixed bottom nav */}
-      <a
-        href="https://wa.me/923124810000"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-20 left-4 md:bottom-6 md:left-6 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 md:px-5 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:scale-105 hover:shadow-card-hover text-sm md:text-base"
-        aria-label="WhatsApp"
-      >
-        <FaWhatsapp className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">WhatsApp us</span>
-      </a>
-      {/* Chatbot toggle button - bottom right; mobile: above fixed bottom nav */}
-      <button
-        type="button"
-        onClick={() => setChatOpen((o) => !o)}
-        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 bg-primary text-white px-4 py-2.5 md:px-4 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:bg-primary-dark hover:scale-105 hover:shadow-card-hover text-sm md:text-base"
-        aria-label="Open chatbot"
-      >
-        <FaComments className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">Chat with us</span>
-      </button>
     </>
   );
 }
