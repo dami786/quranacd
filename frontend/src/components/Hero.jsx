@@ -9,12 +9,7 @@ const slides = [
     title: "Discover your Own Path to Peace & Knowledge",
     tag: "Quran Learning Classes: We're the World's Best!",
   },
-  {
-    image: '/images/hero%202.jpg',
-    sub: 'The Quran: A Journey to the Heart of Islam',
-    title: 'A Complete Online Quran Learning Experience',
-    tag: 'Quran Learning Online: Classes for Everyone, Anywhere',
-  },
+ 
   {
     image: '/images/hero%204.jpg',
     sub: 'A Journey to the Heart of Islam',
@@ -75,7 +70,7 @@ export default function Hero() {
               <Button to="/contact" variant="primary">
                 Register Now
               </Button>
-              <Button to="/contact" variant="outline" >
+              <Button to="/contact" variant="outline" className="hover:text-primary">
                 Start Free Trial
               </Button>
             </div>

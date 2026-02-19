@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HiViewGrid, HiPlus, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart } from 'react-icons/hi';
+import { HiViewGrid, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
 import Seo from '../components/Seo';
 import { ItemFormModal } from '../components/Modals';
@@ -20,6 +20,11 @@ export default function Dashboard() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard-free-trial');
+
+  const showSection = (id) => {
+    setActiveSection(id);
+  };
 
   const fetchTrials = () => {
     setTrialsLoading(true);
@@ -140,31 +145,59 @@ export default function Dashboard() {
     <div className="min-h-screen bg-bg-alt py-14">
       <Seo title="Dashboard" description="Babul Quran admin dashboard." noIndex />
       <div className="max-w-container mx-auto px-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2 animate-fade-in-up">
             <HiViewGrid className="w-8 h-8 text-primary" /> Dashboard
           </h1>
-          <div className="flex gap-3">
-            <Button to="/profile" variant="outlinePrimary" className="inline-flex items-center gap-2">
-              <HiUser className="w-4 h-4" /> Profile
-            </Button>
-            <Button
+          <Button to="/profile" variant="outlinePrimary" className="inline-flex items-center gap-2 w-fit hover:text-white">
+            <HiUser className="w-4 h-4" /> Profile
+          </Button>
+        </div>
+
+        {/* Section nav buttons – click to show only that section */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {localStorage.getItem('isSuperAdmin') === 'true' && (
+            <button
               type="button"
-              variant="primary"
-              className="inline-flex items-center gap-2"
-              onClick={() => {
-                setEditingItem(null);
-                setModalOpen(true);
-              }}
+              onClick={() => showSection('dashboard-users')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-users' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
             >
-              <HiPlus className="w-4 h-4" /> Add Course
-            </Button>
-          </div>
+              <HiUserGroup className="w-4 h-4 inline-block mr-1.5 align-middle" /> Registered Users
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => showSection('dashboard-free-trial')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-free-trial' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+          >
+            <HiInbox className="w-4 h-4 inline-block mr-1.5 align-middle" /> Free Trial Inquiries
+          </button>
+          <button
+            type="button"
+            onClick={() => showSection('dashboard-enrollment')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-enrollment' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+          >
+            <HiInbox className="w-4 h-4 inline-block mr-1.5 align-middle" /> Enrollment
+          </button>
+          <button
+            type="button"
+            onClick={() => showSection('dashboard-donations')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-donations' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+          >
+            <HiHeart className="w-4 h-4 inline-block mr-1.5 align-middle" /> Donations
+          </button>
+          <button
+            type="button"
+            onClick={() => showSection('dashboard-courses')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-courses' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+          >
+            <HiViewGrid className="w-4 h-4 inline-block mr-1.5 align-middle" /> Courses
+          </button>
         </div>
 
         {/* Registered Users – super admin only: name, email, role dropdown */}
-        {localStorage.getItem('isSuperAdmin') === 'true' && (
-          <section className="mb-10">
+        {localStorage.getItem('isSuperAdmin') === 'true' && activeSection === 'dashboard-users' && (
+          <section id="dashboard-users" className="mb-10">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
               <HiUserGroup className="w-6 h-6 text-primary" /> Registered Users
             </h2>
@@ -218,7 +251,8 @@ export default function Dashboard() {
         )}
 
         {/* Free Trial Inquiries - jinhon ne Free Trial pe click karke form bheja */}
-        <section className="mb-10">
+        {activeSection === 'dashboard-free-trial' && (
+        <section id="dashboard-free-trial" className="mb-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <HiInbox className="w-6 h-6 text-primary" /> Free Trial Inquiries
           </h2>
@@ -296,9 +330,11 @@ export default function Dashboard() {
             );
           })()}
         </section>
+        )}
 
         {/* Enrollment / Get Admission - jinhon ne Get Admission / course enroll ke liye bheja */}
-        <section className="mb-10">
+        {activeSection === 'dashboard-enrollment' && (
+        <section id="dashboard-enrollment" className="mb-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <HiInbox className="w-6 h-6 text-primary" /> Enrollment / Get Admission
           </h2>
@@ -376,9 +412,11 @@ export default function Dashboard() {
             );
           })()}
         </section>
+        )}
 
         {/* Donations - Zakat & Donation form submissions */}
-        <section className="mb-10">
+        {activeSection === 'dashboard-donations' && (
+        <section id="dashboard-donations" className="mb-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <HiHeart className="w-6 h-6 text-primary" /> Donations
           </h2>
@@ -424,7 +462,14 @@ export default function Dashboard() {
             </div>
           )}
         </section>
+        )}
 
+        {/* Courses */}
+        {activeSection === 'dashboard-courses' && (
+        <section id="dashboard-courses" className="mb-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <HiViewGrid className="w-6 h-6 text-primary" /> Courses
+          </h2>
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -446,14 +491,7 @@ export default function Dashboard() {
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-            <p className="text-gray-600 mb-4">No courses yet. Add your first course.</p>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => setModalOpen(true)}
-            >
-              Add Course
-            </Button>
+            <p className="text-gray-600">No courses yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -492,6 +530,8 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        )}
+        </section>
         )}
       </div>
       <ItemFormModal

@@ -60,10 +60,10 @@ export default function Footer() {
               <FaWhatsapp className="w-4 h-4 text-green-400 flex-shrink-0" /> +923124810000 (WhatsApp)
             </p>
             <a
-              href="mailto:pakquranteaching@gmail.com"
+              href="mailto:babulquranacademy1@gmail.com"
               className="flex items-center gap-2 hover:text-primary-light transition-colors"
             >
-              <FaEnvelope className="w-4 h-4 text-primary-light flex-shrink-0" /> pakquranteaching@gmail.com
+              <FaEnvelope className="w-4 h-4 text-primary-light flex-shrink-0" /> babulquranacademy1@gmail.com
             </a>
           </div>
         </div>

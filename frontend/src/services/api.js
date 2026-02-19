@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    const isAuthRequest = err.config?.url?.includes('/auth/login') || err.config?.url?.includes('/auth/register');
+    const isAuthRequest = err.config?.url?.includes('/auth/login') || err.config?.url?.includes('/auth/register') || err.config?.url?.includes('/auth/update-password');
     if (err.response?.status === 401 && !isAuthRequest) {
       localStorage.removeItem('token');
       localStorage.removeItem('isSuperAdmin');
@@ -36,6 +36,7 @@ export const loginUser = (data) => api.post('/auth/login', data);
 export const getProfile = () => api.get('/auth/profile');
 export const requestPasswordReset = (email) => api.post('/auth/forgot-password', { email });
 export const resetPasswordWithCode = (data) => api.post('/auth/reset-password', data);
+export const changePassword = (data) => api.post('/auth/update-password', data);
 export const getUsers = () => api.get('/auth/users');
 export const updateUserRole = (id, role) => api.patch(`/auth/users/${id}/role`, { role });
 

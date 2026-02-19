@@ -216,3 +216,27 @@ export const updateUserRole = async (req, res) => {
     res.status(500).json({ message: error.message || 'Server error.' });
   }
 };
+
+/** PATCH /auth/change-password – logged-in user changes password. Body: { currentPassword, newPassword } */
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Please provide current password and new password.' });
+    }
+    if (String(newPassword).length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters.' });
+    }
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) return res.status(401).json({ message: 'User not found.' });
+    const match = await user.comparePassword(currentPassword);
+    if (!match) {
+      return res.status(400).json({ message: 'Current password is incorrect.' });
+    }
+    user.password = newPassword;
+    await user.save();
+    res.json({ message: 'Password has been changed successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Server error.' });
+  }
+};

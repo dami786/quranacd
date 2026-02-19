@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiLogout, HiAcademicCap, HiBookOpen, HiMail } from 'react-icons/hi';
+import { HiLogout, HiAcademicCap, HiBookOpen, HiMail, HiKey } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
+import { Input } from '../components/Forms';
 import Seo from '../components/Seo';
-import { getProfile, getMyTrial } from '../services/api';
+import { getProfile, getMyTrial, changePassword } from '../services/api';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ export default function Profile() {
   const [inquiry, setInquiry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [changePasswordLoading, setChangePasswordLoading] = useState(false);
+  const [changePasswordError, setChangePasswordError] = useState('');
+  const [changePasswordSuccess, setChangePasswordSuccess] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -55,6 +60,43 @@ export default function Profile() {
     localStorage.removeItem('hasInquiry');
     window.dispatchEvent(new Event('auth-change'));
     navigate('/');
+  };
+
+  const handleChangePasswordSubmit = (e) => {
+    e.preventDefault();
+    setChangePasswordError('');
+    setChangePasswordSuccess('');
+    const form = e.target;
+    const currentPassword = (form.elements.currentPassword && form.elements.currentPassword.value) || '';
+    const newPassword = (form.elements.newPassword && form.elements.newPassword.value) || '';
+    const confirmPassword = (form.elements.confirmPassword && form.elements.confirmPassword.value) || '';
+    if (!currentPassword.trim()) {
+      setChangePasswordError('Please enter your current password.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setChangePasswordError('New password must be at least 6 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setChangePasswordError('New password and confirm password do not match.');
+      return;
+    }
+    setChangePasswordLoading(true);
+    changePassword({ currentPassword, newPassword })
+      .then((res) => {
+        setChangePasswordSuccess(res.data?.message || 'Password changed successfully.');
+        form.reset();
+        setTimeout(() => {
+          setShowChangePassword(false);
+          setChangePasswordSuccess('');
+        }, 2000);
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || err.message || 'Failed to change password.';
+        setChangePasswordError(msg);
+      })
+      .finally(() => setChangePasswordLoading(false));
   };
 
   if (loading) {
@@ -113,10 +155,32 @@ export default function Profile() {
                   <HiAcademicCap className="w-4 h-4" /> Dashboard
                 </Button>
               )}
+              <Button type="button" variant="outlinePrimary" className="inline-flex items-center gap-2 hover:text-white" onClick={() => { setShowChangePassword(!showChangePassword); setChangePasswordError(''); setChangePasswordSuccess(''); }}>
+                <HiKey className="w-4 h-4" /> Change Password
+              </Button>
               <Button type="button" variant="danger" onClick={handleLogout} className="inline-flex items-center gap-2">
                 <HiLogout className="w-4 h-4" /> Logout
               </Button>
             </div>
+
+            {showChangePassword && (
+              <form onSubmit={handleChangePasswordSubmit} className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+                <h3 className="font-semibold text-gray-800">Change Password</h3>
+                <Input label="Current password" name="currentPassword" type="password" required placeholder="••••••••" />
+                <Input label="New password" name="newPassword" type="password" required minLength={6} placeholder="Min 6 characters" />
+                <Input label="Confirm new password" name="confirmPassword" type="password" required minLength={6} placeholder="Confirm new password" />
+                {changePasswordError && <p className="text-sm text-red-500">{changePasswordError}</p>}
+                {changePasswordSuccess && <p className="text-sm text-green-600">{changePasswordSuccess}</p>}
+                <div className="flex gap-2">
+                  <Button type="submit" variant="primary" disabled={changePasswordLoading}>
+                    {changePasswordLoading ? 'Updating...' : 'Update Password'}
+                  </Button>
+                  <Button type="button" variant="outlinePrimary" onClick={() => { setShowChangePassword(false); setChangePasswordError(''); setChangePasswordSuccess(''); }}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
 
           {/* Your Inquiry + Status */}

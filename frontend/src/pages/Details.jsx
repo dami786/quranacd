@@ -88,7 +88,7 @@ export default function Details() {
             <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
               <HiAcademicCap className="w-4 h-4" /> Enroll Now
             </Button>
-            <Button to="/#courses" variant="outlinePrimary" className="inline-flex items-center gap-2">
+            <Button to="/#courses" variant="outlinePrimary" className="inline-flex items-center gap-2 hover:text-white">
               <HiArrowLeft className="w-4 h-4" /> Back to Courses
             </Button>
           </div>
