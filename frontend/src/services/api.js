@@ -34,7 +34,7 @@ api.interceptors.response.use(
 export const registerUser = (data) => api.post('/auth/register', data);
 export const loginUser = (data) => api.post('/auth/login', data);
 export const getProfile = () => api.get('/auth/profile');
-export const requestPasswordReset = (email) => api.post('/auth/forgot-password', { email });
+export const requestPasswordReset = (email) => api.post('/auth/forgot-password', { email }, { timeout: 15000 });
 export const resetPasswordWithCode = (data) => api.post('/auth/reset-password', data);
 export const changePassword = (data) => api.post('/auth/update-password', data);
 export const getUsers = () => api.get('/auth/users');

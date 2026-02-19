@@ -136,7 +136,7 @@ async function sendResetEmail(to, code) {
   }
 }
 
-/** POST /auth/forgot-password - body: { email } - sends verification code to email */
+/** POST /auth/forgot-password - body: { email } - saves code, responds immediately, sends email in background */
 export const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -145,15 +145,16 @@ export const requestPasswordReset = async (req, res) => {
     }
     const emailLower = String(email).trim().toLowerCase();
     const user = await User.findOne({ email: emailLower });
-    // Always respond same message so we don't reveal if email exists
     const code = generateCode();
     const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000);
     await PasswordReset.deleteMany({ email: emailLower });
     await PasswordReset.create({ email: emailLower, code, expiresAt });
-    if (user) {
-      await sendResetEmail(user.email, code);
-    }
+    // Respond immediately so user is not stuck on "Sending..."
     res.json({ message: 'If an account exists with this email, a verification code has been sent.' });
+    // Send email in background (do not await)
+    if (user) {
+      sendResetEmail(user.email, code).catch((err) => console.error('[Password reset] Email failed:', err.message));
+    }
   } catch (error) {
     res.status(500).json({ message: error.message || 'Server error.' });
   }

@@ -32,7 +32,10 @@ export default function ForgotPassword() {
         setStep(2);
       })
       .catch((err) => {
-        setError(err.response?.data?.message || 'Failed to send code.');
+        const msg = err.code === 'ECONNABORTED'
+          ? 'Request took too long. Please check your connection and try again.'
+          : (err.response?.data?.message || 'Failed to send code.');
+        setError(msg);
       })
       .finally(() => setLoading(false));
   };
