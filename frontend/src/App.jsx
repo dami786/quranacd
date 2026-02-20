@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans overflow-x-hidden">
       <ScrollToTop />
       <Navbar />
       <main className="flex-1 pb-16 md:pb-0">

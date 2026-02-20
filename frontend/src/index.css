@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   @apply text-gray-800 bg-white antialiased;
-}
-
-html {
-  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 .animate-delay-100 { animation-delay: 100ms; }
@@ -22,6 +24,40 @@ html {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Footer – moving pattern, continuously change hota rehta hai */
+@keyframes footer-pattern-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
+.footer-pattern {
+  position: relative;
+}
+
+.footer-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.12' stroke-width='0.6' d='M0 32h64M32 0v64M4 4l56 56M60 4L4 60'/%3E%3Cpath fill='%230d9488' fill-opacity='0.06' d='M32 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z'/%3E%3Cpath fill='%230d9488' fill-opacity='0.05' d='M32 38l3 8 8 3-8 3-3 8-3-8-8-3 8-3z'/%3E%3C/svg%3E");
+  background-size: 64px 64px;
+  background-position: 0 0;
+  animation: footer-pattern-move 25s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-pattern::before {
+    animation: none;
+  }
+}
+
+.footer-pattern > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Language dropdown - fixed height taake scrollbar hamesha dikhe */
@@ -184,4 +220,33 @@ body .goog-te-banner-frame {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%231a5f4a' fill-opacity='0.06' d='M20 2l2.5 7.5L30 12l-7.5 2.5L20 22l-2.5-7.5L10 12l7.5-2.5L20 2z'/%3E%3Cpath fill='%231a5f4a' fill-opacity='0.04' d='M20 18l1.5 4.5L26 24l-4.5 1.5L20 30l-1.5-4.5L14 24l4.5-1.5L20 18z'/%3E%3C/svg%3E");
   border-radius: inherit;
   pointer-events: none;
+}
+
+/* Scroll reveal: content left/right/upar se aata hai jab scroll pe viewport mein aaye */
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+}
+.scroll-reveal-left.in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+}
+.scroll-reveal-right.in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-reveal-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+}
+.scroll-reveal-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -6,6 +6,7 @@ import { Input } from '../components/Forms';
 import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaComments } from 'react-icons/fa';
 import Hero from '../components/Hero';
 import StepsSection from '../components/StepsSection';
+import ScrollReveal from '../components/ScrollReveal';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
 import { getCourseImageUrl } from '../services/api';
@@ -23,11 +24,21 @@ export default function Home() {
   const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
+  const [showOfferPopup, setShowOfferPopup] = useState(false);
 
-  // Mobile: scroll to #courses when nav link /#courses is used
+  // Website reload pe offer popup hamesha dikhao
   useEffect(() => {
-    if (location.hash === '#courses') {
-      const el = document.getElementById('courses');
+    const t = setTimeout(() => setShowOfferPopup(true), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  const closeOfferPopup = () => setShowOfferPopup(false);
+
+  // Nav link se #courses ya #zakat-donation pe click pe us section tak scroll
+  useEffect(() => {
+    const hash = location.hash?.slice(1);
+    if (hash) {
+      const el = document.getElementById(hash);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [location.hash]);
@@ -63,10 +74,43 @@ export default function Home() {
         title="Learn Quran Online | Free Trial"
         description="Babul Quran offers online Quran classes with qualified teachers. Free 3-day trial, flexible schedule, Noorani Qaida, Tajweed, Hifz & more. Enroll now."
       />
+      {/* 40% off offer popup - website load pe, chota size, screen ke beech mein */}
+      {showOfferPopup && (
+        <div
+          className="fixed inset-0 z-[100] min-h-screen flex items-center justify-center p-4 bg-black/50 animate-fade-in"
+          onClick={closeOfferPopup}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl border border-gray-200 w-[min(100%,280px)] overflow-hidden relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={closeOfferPopup}
+              className="absolute top-2 right-2 p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors z-10"
+              aria-label="Close"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div className="pt-6 pb-4 px-4 text-center">
+              <p className="text-lg font-bold text-primary mb-0.5 leading-tight">40% off on first 5 admission</p>
+              <p className="text-gray-600 text-sm font-medium mb-4">Limited offer</p>
+              <Button to="/contact?source=offer" variant="primary" className="w-full py-2.5 text-sm" onClick={closeOfferPopup}>
+                Avail this offer
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <Hero />
       {/* Learn Quran Online - 3 Steps (same as reference) */}
-      <StepsSection />
+      <ScrollReveal direction="up">
+        <StepsSection />
+      </ScrollReveal>
       {/* CTA Banner (Islamic pattern bg + left image from Pexels) */}
+      <ScrollReveal direction="up">
       <section className="relative bg-gradient-to-br from-primary to-primary-dark text-white py-12 md:py-16 overflow-hidden">
         {/* Islamic-style pattern: diagonal stripes + subtle geometric grid */}
         <div
@@ -119,7 +163,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
       {/* Why Choose Babul Quran - redesigned */}
+      <ScrollReveal direction="left">
       <section id="about" className="py-16 md:py-20 bg-bg-alt overflow-hidden">
         <div className="max-w-container mx-auto px-5">
           <div className="text-center max-w-2xl mx-auto mb-12">
@@ -216,7 +262,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
       {/* Teachers - Quran bg image clear; gradient overlay se upar wala white shade kam */}
+      <ScrollReveal direction="right">
       <section id="teachers" className="py-14 text-center relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -235,10 +283,9 @@ export default function Home() {
           aria-hidden
         />
         <div className="relative z-10 max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex justify-center">
-            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
-              <FaChalkboardTeacher className="w-6 h-6 md:w-8 md:h-8 text-primary flex-shrink-0" /> Meet Our Inspiring Online Quran Teacher Experts
-            </span>
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2 text-center">
+            <FaChalkboardTeacher className="w-8 h-8 md:w-10 md:h-10 text-primary shrink-0" />
+            <span>Meet Our Inspiring Online Quran Teacher Experts</span>
           </h2>
           <p className="max-w-2xl mx-auto text-white/95 mb-4">
             Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts.
@@ -254,7 +301,9 @@ export default function Home() {
           </Button>
         </div>
       </section>
+      </ScrollReveal>
       {/* Courses from API - moved below Teachers */}
+      <ScrollReveal direction="up">
       <section id="courses" className="py-14 md:py-16 bg-white">
         <div className="max-w-container mx-auto px-5">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-3 animate-fade-in-up">
@@ -299,7 +348,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
       {/* Price */}
+      <ScrollReveal direction="left">
       <section id="fee" className="py-12 bg-white text-center">
         <div className="max-w-container mx-auto px-5">
           <h2 className="text-xl md:text-2xl font-bold text-primary mb-3">
@@ -311,13 +362,14 @@ export default function Home() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
       {/* Zakat & Donation - pehle jaisa: cards, button click pe form */}
+      <ScrollReveal direction="right">
       <section id="zakat-donation" className="py-14 md:py-16 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex justify-center">
-            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
-              <FaHandHoldingHeart className="w-6 h-6 md:w-8 md:h-8 text-primary flex-shrink-0" /> Zakat & Donation
-            </span>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2">
+            <FaHandHoldingHeart className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
+            <span>Zakat & Donation</span>
           </h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
             Fulfill your Zakat and Sadaqah by supporting Islamic education and masjid development. Your contribution helps madrasa children and mosque building.
@@ -353,13 +405,14 @@ export default function Home() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
       {/* CTA */}
+      <ScrollReveal direction="up">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-12 text-center">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex justify-center">
-            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
-              <FaAward className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" /> Claim Your FREE Online Quran Class Trial Today
-            </span>
+          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2 text-center">
+            <FaAward className="w-5 h-5 md:w-6 md:h-6 shrink-0" />
+            <span>Claim Your FREE Online Quran Class Trial Today</span>
           </h2>
           <p className="max-w-2xl mx-auto mb-6 opacity-95">
             We are offering a free online Quran class. Delve into a personalized one-to-one, 30-minute class,
@@ -370,10 +423,12 @@ export default function Home() {
           </Button>
         </div>
       </section>
+      </ScrollReveal>
       {/* FAQ */}
+      <ScrollReveal direction="left">
       <section className="py-14 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 animate-fade-in-up flex flex-wrap items-center justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2">
             <FaQuestionCircle className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
             <span>Frequently Asked Questions</span>
           </h2>
@@ -394,6 +449,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
       {/* WhatsApp + Chatbot: body pe portal – hamesha viewport pe fixed, scroll ke sath nahi chalenge */}
       {createPortal(
         <>

@@ -15,7 +15,7 @@ const usefulLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-bg-dark text-gray-300 pt-12 pb-20 md:pb-6 rounded-t-2xl">
+    <footer className="footer-pattern bg-bg-dark text-gray-300 pt-12 pb-20 md:pb-6 rounded-t-2xl">
       <div className="max-w-container mx-auto px-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           <div className="opacity-0 animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>
