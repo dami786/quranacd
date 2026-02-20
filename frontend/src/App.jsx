@@ -39,7 +39,7 @@ function App() {
     <div className="min-h-screen flex flex-col font-sans overflow-x-hidden">
       <ScrollToTop />
       <Navbar />
-      <main className="flex-1 pb-16 md:pb-0">
+      <main className="flex-1 pb-16 md:pb-0 -mt-5">
         <Routes>
           {/* --- PUBLIC ROUTES: Inhein koi bhi dekh sakta hai --- */}
           <Route path="/" element={<Home />} />

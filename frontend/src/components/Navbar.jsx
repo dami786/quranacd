@@ -160,7 +160,7 @@ export default function Navbar() {
   const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'user');
   const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
   const [headerTop, setHeaderTop] = useState(40); // pehli paint pe top bar ke neeche; effect se update
-  const [spacerHeight, setSpacerHeight] = useState(96); // top bar + header approx, hero bilkul neeche
+  const [spacerHeight, setSpacerHeight] = useState(74); // top bar + header approx, content navbar ke saath
   const showDashboard = isSuperAdmin || userRole === 'admin';
 
   useEffect(() => setCurrentLang(getCurrentTranslateLabel()), []);
@@ -174,7 +174,8 @@ export default function Navbar() {
       const topH = topEl.offsetHeight;
       const headerH = headerEl.offsetHeight;
       setHeaderTop(Math.min(topH, Math.max(0, topH - window.scrollY)));
-      setSpacerHeight(topH + headerH);
+      /* Content navbar ke bilkul saath – extra gap hatao */
+      setSpacerHeight(Math.max(0, topH + headerH - 22));
     };
     update();
     window.addEventListener('scroll', update, { passive: true });

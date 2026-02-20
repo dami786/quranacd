@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPhone, FaWhatsapp, FaEnvelope, FaBookOpen, FaMap } from 'react-icons/fa';
 import { manualCourses } from '../data/courses';
@@ -13,10 +14,40 @@ const usefulLinks = [
   { to: '/', label: 'Sitemap' },
 ];
 
+// Har 2 sec baad switch hone wale patterns (SVG data URLs)
+const footerPatterns = [
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.12' stroke-width='0.6' d='M0 32h64M32 0v64M4 4l56 56M60 4L4 60'/%3E%3Cpath fill='%230d9488' fill-opacity='0.06' d='M32 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z'/%3E%3C/svg%3E\")",
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='2' fill='%2314b8a6' fill-opacity='0.15'/%3E%3Ccircle cx='8' cy='8' r='1.5' fill='%230d9488' fill-opacity='0.12'/%3E%3Ccircle cx='56' cy='8' r='1.5' fill='%230d9488' fill-opacity='0.12'/%3E%3Ccircle cx='8' cy='56' r='1.5' fill='%230d9488' fill-opacity='0.12'/%3E%3Ccircle cx='56' cy='56' r='1.5' fill='%230d9488' fill-opacity='0.12'/%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.08' d='M16 16l32 32M48 16L16 48'/%3E%3C/svg%3E\")",
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='%2314b8a6' fill-opacity='0.06' d='M0 0l32 32L0 64h32L64 32 32 0H0z'/%3E%3Cpath fill='none' stroke='%230d9488' stroke-opacity='0.1' stroke-width='0.5' d='M32 0v64M0 32h64'/%3E%3C/svg%3E\")",
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.1' stroke-width='0.8' d='M0 16h64M0 32h64M0 48h64M16 0v64M32 0v64M48 0v64'/%3E%3Cpath fill='%230d9488' fill-opacity='0.05' d='M8 8h16v16H8zM40 8h16v16H40zM8 40h16v16H8zM40 40h16v16H40z'/%3E%3C/svg%3E\")",
+];
+
 export default function Footer() {
+  const [patternIndex, setPatternIndex] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const t = setInterval(() => {
+      setPatternIndex((i) => (i + 1) % footerPatterns.length);
+    }, 2000);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <footer className="footer-pattern bg-bg-dark text-gray-300 pt-12 pb-20 md:pb-6 rounded-t-2xl">
-      <div className="max-w-container mx-auto px-5">
+    <footer className="footer-pattern relative bg-bg-dark text-gray-300 pt-12 pb-20 md:pb-6 rounded-t-2xl overflow-hidden">
+      {/* Pattern layer – har 2 sec change */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 rounded-t-2xl transition-[background-image] duration-700"
+        style={{
+          backgroundImage: footerPatterns[patternIndex],
+          backgroundSize: '64px 64px',
+          animation: 'footer-pattern-move 25s linear infinite',
+        }}
+        aria-hidden
+      />
+      {/* Lightning-style glow overlay */}
+      <div className="footer-glow absolute inset-0 pointer-events-none z-[0.5] rounded-t-2xl" aria-hidden />
+      <div className="max-w-container mx-auto px-5 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           <div className="opacity-0 animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>
             <h4 className="text-white font-semibold text-lg mb-3 flex items-center gap-2">

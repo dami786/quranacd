@@ -26,7 +26,7 @@ body {
   }
 }
 
-/* Footer – moving pattern, continuously change hota rehta hai */
+/* Footer – pattern move (used by JS pattern layer) */
 @keyframes footer-pattern-move {
   0% { background-position: 0 0; }
   100% { background-position: 64px 64px; }
@@ -36,28 +36,40 @@ body {
   position: relative;
 }
 
-.footer-pattern::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.12' stroke-width='0.6' d='M0 32h64M32 0v64M4 4l56 56M60 4L4 60'/%3E%3Cpath fill='%230d9488' fill-opacity='0.06' d='M32 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z'/%3E%3Cpath fill='%230d9488' fill-opacity='0.05' d='M32 38l3 8 8 3-8 3-3 8-3-8-8-3 8-3z'/%3E%3C/svg%3E");
-  background-size: 64px 64px;
-  background-position: 0 0;
-  animation: footer-pattern-move 25s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: inherit;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .footer-pattern::before {
-    animation: none;
+  .footer-pattern [style*="animation: footer-pattern-move"] {
+    animation: none !important;
   }
 }
 
-.footer-pattern > * {
-  position: relative;
-  z-index: 1;
+/* Footer – lightning-style glow (pulse) */
+@keyframes footer-glow-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    filter: blur(28px);
+  }
+  50% {
+    opacity: 0.6;
+    filter: blur(32px);
+  }
+}
+
+.footer-glow {
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(20, 184, 166, 0.4) 0%,
+    rgba(13, 148, 136, 0.25) 35%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 75%
+  );
+  animation: footer-glow-pulse 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-glow {
+    animation: none;
+    opacity: 0.4;
+  }
 }
 
 /* Language dropdown - fixed height taake scrollbar hamesha dikhe */
