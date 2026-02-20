@@ -10,8 +10,13 @@ export default function About() {
         description="Learn about Babul Quran – online Quran academy. Qualified teachers, flexible schedule, Noorani Qaida, Tajweed, Hifz. Quality Islamic education for all ages."
       />
       <section className="py-16 md:py-20 max-w-container mx-auto px-5">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center animate-fade-in-up flex items-center justify-center gap-3">
-          <FaMosque className="w-10 h-10 text-primary" /> About Babul Quran
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center animate-fade-in-up flex justify-center">
+          <span className="inline-flex items-center gap-2 md:gap-3 flex-nowrap">
+            <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 text-primary flex-shrink-0">
+              <FaMosque className="w-6 h-6 md:w-7 md:h-7" />
+            </span>
+            About Babul Quran
+          </span>
         </h1>
         <div className="max-w-3xl mx-auto space-y-6 text-gray-600 leading-relaxed animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
           <p>

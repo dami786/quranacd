@@ -6,7 +6,8 @@ export const submitDonation = async (req, res) => {
     if (!name || !phone || !amount) {
       return res.status(400).json({ message: 'Name, phone and amount are required.' });
     }
-    const type = donateType === 'Donate for Mosque' ? 'Donate for Mosque' : 'Donate for Madrasa';
+    const allowed = ['Donate for Madrasa', 'Donate for Mosque', 'Fitrana & Sadaqa'];
+    const type = allowed.includes(donateType) ? donateType : 'Donate for Madrasa';
     const donation = await Donation.create({
       name: name.trim(),
       phone: String(phone).trim(),

@@ -11,6 +11,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Details from './pages/Details';
+import DonationDetail from './pages/DonationDetail';
 
 // Scroll to top on route change (e.g. footer link click)
 function ScrollToTop() {
@@ -43,6 +44,7 @@ function App() {
           {/* --- PUBLIC ROUTES: Inhein koi bhi dekh sakta hai --- */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/donate/:type" element={<DonationDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />

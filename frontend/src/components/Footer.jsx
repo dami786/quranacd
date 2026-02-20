@@ -70,6 +70,7 @@ export default function Footer() {
         <div className="pt-6 border-t border-white/10 text-center text-sm opacity-80">
           Copyright © {new Date().getFullYear()} - with Babul Quran.
         </div>
+        <p className="text-center text-xs opacity-70 mt-2 pb-2">Designed by AlphaDev</p>
       </div>
     </footer>
   );

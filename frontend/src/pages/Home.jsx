@@ -8,7 +8,7 @@ import Hero from '../components/Hero';
 import StepsSection from '../components/StepsSection';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
-import { submitDonation, getCourseImageUrl } from '../services/api';
+import { getCourseImageUrl } from '../services/api';
 
 const featureIcons = [
   { Icon: FaClock, iconLabel: 'Schedule' },
@@ -23,10 +23,6 @@ export default function Home() {
   const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
-  const [donateType, setDonateType] = useState('Donate for Madrasa');
-  const [showDonationForm, setShowDonationForm] = useState(false);
-  const [donationLoading, setDonationLoading] = useState(false);
-  const [donationMessage, setDonationMessage] = useState({ type: '', text: '' });
 
   // Mobile: scroll to #courses when nav link /#courses is used
   useEffect(() => {
@@ -239,8 +235,10 @@ export default function Home() {
           aria-hidden
         />
         <div className="relative z-10 max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex items-center justify-center gap-2">
-            <FaChalkboardTeacher className="w-11 h-11 md:w-8 md:h-8 text-primary flex-shrink-0" /> Meet Our Inspiring Online Quran Teacher Experts
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex justify-center">
+            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
+              <FaChalkboardTeacher className="w-6 h-6 md:w-8 md:h-8 text-primary flex-shrink-0" /> Meet Our Inspiring Online Quran Teacher Experts
+            </span>
           </h2>
           <p className="max-w-2xl mx-auto text-white/95 mb-4">
             Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts.
@@ -316,141 +314,40 @@ export default function Home() {
       {/* Zakat & Donation - pehle jaisa: cards, button click pe form */}
       <section id="zakat-donation" className="py-14 md:py-16 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex items-center justify-center gap-2 flex-wrap">
-            <FaHandHoldingHeart className="w-8 h-8 text-primary" /> Zakat & Donation
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex justify-center">
+            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
+              <FaHandHoldingHeart className="w-6 h-6 md:w-8 md:h-8 text-primary flex-shrink-0" /> Zakat & Donation
+            </span>
           </h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
             Fulfill your Zakat and Sadaqah by supporting Islamic education and masjid development. Your contribution helps madrasa children and mosque building.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
               <FaChild className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
               <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Madrasa</h3>
               <p className="text-gray-600 text-sm mb-6 flex-1">Support Islamic education for children. Your donation helps run our madrasa.</p>
-              <Button
-                type="button"
-                variant="primary"
-                className="w-full py-3"
-                onClick={() => { setDonateType('Donate for Madrasa'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
-              >
-                Donate Now
+              <Button to="/donate/madrasa" variant="primary" className="w-full py-3">
+                View Detail
               </Button>
             </div>
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
               <FaMosque className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
               <h3 className="font-bold text-gray-800 text-lg mb-2">Donate for Mosque</h3>
               <p className="text-gray-600 text-sm mb-6 flex-1">Contribute to mosque building and maintenance. May Allah accept your sadaqah.</p>
-              <Button
-                type="button"
-                variant="primary"
-                className="w-full py-3"
-                onClick={() => { setDonateType('Donate for Mosque'); setShowDonationForm(true); setDonationMessage({ type: '', text: '' }); }}
-              >
-                Donate Now
+              <Button to="/donate/mosque" variant="primary" className="w-full py-3">
+                View Detail
+              </Button>
+            </div>
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft hover:shadow-card-hover transition-all text-center flex flex-col">
+              <FaHandHoldingHeart className="w-14 h-14 text-primary mx-auto mb-4 flex-shrink-0" />
+              <h3 className="font-bold text-gray-800 text-lg mb-2">Fitrana & Sadaqa</h3>
+              <p className="text-gray-600 text-sm mb-6 flex-1">Give Fitrana (Eid al-Fitr) and general Sadaqa. Your charity supports those in need.</p>
+              <Button to="/donate/fitrana" variant="primary" className="w-full py-3">
+                View Detail
               </Button>
             </div>
           </div>
-          {/* Donation form popup modal */}
-          {showDonationForm && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
-              onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
-              aria-modal="true"
-              role="dialog"
-            >
-              <div
-                className="bg-white rounded-2xl shadow-xl border border-gray-200 max-w-md w-full max-h-[90vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                  <h3 className="text-lg font-bold text-gray-800">Donation Form</h3>
-                  <button
-                    type="button"
-                    onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
-                    className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
-                    aria-label="Close"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.target;
-                    const name = form.name?.value?.trim();
-                    const phone = form.phone?.value?.trim();
-                    const amount = form.amount?.value?.trim();
-                    if (!name || !phone || !amount) return;
-                    setDonationMessage({ type: '', text: '' });
-                    setDonationLoading(true);
-                    submitDonation({ name, phone, amount, donateType })
-                      .then(() => {
-                        setDonationMessage({ type: 'success', text: 'Jazakallah! Your donation details have been received. Please send PKR ' + amount + ' to the EasyPaisa number below. We will confirm once received.' });
-                        form.reset();
-                        setTimeout(() => {
-                          setShowDonationForm(false);
-                          setDonationMessage({ type: '', text: '' });
-                        }, 2000);
-                      })
-                      .catch((err) => setDonationMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit. Please try again.' }))
-                      .finally(() => setDonationLoading(false));
-                  }}
-                  className="p-6 space-y-4"
-                >
-                  <Input label="Name" name="name" required placeholder="Your name" />
-                  <Input label="Phone Number" name="phone" type="tel" required placeholder="03XX XXXXXXX" />
-                  <Input label="Amount (PKR)" name="amount" type="number" min="1" required placeholder="e.g. 1000" />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Donate for</label>
-                    <select
-                      name="donateType"
-                      value={donateType}
-                      onChange={(e) => setDonateType(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                    >
-                      <option value="Donate for Madrasa">Donate for Madrasa</option>
-                      <option value="Donate for Mosque">Donate for Mosque</option>
-                    </select>
-                  </div>
-                  {donateType === 'Donate for Madrasa' && (
-                    <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
-                      <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number for Madrasa:</p>
-                      <p className="text-xl font-bold text-primary">0312 4810000</p>
-                      <p className="text-xs text-gray-500 mt-1">Send your amount to this number and mention &quot;Madrasa Donation&quot; in the reference.</p>
-                    </div>
-                  )}
-                  {donateType === 'Donate for Mosque' && (
-                    <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
-                      <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number for Mosque:</p>
-                      <p className="text-xl font-bold text-primary">0312 4810000</p>
-                      <p className="text-xs text-gray-500 mt-1">Send your amount to this number and mention &quot;Mosque Donation&quot; in the reference.</p>
-                    </div>
-                  )}
-                  {donationMessage.text && (
-                    <p className={`text-sm ${donationMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{donationMessage.text}</p>
-                  )}
-                  <div className="flex gap-2">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      className="flex-1 py-3"
-                      disabled={donationLoading}
-                    >
-                      {donationLoading ? 'Submitting...' : 'Submit'}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="light"
-                      className="px-4 py-3 border border-gray-300"
-                      onClick={() => { setShowDonationForm(false); setDonationMessage({ type: '', text: '' }); }}
-                    >
-                      Close
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
           <p className="text-center text-sm text-gray-500 mt-6 animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
             Contact us to specify your intention (Zakat / Sadaqah) and we will guide you through a secure process.
           </p>
@@ -459,8 +356,10 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-12 text-center">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex items-center justify-center gap-2">
-            <FaAward className="w-6 h-6" /> Claim Your FREE Online Quran Class Trial Today
+          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex justify-center">
+            <span className="inline-flex items-start gap-0 md:gap-2 flex-nowrap">
+              <FaAward className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" /> Claim Your FREE Online Quran Class Trial Today
+            </span>
           </h2>
           <p className="max-w-2xl mx-auto mb-6 opacity-95">
             We are offering a free online Quran class. Delve into a personalized one-to-one, 30-minute class,
@@ -474,8 +373,9 @@ export default function Home() {
       {/* FAQ */}
       <section className="py-14 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 animate-fade-in-up flex items-center justify-center gap-2">
-            <FaQuestionCircle className="w-8 h-8 text-primary" /> Frequently Asked Questions
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 animate-fade-in-up flex flex-wrap items-center justify-center gap-2">
+            <FaQuestionCircle className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
+            <span>Frequently Asked Questions</span>
           </h2>
           <div className="max-w-2xl mx-auto space-y-3">
             {[
