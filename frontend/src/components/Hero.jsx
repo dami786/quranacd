@@ -29,7 +29,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative h-[85vh] min-h-[420px] max-h-[700px] overflow-hidden">
+    <section className="relative h-[85vh] min-h-[420px] max-h-[700px] overflow-hidden -mt-8 pt-0">
       {slides.map((slide, i) => (
         <div
           key={i}

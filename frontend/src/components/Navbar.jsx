@@ -159,9 +159,33 @@ export default function Navbar() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'user');
   const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
+  const [headerTop, setHeaderTop] = useState(40); // pehli paint pe top bar ke neeche; effect se update
+  const [spacerHeight, setSpacerHeight] = useState(96); // top bar + header approx, hero bilkul neeche
   const showDashboard = isSuperAdmin || userRole === 'admin';
 
   useEffect(() => setCurrentLang(getCurrentTranslateLabel()), []);
+
+  // White navbar fixed: upar wala top bar scroll ke sath chale, navbar fixed rahey (scroll pe top 0)
+  useEffect(() => {
+    const topEl = document.getElementById('navbar-top-bar');
+    const headerEl = document.getElementById('navbar-header');
+    if (!topEl || !headerEl) return;
+    const update = () => {
+      const topH = topEl.offsetHeight;
+      const headerH = headerEl.offsetHeight;
+      setHeaderTop(Math.min(topH, Math.max(0, topH - window.scrollY)));
+      setSpacerHeight(topH + headerH);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(topEl);
+    ro.observe(headerEl);
+    return () => {
+      window.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const updateAuth = () => {
@@ -234,8 +258,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Bar - Translate box + email & phone (choti height taake upar wala shade kam) */}
-      <div className="bg-primary-dark text-white py-1.5 text-sm">
+      {/* Top Bar - scroll ke sath chalta hai; iske neeche wala white navbar fixed rehta hai */}
+      <div id="navbar-top-bar" className="bg-primary-dark text-white py-1.5 text-sm">
         <div className="max-w-container mx-auto px-5 flex flex-wrap items-center justify-center md:justify-between gap-4">
           {/* Translator - box ke andar; button click pe Google dropdown open */}
           <div className="relative">
@@ -281,8 +305,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-50">
+      {/* Header - fixed; scroll nahi hota, sirf top bar scroll hota hai */}
+      <header id="navbar-header" className="bg-white shadow-md fixed left-0 right-0 z-50 transition-[top] duration-150" style={{ top: headerTop }}>
         <div className="max-w-container mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
             <button
@@ -345,6 +369,9 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* Spacer: fixed header flow mein space nahi leta, isliye content neeche rahey */}
+      <div aria-hidden="true" style={{ height: spacerHeight }} />
 
       {/* Mobile: fixed bottom nav – Home, About Us, Courses + Profile (when logged in) */}
       <nav

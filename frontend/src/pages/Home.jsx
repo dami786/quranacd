@@ -283,8 +283,8 @@ export default function Home() {
           aria-hidden
         />
         <div className="relative z-10 max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2 text-center">
-            <FaChalkboardTeacher className="w-8 h-8 md:w-10 md:h-10 text-primary shrink-0" />
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 text-left md:text-center">
+            <FaChalkboardTeacher className="w-8 h-8 md:w-10 md:h-10 text-primary shrink-0 mt-0.5" />
             <span>Meet Our Inspiring Online Quran Teacher Experts</span>
           </h2>
           <p className="max-w-2xl mx-auto text-white/95 mb-4">
@@ -367,8 +367,8 @@ export default function Home() {
       <ScrollReveal direction="right">
       <section id="zakat-donation" className="py-14 md:py-16 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2">
-            <FaHandHoldingHeart className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-left md:text-center mb-2 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2">
+            <FaHandHoldingHeart className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0 mt-0.5" />
             <span>Zakat & Donation</span>
           </h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
@@ -410,8 +410,8 @@ export default function Home() {
       <ScrollReveal direction="up">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-12 text-center">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2 text-center">
-            <FaAward className="w-5 h-5 md:w-6 md:h-6 shrink-0" />
+          <h2 className="text-lg md:text-xl font-semibold mb-3 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 text-left md:text-center">
+            <FaAward className="w-5 h-5 md:w-6 md:h-6 shrink-0 mt-0.5" />
             <span>Claim Your FREE Online Quran Class Trial Today</span>
           </h2>
           <p className="max-w-2xl mx-auto mb-6 opacity-95">
@@ -428,8 +428,8 @@ export default function Home() {
       <ScrollReveal direction="left">
       <section className="py-14 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2">
-            <FaQuestionCircle className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-left md:text-center mb-10 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2">
+            <FaQuestionCircle className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0 mt-0.5" />
             <span>Frequently Asked Questions</span>
           </h2>
           <div className="max-w-2xl mx-auto space-y-3">

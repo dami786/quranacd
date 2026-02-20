@@ -10,8 +10,8 @@ export default function About() {
         description="Learn about Babul Quran – online Quran academy. Qualified teachers, flexible schedule, Noorani Qaida, Tajweed, Hifz. Quality Islamic education for all ages."
       />
       <section className="py-16 md:py-20 max-w-container mx-auto px-5">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center animate-fade-in-up flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
-          <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 text-primary shrink-0">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-left md:text-center animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 md:gap-3">
+          <span className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 text-primary shrink-0 mt-0.5">
             <FaMosque className="w-6 h-6 md:w-7 md:h-7" />
           </span>
           <span>About Babul Quran</span>
