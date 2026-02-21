@@ -57,7 +57,7 @@ export default function DonationDetail() {
   const Icon = topic.Icon;
 
   const openForm = () => {
-    setDonateType(topic.donateType);
+    setDonateType(DONATE_TYPE_OPTIONS[0]);
     setMessage({ type: '', text: '' });
     setShowForm(true);
   };
@@ -68,13 +68,23 @@ export default function DonationDetail() {
     const name = form.name?.value?.trim();
     const phone = form.phone?.value?.trim();
     const amount = form.amount?.value?.trim();
+    const selectedType = donateType || DONATE_TYPE_OPTIONS[0];
     if (!name || !phone || !amount) return;
     setMessage({ type: '', text: '' });
     setLoading(true);
-    submitDonation({ name, phone, amount, donateType: donateType || topic.donateType })
+    const receiptInput = form.receipt;
+    const receiptFile = receiptInput?.files?.[0];
+    const payload = new FormData();
+    payload.append('name', name);
+    payload.append('phone', phone);
+    payload.append('amount', amount);
+    payload.append('donateType', selectedType);
+    if (receiptFile) payload.append('receipt', receiptFile);
+    submitDonation(payload)
       .then(() => {
         setMessage({ type: 'success', text: 'Jazakallah! Your donation details have been received. Please send PKR ' + amount + ' to the EasyPaisa number below. We will confirm once received.' });
         form.reset();
+        setDonateType(DONATE_TYPE_OPTIONS[0]);
         setTimeout(() => {
           setShowForm(false);
           setMessage({ type: '', text: '' });
@@ -84,7 +94,12 @@ export default function DonationDetail() {
       .finally(() => setLoading(false));
   };
 
-  const refLabel = donateType === 'Donate for Madrasa' ? 'Madrasa Donation' : donateType === 'Donate for Mosque' ? 'Mosque Donation' : 'Fitrana/Sadaqa';
+  const DONATE_TYPE_OPTIONS = [
+  'Donate in mosque/madrasah construction',
+  'Donate for needy children',
+  'Donate for another charity',
+];
+const refLabel = donateType || DONATE_TYPE_OPTIONS[0];
 
   return (
     <div className="min-h-screen bg-bg-alt">
@@ -156,10 +171,23 @@ export default function DonationDetail() {
                   onChange={(e) => setDonateType(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                 >
-                  <option value="Donate for Madrasa">Donate for Madrasa</option>
-                  <option value="Donate for Mosque">Donate for Mosque</option>
-                  <option value="Fitrana & Sadaqa">Fitrana & Sadaqa</option>
+                  {DONATE_TYPE_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
+              </div>
+              <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm text-gray-700">
+                <p className="font-medium text-amber-800 mb-0.5">Payment receipt</p>
+                <p>Make sure to attach or send the payment receipt here or to admin WhatsApp so we can confirm your donation.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Attach receipt (optional)</label>
+                <input
+                  type="file"
+                  name="receipt"
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,image/*,application/pdf"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-medium"
+                />
               </div>
               <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
                 <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number:</p>

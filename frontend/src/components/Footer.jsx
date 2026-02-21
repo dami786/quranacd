@@ -14,6 +14,13 @@ const usefulLinks = [
   { to: '/', label: 'Sitemap' },
 ];
 
+const otherLinks = [
+  { to: '/contact?source=enrollment', label: 'Free Trial' },
+  { to: '/donate/madrasa', label: 'Donate – Madrasa' },
+  { to: '/donate/mosque', label: 'Donate – Mosque' },
+  { to: '/donate/fitrana', label: 'Fitrana & Sadaqa' },
+];
+
 // Har 2 sec baad switch hone wale patterns (SVG data URLs)
 const footerPatterns = [
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='none' stroke='%2314b8a6' stroke-opacity='0.12' stroke-width='0.6' d='M0 32h64M32 0v64M4 4l56 56M60 4L4 60'/%3E%3Cpath fill='%230d9488' fill-opacity='0.06' d='M32 2l4 12 12 4-12 4-4 12-4-12-12-4 12-4z'/%3E%3C/svg%3E\")",
@@ -48,7 +55,8 @@ export default function Footer() {
       {/* Lightning-style glow overlay */}
       <div className="footer-glow absolute inset-0 pointer-events-none z-[0.5] rounded-t-2xl" aria-hidden />
       <div className="max-w-container mx-auto px-5 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        {/* Top row: About, Courses, Get in touch – 3 columns, space filled */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           <div className="opacity-0 animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>
             <h4 className="text-white font-semibold text-lg mb-3 flex items-center gap-2">
               <FaBookOpen className="text-primary-light" /> About
@@ -71,18 +79,6 @@ export default function Footer() {
             </ul>
           </div>
           <div className="opacity-0 animate-fade-in-up animate-delay-300" style={{ animationFillMode: 'forwards' }}>
-            <h4 className="text-white font-semibold text-lg mb-3">Useful Links</h4>
-            <ul className="space-y-2">
-              {usefulLinks.map(({ to, label }) => (
-                <li key={label}>
-                  <Link to={to} className="hover:text-primary-light transition-colors inline-flex items-center gap-2">
-                    <FaMap className="w-3.5 h-3.5 text-primary-light/80" /> {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="opacity-0 animate-fade-in-up animate-delay-400" style={{ animationFillMode: 'forwards' }}>
             <h4 className="text-white font-semibold text-lg mb-3">Get in touch</h4>
             <p className="flex items-center gap-2 mb-2">
               <FaPhone className="w-4 h-4 text-primary-light flex-shrink-0" /> +923124810000
@@ -96,6 +92,33 @@ export default function Footer() {
             >
               <FaEnvelope className="w-4 h-4 text-primary-light flex-shrink-0" /> babulquranacademy1@gmail.com
             </a>
+          </div>
+        </div>
+        {/* Useful Links & Other Links – niche, space fill */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-6 border-t border-white/10">
+          <div>
+            <h4 className="text-white font-semibold text-base mb-2">Useful Links</h4>
+            <ul className="space-y-1.5">
+              {usefulLinks.map(({ to, label }) => (
+                <li key={label}>
+                  <Link to={to} className="text-gray-300 hover:text-primary-light transition-colors inline-flex items-center gap-2 text-sm">
+                    <FaMap className="w-3 h-3 text-primary-light/80 flex-shrink-0" /> {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:col-span-2 lg:col-span-3">
+            <h4 className="text-white font-semibold text-base mb-2">Other Links</h4>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {otherLinks.map(({ to, label }) => (
+                <li key={label}>
+                  <Link to={to} className="text-gray-300 hover:text-primary-light transition-colors inline-flex items-center gap-2 text-sm">
+                    <span className="text-primary-light/70">→</span> {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
         <div className="pt-6 border-t border-white/10 text-center text-sm opacity-80">

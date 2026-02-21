@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import dataRoutes from './routes/dataRoutes.js';
 import trialRoutes from './routes/trialRoutes.js';
 import donationRoutes from './routes/donationRoutes.js';
+import queryRoutes from './routes/queryRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -30,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', dataRoutes);
 app.use('/api/trials', trialRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/queries', queryRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

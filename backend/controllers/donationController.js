@@ -1,4 +1,4 @@
-import Donation from '../models/Donation.js';
+import Donation, { DONATE_TYPES } from '../models/Donation.js';
 
 export const submitDonation = async (req, res) => {
   try {
@@ -6,13 +6,14 @@ export const submitDonation = async (req, res) => {
     if (!name || !phone || !amount) {
       return res.status(400).json({ message: 'Name, phone and amount are required.' });
     }
-    const allowed = ['Donate for Madrasa', 'Donate for Mosque', 'Fitrana & Sadaqa'];
-    const type = allowed.includes(donateType) ? donateType : 'Donate for Madrasa';
+    const type = DONATE_TYPES.includes(donateType) ? donateType : DONATE_TYPES[0];
+    const receiptPath = req.file ? `/uploads/${req.file.filename}` : '';
     const donation = await Donation.create({
-      name: name.trim(),
+      name: String(name).trim(),
       phone: String(phone).trim(),
       amount: String(amount).trim(),
       donateType: type,
+      receipt: receiptPath,
     });
     res.status(201).json(donation);
   } catch (error) {

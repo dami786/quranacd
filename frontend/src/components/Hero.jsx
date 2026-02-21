@@ -9,12 +9,23 @@ const slides = [
     title: "Discover your Own Path to Peace & Knowledge",
     tag: "Quran Learning Classes: We're the World's Best!",
   },
- 
   {
     image: '/images/hero%204.jpg',
     sub: 'A Journey to the Heart of Islam',
     title: 'Learn with Dedication & Serenity',
     tag: 'Online Quran classes for children and families – start your free trial.',
+  },
+  {
+    image: '/images/teacher.jpg',
+    sub: 'One-to-One Online Classes',
+    title: 'Learn with Qualified Quran Teachers',
+    tag: 'Male and female instructors. Noorani Qaida, Tajweed, Hifz & Tafseer – at your pace.',
+  },
+  {
+    image: '/images/gh.jpg',
+    sub: 'From Home, Anywhere',
+    title: 'Flexible Schedule, Steady Progress',
+    tag: 'Four classes per month. Book your free trial and begin your journey today.',
   },
 ];
 

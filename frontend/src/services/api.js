@@ -54,9 +54,13 @@ export const getMyTrial = () => api.get('/trials/me');
 export const updateTrialStatus = (id, status) => api.patch(`/trials/${id}`, { status });
 export const deleteTrial = (id) => api.delete(`/trials/${id}`);
 
-// Donations (POST public, GET superadmin)
+// Donations (POST public, GET superadmin). data can be FormData (with optional receipt file) or plain object.
 export const submitDonation = (data) => api.post('/donations', data);
 export const getDonations = () => api.get('/donations');
+
+// Queries (POST public – send question; GET admin – list queries for reply)
+export const submitQuery = (data) => api.post('/queries', data);
+export const getQueries = () => api.get('/queries');
 
 // Resolve course image URL (uploaded files are at /uploads/...)
 export const getImageUrl = (image) => {

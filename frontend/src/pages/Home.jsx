@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, Link } from 'react-router-dom';
 import Seo from '../components/Seo';
@@ -9,7 +9,7 @@ import StepsSection from '../components/StepsSection';
 import ScrollReveal from '../components/ScrollReveal';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
-import { getCourseImageUrl } from '../services/api';
+import { getCourseImageUrl, submitQuery } from '../services/api';
 
 const featureIcons = [
   { Icon: FaClock, iconLabel: 'Schedule' },
@@ -20,16 +20,79 @@ const featureIcons = [
   { Icon: FaAward, iconLabel: 'Certificate' },
 ];
 
+const teacherSlides = [
+  {
+    image: '/images/teacher.jpg',
+    heading: 'Meet Our Inspiring Online Quran Teacher Experts',
+    intro: 'Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts. Our instructors are committed to nurturing your spiritual growth.',
+    boxTitle: 'Four Classes per Month – Steady Progress, Lasting Impact',
+    boxText: "Consistency is the key to success. With four classes scheduled per month, you'll experience steady advancement.",
+  },
+  {
+    image: '/images/gh.jpg',
+    heading: 'Qualified & Certified Quran Instructors',
+    intro: 'Our male and female teachers are trained and certified to teach Noorani Qaida, Tajweed, Hifz, and Tafseer. Learn with confidence from authentic scholars.',
+    boxTitle: 'One-to-One Personalized Learning',
+    boxText: 'Every student gets individual attention. Our teachers adapt to your pace and focus on your goals—whether reading, memorization, or understanding.',
+  },
+  {
+    image: '/images/hero%202.jpg',
+    heading: 'Learn Quran Online at Your Convenience',
+    intro: 'Schedule classes when it suits you. We offer flexible timings so you can balance work, family, and your Quranic journey without compromise.',
+    boxTitle: 'Free 3-Day Trial – No Commitment',
+    boxText: 'Experience our teaching style and curriculum before you enroll. Book your free trial and see why families choose Babul Quran.',
+  },
+  {
+    image: '/images/hero%204.jpg',
+    heading: 'From Beginners to Huffaz – We Guide You',
+    intro: 'Whether you are starting with Arabic letters or aiming to complete Hifz, our teachers walk with you step by step with patience and expertise.',
+    boxTitle: 'Structured Curriculum, Clear Progress',
+    boxText: 'We follow a proven path: Noorani Qaida → Nazra → Tajweed → Hifz/Tafseer. Track your progress and celebrate milestones together.',
+  },
+];
+
 export default function Home() {
   const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
+  const [querySent, setQuerySent] = useState(false);
+  const [queryLoading, setQueryLoading] = useState(false);
+  const [queryError, setQueryError] = useState('');
   const [showOfferPopup, setShowOfferPopup] = useState(false);
+  const offerTriggeredRef = useRef(false);
+  const [teacherSlideIndex, setTeacherSlideIndex] = useState(0);
 
-  // Website reload pe offer popup hamesha dikhao
+  // Show offer popup: 10s after load OR when user scrolls 50% down (whichever first)
   useEffect(() => {
-    const t = setTimeout(() => setShowOfferPopup(true), 600);
-    return () => clearTimeout(t);
+    const tryShow = () => {
+      if (offerTriggeredRef.current) return;
+      offerTriggeredRef.current = true;
+      setShowOfferPopup(true);
+    };
+
+    const timer = setTimeout(tryShow, 10_000);
+
+    const onScroll = () => {
+      const scrollTop = window.scrollY ?? document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) return;
+      const pct = (scrollTop / scrollHeight) * 100;
+      if (pct >= 50) tryShow();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+  // Teachers section background + text slider – auto-advance every 5s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTeacherSlideIndex((i) => (i + 1) % teacherSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const closeOfferPopup = () => setShowOfferPopup(false);
@@ -68,13 +131,31 @@ export default function Home() {
     ]);
   };
 
+  const handleSendQuery = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.queryName?.value?.trim();
+    const email = form.queryEmail?.value?.trim();
+    const message = form.queryMessage?.value?.trim();
+    if (!name || !email || !message) return;
+    setQueryError('');
+    setQueryLoading(true);
+    submitQuery({ name, email, message, phone: form.queryPhone?.value?.trim() || '' })
+      .then(() => {
+        setQuerySent(true);
+        form.reset();
+      })
+      .catch((err) => setQueryError(err.response?.data?.message || 'Failed to send. Please try again.'))
+      .finally(() => setQueryLoading(false));
+  };
+
   return (
     <>
       <Seo
         title="Learn Quran Online | Free Trial"
         description="Babul Quran offers online Quran classes with qualified teachers. Free 3-day trial, flexible schedule, Noorani Qaida, Tajweed, Hifz & more. Enroll now."
       />
-      {/* 40% off offer popup - website load pe, chota size, screen ke beech mein */}
+      {/* 20% off first admission popup - 10s after load or 50% scroll */}
       {showOfferPopup && (
         <div
           className="fixed inset-0 z-[100] min-h-screen flex items-center justify-center p-4 bg-black/50 animate-fade-in"
@@ -95,7 +176,7 @@ export default function Home() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="pt-6 pb-4 px-4 text-center">
-              <p className="text-lg font-bold text-primary mb-0.5 leading-tight">40% off on first 5 admission</p>
+              <p className="text-lg font-bold text-primary mb-0.5 leading-tight">20% off on first Admission</p>
               <p className="text-gray-600 text-sm font-medium mb-4">Limited offer</p>
               <Button to="/contact?source=offer" variant="primary" className="w-full py-2.5 text-sm" onClick={closeOfferPopup}>
                 Avail this offer
@@ -217,19 +298,19 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 animate-fade-in-up">
             Reasons to <span className="text-primary">Hire Us?</span>
           </h2>
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
-            {/* Left: Reasons to Hire Us image */}
-            <div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
-              <div className="rounded-3xl overflow-hidden shadow-card border border-gray-200">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+            {/* Left: Reasons to Hire Us image – height barabar, centre aligned */}
+            <div className="w-full opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+              <div className="rounded-3xl overflow-hidden shadow-card border border-gray-200 h-full min-h-[320px] md:min-h-[400px] flex items-center justify-center">
                 <img
                   src="/images/hiring%20us.jpg"
                   alt="Reasons to hire Babul Quran – qualified teachers and flexible learning"
-                  className="w-full h-full max-h-[340px] object-cover"
+                  className="w-full h-full min-h-[320px] md:min-h-[400px] object-cover object-center"
                 />
               </div>
             </div>
-            {/* Right: content (sirf pehla paragraph image ke saath row mein) - bara paragraph */}
-            <div className="space-y-4 text-gray-600 text-base md:text-lg leading-relaxed opacity-0 animate-fade-in-up animate-delay-150" style={{ animationFillMode: 'forwards' }}>
+            {/* Right: content – centre aligned with image */}
+            <div className="w-full space-y-4 text-gray-600 text-base md:text-lg leading-relaxed text-center md:text-left opacity-0 animate-fade-in-up animate-delay-150 flex flex-col justify-center" style={{ animationFillMode: 'forwards' }}>
               <p>
                 At Babul Quran, we take pride in our team of highly qualified and experienced teachers. They are
                 dedicated to providing you with personalized guidance and support on your Quranic journey. We understand
@@ -240,41 +321,55 @@ export default function Home() {
               </p>
             </div>
           </div>
-          {/* Neeche image ke baad - sirf courses subsection */}
-          <div className="mt-8 max-w-5xl mx-auto space-y-4 text-gray-600 text-sm md:text-base leading-relaxed">
-            {/* Courses subsection */}
-            <div className="mt-10 pt-8 border-t border-gray-200">
-              <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3">
-                We Offer Various Courses to Learn Quran Online
-              </h3>
-              <p className="mb-6">
-                Our mission is to provide convenient Quranic education to individuals from all walks of life. Whether you are a beginner or someone looking to enhance your existing knowledge, we have the perfect courses tailored to your needs.
-              </p>
-              <div className="space-y-5">
-                {manualCourses.map((course) => (
-                  <div key={course.titleEn}>
-                    <h4 className="font-bold text-gray-800 mb-1">{course.titleEn}</h4>
-                    <p>{course.description}</p>
+          {/* Reason to learn with us - features */}
+          <div className="mt-10 pt-8 border-t border-gray-200 max-w-5xl mx-auto">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+              Reason to learn with us
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {featureIcons.map(({ Icon, iconLabel }, idx) => (
+                <div
+                  key={iconLabel}
+                  className="flex items-start gap-3 p-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/15 to-primary-dark/15 text-primary flex items-center justify-center">
+                    <Icon className="w-6 h-6" />
                   </div>
-                ))}
-              </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-0.5">{iconLabel}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {iconLabel === 'Schedule' && 'Learn at your convenience with 24/7 flexible class timings.'}
+                      {iconLabel === 'Money back' && 'Not satisfied? Get a refund within the first month.'}
+                      {iconLabel === 'Affordable' && 'Quality education at competitive fees and family discounts.'}
+                      {iconLabel === 'Teachers' && 'Certified male and female Quran teachers.'}
+                      {iconLabel === 'Curriculum' && 'Structured, authentic Islamic curriculum for all levels.'}
+                      {iconLabel === 'Certificate' && 'Receive a certificate upon course completion.'}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
       </ScrollReveal>
-      {/* Teachers - Quran bg image clear; gradient overlay se upar wala white shade kam */}
+      {/* Teachers – background image slider + text flips with each slide */}
       <ScrollReveal direction="right">
-      <section id="teachers" className="py-14 text-center relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/images/teacher.jpg)',
-            filter: 'contrast(1.12) brightness(1.1)',
-          }}
-          aria-hidden
-        />
-        {/* Peechy bg par sahi shade – balanced gradient, text clear, image halki nazar aaye */}
+      <section id="teachers" className="py-14 text-center relative overflow-hidden min-h-[420px] md:min-h-[480px] flex flex-col justify-center">
+        {/* Background slider – 2–4 images with fade */}
+        {teacherSlides.map((slide, idx) => (
+          <div
+            key={idx}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700 ease-in-out"
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              filter: 'contrast(1.12) brightness(1.1)',
+              opacity: teacherSlideIndex === idx ? 1 : 0,
+              zIndex: teacherSlideIndex === idx ? 0 : -1,
+            }}
+            aria-hidden
+          />
+        ))}
         <div
           className="absolute inset-0 z-[1]"
           style={{
@@ -283,22 +378,47 @@ export default function Home() {
           aria-hidden
         />
         <div className="relative z-10 max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 text-left md:text-center">
-            <FaChalkboardTeacher className="w-8 h-8 md:w-10 md:h-10 text-primary shrink-0 mt-0.5" />
-            <span>Meet Our Inspiring Online Quran Teacher Experts</span>
-          </h2>
-          <p className="max-w-2xl mx-auto text-white/95 mb-4">
-            Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts.
-            Our instructors are committed to nurturing your spiritual growth.
-          </p>
-          <p className="max-w-2xl mx-auto text-gray-700 mb-6 bg-white p-4 rounded-lg border-l-4 border-primary">
-            <strong>Four Classes per Month – Steady Progress, Lasting Impact</strong>
-            <br />
-            Consistency is the key to success. With four classes scheduled per month, you'll experience steady advancement.
-          </p>
+          {/* Text flips with slide – key by index for smooth change */}
+          {teacherSlides.map((slide, idx) => (
+            <div
+              key={idx}
+              className="transition-opacity duration-500 ease-in-out"
+              style={{
+                opacity: teacherSlideIndex === idx ? 1 : 0,
+                display: teacherSlideIndex === idx ? 'block' : 'none',
+              }}
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 text-left md:text-center">
+                <FaChalkboardTeacher className="w-8 h-8 md:w-10 md:h-10 text-primary shrink-0 mt-0.5" />
+                <span>{slide.heading}</span>
+              </h2>
+              <p className="max-w-2xl mx-auto text-white/95 mb-4">
+                {slide.intro}
+              </p>
+              <p className="max-w-2xl mx-auto text-gray-700 mb-6 bg-white p-4 rounded-lg border-l-4 border-primary text-left">
+                <strong>{slide.boxTitle}</strong>
+                <br />
+                {slide.boxText}
+              </p>
+            </div>
+          ))}
           <Button to="/contact" variant="primary">
             Join Us Today
           </Button>
+        </div>
+        {/* Slider dots – click to go to slide */}
+        <div className="absolute bottom-4 left-0 right-0 z-10 flex justify-center gap-2">
+          {teacherSlides.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setTeacherSlideIndex(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                teacherSlideIndex === idx ? 'bg-primary scale-125' : 'bg-white/60 hover:bg-white/80'
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
         </div>
       </section>
       </ScrollReveal>
@@ -345,6 +465,13 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+          {/* Know More – in courses ke ilawa parhna/janana ho to contact pe */}
+          <div className="mt-10 text-center">
+            <p className="text-gray-600 mb-4">Want to study something else or need more information?</p>
+            <Button to="/contact?source=knowmore" variant="primary" className="px-6 py-3">
+              Know More
+            </Button>
           </div>
         </div>
       </section>
@@ -474,21 +601,22 @@ export default function Home() {
             </Button>
           </div>
           {chatOpen && (
-            <div className="fixed bottom-24 right-4 md:bottom-20 md:right-6 w-80 max-w-[90vw] bg-white rounded-2xl shadow-card border border-gray-200 z-50 flex flex-col overflow-hidden">
-              <div className="px-4 py-3 bg-primary text-white flex items-center justify-between">
+            <div className="fixed top-20 right-4 md:top-24 md:right-6 w-80 max-w-[90vw] max-h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-card border border-gray-200 z-50 flex flex-col overflow-hidden">
+              <div className="flex-shrink-0 px-4 py-3 bg-primary text-white flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FaComments className="w-4 h-4" />
                   <span className="font-semibold text-sm">Quran Academy Chatbot</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setChatOpen(false)}
+                  onClick={() => { setChatOpen(false); setQuerySent(false); setQueryError(''); }}
                   className="text-white/80 hover:text-white text-sm"
                 >
                   ✕
                 </button>
               </div>
-              <div className="px-4 py-3 space-y-2 text-xs text-gray-700 max-h-64 overflow-y-auto">
+              <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="px-4 py-3 space-y-2 text-xs text-gray-700">
                 {chatMessages.length === 0 && (
                   <p className="text-gray-600">
                     Ask anything about our academy, courses, fee or free trial. Select a quick question below to begin.
@@ -512,7 +640,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="px-4 pb-3 pt-2 border-t border-gray-100">
-                <p className="text-[11px] hover:text-white text-gray-500 mb-1">Quick questions:</p>
+                <p className="text-[11px] text-gray-500 mb-1">Quick questions:</p>
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" variant="outlinePrimary" className="rounded-full text-xs px-2 py-1 hover:text-white" onClick={() => askBot('courses')}>
                     Courses
@@ -527,6 +655,23 @@ export default function Home() {
                     Contact
                   </Button>
                 </div>
+                <p className="text-[11px] text-gray-500 mt-3 mb-1">Or send your question – we&apos;ll reply soon:</p>
+                {querySent ? (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
+                    We&apos;ve received your query. Our team will get back to you soon via email or WhatsApp.
+                    <button type="button" onClick={() => setQuerySent(false)} className="block mt-2 text-primary font-medium text-left">Send another</button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSendQuery} className="space-y-2">
+                    <input type="text" name="queryName" required placeholder="Your name" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                    <input type="email" name="queryEmail" required placeholder="Email" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                    <input type="tel" name="queryPhone" placeholder="Phone (optional)" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                    <textarea name="queryMessage" required rows={2} placeholder="Your question or message" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" />
+                    {queryError && <p className="text-red-600 text-xs">{queryError}</p>}
+                    <Button type="submit" variant="primary" className="w-full py-2 text-sm" disabled={queryLoading}>{queryLoading ? 'Sending...' : 'Send query'}</Button>
+                  </form>
+                )}
+              </div>
               </div>
             </div>
           )}

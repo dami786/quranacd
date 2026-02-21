@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HiViewGrid, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart } from 'react-icons/hi';
+import { HiViewGrid, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart, HiChat } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
 import Seo from '../components/Seo';
 import { ItemFormModal } from '../components/Modals';
-import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations, getUsers, updateUserRole } from '../services/api';
+import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations, getQueries, getUsers, updateUserRole } from '../services/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ export default function Dashboard() {
   const [trialsLoading, setTrialsLoading] = useState(true);
   const [donations, setDonations] = useState([]);
   const [donationsLoading, setDonationsLoading] = useState(true);
+  const [queries, setQueries] = useState([]);
+  const [queriesLoading, setQueriesLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,6 +42,14 @@ export default function Dashboard() {
       .then((res) => setDonations(Array.isArray(res.data) ? res.data : []))
       .catch(() => setDonations([]))
       .finally(() => setDonationsLoading(false));
+  };
+
+  const fetchQueries = () => {
+    setQueriesLoading(true);
+    getQueries()
+      .then((res) => setQueries(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setQueries([]))
+      .finally(() => setQueriesLoading(false));
   };
 
   const fetchItems = () => {
@@ -89,6 +99,7 @@ export default function Dashboard() {
     fetchItems();
     fetchTrials();
     fetchDonations();
+    fetchQueries();
     if (isSuperAdmin) fetchUsers();
   }, [navigate]);
 
@@ -178,6 +189,13 @@ export default function Dashboard() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-enrollment' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
           >
             <HiInbox className="w-4 h-4 inline-block mr-1.5 align-middle" /> Enrollment
+          </button>
+          <button
+            type="button"
+            onClick={() => showSection('dashboard-queries')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-queries' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+          >
+            <HiChat className="w-4 h-4 inline-block mr-1.5 align-middle" /> Queries
           </button>
           <button
             type="button"
@@ -411,6 +429,72 @@ export default function Dashboard() {
               </div>
             );
           })()}
+        </section>
+        )}
+
+        {/* Queries – from Chat widget "Send query" */}
+        {activeSection === 'dashboard-queries' && (
+        <section id="dashboard-queries" className="mb-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <HiChat className="w-6 h-6 text-primary" /> Chat Queries
+          </h2>
+          <p className="text-sm text-gray-600 mb-3">Replies can be sent via email or WhatsApp to the contact details below.</p>
+          {queriesLoading ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+                ))}
+              </div>
+            </div>
+          ) : queries.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+              No queries yet.
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-bg-alt border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800 hidden sm:table-cell">Phone</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Message</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Reply</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {queries.map((q) => (
+                    <tr key={q._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                      <td className="px-4 py-3 text-gray-800 font-medium">{q.name}</td>
+                      <td className="px-4 py-3">
+                        <a href={`mailto:${q.email}?subject=Re: Your query to Babul Quran`} className="text-primary hover:underline">{q.email}</a>
+                      </td>
+                      <td className="px-4 py-3 hidden sm:table-cell text-gray-600">{q.phone || '–'}</td>
+                      <td className="px-4 py-3 text-gray-600 max-w-[200px]" title={q.message || ''}>
+                        <span className="line-clamp-2">{q.message || '–'}</span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                        {q.createdAt ? new Date(q.createdAt).toLocaleDateString() : '–'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <a href={`mailto:${q.email}?subject=Re: Your query to Babul Quran`} className="px-2.5 py-1 rounded bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors inline-block mr-1">
+                          Email
+                        </a>
+                        {q.phone && (() => { const d = (q.phone || '').replace(/\D/g, ''); const wa = (d.length === 10 && d.startsWith('3')) ? '92' + d : d; return wa ? (
+                          <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200 transition-colors inline-block">
+                            WhatsApp
+                          </a>
+                        ) : null; })()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
         )}
 
