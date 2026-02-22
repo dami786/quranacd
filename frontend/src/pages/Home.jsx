@@ -59,6 +59,12 @@ const testimonials = [
   { name: 'Mrs. Salma Raza', role: 'Mother of Iqra (Quran Studies student)', quote: "I am from Italy and enrolled my daughter after seeing their page. The teacher taught with excellent Tajweed and Islamic guidance. My daughter now recites with confidence and beauty." },
   { name: 'Mr. Ahmed Hassan', role: 'Father of two (Hifz students)', quote: 'Flexible timings and qualified teachers made all the difference. Both my sons are progressing in Hifz. May Allah reward the team at Babul Quran.' },
   { name: 'Mrs. Fatima Khan', role: 'Parent (Free trial then enrolled)', quote: 'The free trial convinced us. Professional setup, patient teacher, and my child looks forward to every class. Highly recommend for online Quran learning.' },
+  { name: 'Mr. Omar Farooq', role: 'Father (Tafseer student)', quote: 'I wanted to understand the Quran in depth. Babul Quran’s Tafseer classes are structured and the teacher explains with clarity. Very grateful for this service.' },
+  { name: 'Mrs. Aisha Malik', role: 'Mother of three (multiple courses)', quote: 'All three of my children take different courses here—Noorani Qaida, Nazra, and Hifz. One platform, excellent teachers, and flexible timings. Jazakallah Khair.' },
+  { name: 'Mr. Yusuf Ali', role: 'Adult learner (Tajweed)', quote: 'As a busy professional I needed flexible hours. The one-to-one Tajweed classes fit my schedule and my recitation has improved noticeably in a few months.' },
+  { name: 'Mrs. Mariam Hussain', role: 'Mother (UK)', quote: 'We are based in the UK and were looking for a reliable online academy. Babul Quran exceeded our expectations. My son has completed Noorani Qaida and now does Nazra with confidence.' },
+  { name: 'Mr. Khalid Rahman', role: 'Parent (Hifz + Islamic Studies)', quote: 'Quality of teaching and discipline are top-notch. My daughter is in Hifz and my son in Islamic Studies. Both look forward to their classes. May Allah bless this institution.' },
+  { name: 'Mrs. Sana Khan', role: 'Mother (Noorani Qaida student)', quote: 'My son started with Noorani Qaida and within months was reading Arabic letters correctly. The teacher is patient and the platform is easy to use. Highly recommend Babul Quran.' },
 ];
 
 export default function Home() {
@@ -110,7 +116,7 @@ export default function Home() {
   // Testimonials slider – hero jaisa auto-advance har 4 sec
   useEffect(() => {
     const interval = setInterval(() => {
-      setTestimonialIndex((i) => (i + 1) % testimonials.length);
+      setTestimonialIndex((i) => (i + 1) % Math.max(1, testimonials.length));
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -195,6 +201,7 @@ export default function Home() {
       <Seo
         title="Learn Quran Online | Free Trial"
         description="Babul Quran offers online Quran classes with qualified teachers. Free 3-day trial, flexible schedule, Noorani Qaida, Tajweed, Hifz & more. Enroll now."
+        canonicalPath="/"
       />
       {/* 20% off first admission popup - 10s after load or 50% scroll */}
       {showOfferPopup && (
@@ -666,7 +673,7 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
-      {/* Testimonials – footer se pehle, image jaisa design (2 cards side-by-side, dots) */}
+      {/* Testimonials – 7–9 items, right-to-left sliding */}
       <ScrollReveal direction="up">
       <section id="testimonials" className="py-14 md:py-16 bg-white">
         <div className="max-w-container mx-auto px-5">
@@ -674,47 +681,54 @@ export default function Home() {
             See What Others Are Saying About Babul Quran
           </h2>
           <div className="max-w-5xl mx-auto">
-            {/* Desktop: 2 cards side-by-side per slide (2 slides) */}
+            {/* Desktop: 2 cards per slide, right-to-left slide track */}
             <div className="hidden md:block overflow-hidden">
-              {[0, 1].map((page) => (
-                <div
-                  key={page}
-                  className={`grid grid-cols-2 gap-4 transition-opacity duration-400 ${Math.floor(testimonialIndex / 2) === page ? 'block' : 'hidden'}`}
-                >
-                  {testimonials.slice(page * 2, page * 2 + 2).map((t) => (
-                    <div key={t.name} className="bg-sky-50 rounded-2xl p-6 md:p-8 border border-sky-100 shadow-md relative min-h-[200px] flex flex-col">
+              <div
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${Math.min(Math.floor(testimonialIndex / 2), Math.ceil(testimonials.length / 2) - 1) * 100}%)` }}
+              >
+                {Array.from({ length: Math.ceil(testimonials.length / 2) }).map((_, page) => (
+                  <div key={page} className="w-full flex-shrink-0 grid grid-cols-2 gap-4 px-1">
+                    {testimonials.slice(page * 2, page * 2 + 2).map((t) => (
+                      <div key={t.name} className="bg-sky-50 rounded-2xl p-6 md:p-8 border border-sky-100 shadow-md relative min-h-[200px] flex flex-col">
+                        <FaQuoteLeft className="absolute top-4 left-4 w-7 h-7 text-primary/30" aria-hidden />
+                        <FaQuoteRight className="absolute bottom-4 right-4 w-7 h-7 text-primary/30" aria-hidden />
+                        <p className="text-gray-700 text-sm md:text-base leading-relaxed flex-1 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
+                        <p className="font-bold text-gray-800 text-base">{t.name}</p>
+                        <p className="text-gray-600 text-sm">{t.role}</p>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Mobile: 1 card at a time, right-to-left slide track */}
+            <div className="md:hidden overflow-hidden">
+              <div
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${Math.min(testimonialIndex, testimonials.length - 1) * 100}%)` }}
+              >
+                {testimonials.map((t) => (
+                  <div key={t.name} className="w-full flex-shrink-0 px-1">
+                    <div className="bg-sky-50 rounded-2xl p-6 border border-sky-100 shadow-md relative">
                       <FaQuoteLeft className="absolute top-4 left-4 w-7 h-7 text-primary/30" aria-hidden />
                       <FaQuoteRight className="absolute bottom-4 right-4 w-7 h-7 text-primary/30" aria-hidden />
-                      <p className="text-gray-700 text-sm md:text-base leading-relaxed flex-1 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-4 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
                       <p className="font-bold text-gray-800 text-base">{t.name}</p>
                       <p className="text-gray-600 text-sm">{t.role}</p>
                     </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            {/* Mobile: 1 card at a time */}
-            <div className="md:hidden">
-              {testimonials.map((t, idx) => (
-                <div key={t.name} className={`${testimonialIndex === idx ? 'block' : 'hidden'}`}>
-                  <div className="bg-sky-50 rounded-2xl p-6 border border-sky-100 shadow-md relative">
-                    <FaQuoteLeft className="absolute top-4 left-4 w-7 h-7 text-primary/30" aria-hidden />
-                    <FaQuoteRight className="absolute bottom-4 right-4 w-7 h-7 text-primary/30" aria-hidden />
-                    <p className="text-gray-700 text-sm leading-relaxed mb-4 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
-                    <p className="font-bold text-gray-800 text-base">{t.name}</p>
-                    <p className="text-gray-600 text-sm">{t.role}</p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-            {/* Dots: 2 on desktop (2 slides), 4 on mobile (4 slides) */}
-            <div className="flex justify-center gap-2 mt-6">
+            {/* Dots: desktop = pages (2 cards each), mobile = one per testimonial */}
+            <div className="flex justify-center gap-2 mt-6 flex-wrap">
               <div className="hidden md:flex justify-center gap-2">
-                {[0, 1].map((page) => (
+                {Array.from({ length: Math.ceil(testimonials.length / 2) }).map((_, page) => (
                   <button
                     key={page}
                     type="button"
-                    onClick={() => setTestimonialIndex(page * 2)}
+                    onClick={() => setTestimonialIndex(Math.min(page * 2, testimonials.length - 1))}
                     className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                       Math.floor(testimonialIndex / 2) === page ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
                     }`}

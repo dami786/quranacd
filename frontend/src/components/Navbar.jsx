@@ -18,6 +18,7 @@ const leftMenuLinks = [
   },
   { to: '/#zakat-donation', label: 'Zakat & Donation' },
   { to: '/contact', label: 'Contact' },
+  { to: '/privacy-policy', label: 'Privacy Policy' },
 ];
 
 // Mobile bottom nav: only Home, About Us, Courses + Profile (when logged in)
@@ -160,6 +161,7 @@ export default function Navbar() {
   const isCourses = (pathname === '/' && hash === '#courses') || pathname.startsWith('/details');
   const isZakat = pathname === '/' && hash === '#zakat-donation';
   const isContact = pathname === '/contact';
+  const isPrivacy = pathname === '/privacy-policy';
   const navLinkBase = 'px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-1.5';
   const navLinkActive = 'bg-primary/15 text-primary';
   const navLinkInactive = 'hover:bg-bg-alt hover:text-primary text-gray-800';
@@ -416,7 +418,7 @@ export default function Navbar() {
                     <li key={item.label}>
                       <Link
                         to={item.to}
-                        className={`block px-4 py-3 rounded-lg font-medium ${(item.to === '/' && isHome && !hash) || (item.to === '/about' && isAbout) || (item.to === '/#zakat-donation' && isZakat) || (item.to === '/contact' && isContact) ? 'bg-primary/15 text-primary' : 'hover:bg-bg-alt text-gray-800'}`}
+                        className={`block px-4 py-3 rounded-lg font-medium ${(item.to === '/' && isHome && !hash) || (item.to === '/about' && isAbout) || (item.to === '/#zakat-donation' && isZakat) || (item.to === '/contact' && isContact) || (item.to === '/privacy-policy' && isPrivacy) ? 'bg-primary/15 text-primary' : 'hover:bg-bg-alt text-gray-800'}`}
                         onClick={closeLeftMenu}
                       >
                         {item.label}

@@ -11,6 +11,7 @@ const courseLinks = manualCourses.map((course, index) => ({
 const usefulLinks = [
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
+  { to: '/privacy-policy', label: 'Privacy Policy' },
   { to: '/', label: 'Sitemap' },
 ];
 
@@ -99,7 +100,7 @@ export default function Footer() {
               <FaPhone className="w-4 h-4 text-primary-light flex-shrink-0" /> +923124810000
             </p>
             <p className="flex items-center gap-2 mb-2">
-              <FaWhatsapp className="w-4 h-4 text-green-400 flex-shrink-0" /> +923124810000 (WhatsApp)
+              <FaWhatsapp className="w-4 h-4 text-green-400 flex-shrink-0" /> +923124810000
             </p>
             <a
               href="mailto:babulquranacademy1@gmail.com"

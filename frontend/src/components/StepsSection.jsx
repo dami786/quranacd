@@ -43,6 +43,10 @@ export default function StepsSection() {
         <p className="max-w-3xl mx-auto text-center text-gray-600 text-base md:text-lg leading-relaxed mb-12 text-justify animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
           Are you looking for a convenient and effective way to <strong className="text-gray-800">Learn Quran Online</strong>? Babul Quran is here to provide you with an exceptional online Quran learning experience. We understand the importance of accessing quality Islamic education, regardless of your location. That's why we offer comprehensive online Quran courses tailored to meet the needs of learners in the USA.
         </p>
+        <h3 className="text-xl md:text-2xl font-bold text-gray-800 text-center mb-2 animate-fade-in-up animate-delay-150 opacity-0" style={{ animationFillMode: 'forwards' }}>
+          How it works
+        </h3>
+        <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-8 animate-fade-in-up animate-delay-200 opacity-0" style={{ animationFillMode: 'forwards' }} />
         {/* 3 Step Cards – same hover as Why Choose Babul Quran: accent line, shadow, icon gradient, title color */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {steps.map(({ step, title, description, cta, Icon }, idx) => (

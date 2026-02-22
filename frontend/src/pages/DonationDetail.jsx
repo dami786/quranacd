@@ -106,6 +106,7 @@ const refLabel = donateType || DONATE_TYPE_OPTIONS[0];
       <Seo
         title={`${topic.title} | Zakat & Donation`}
         description={topic.detail[0]}
+        canonicalPath={type ? `/donate/${type}` : undefined}
       />
       <section className="py-14 md:py-16 max-w-container mx-auto px-5">
         <div className="max-w-3xl mx-auto">

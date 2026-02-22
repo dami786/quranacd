@@ -14,6 +14,7 @@ const courseOptions = [
   'Quran with Tafseer',
   'Quran Memorization',
   'Islamic Studies',
+  'Any other',
 ];
 
 export default function Contact() {
@@ -21,18 +22,25 @@ export default function Contact() {
   const sourceFromUrl = searchParams.get('source');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [selectedCourse, setSelectedCourse] = useState('Select Course');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
     setLoading(true);
     const form = e.target;
+    const courseVal = form.course?.value?.trim() || '';
+    const otherText = form.courseOther?.value?.trim() || '';
+    let messageVal = form.message?.value?.trim() || '';
+    if (courseVal === 'Any other' && otherText) {
+      messageVal = (messageVal ? messageVal + '\n\n' : '') + 'Course/Subject requested: ' + otherText;
+    }
     const data = {
       name: form.name?.value?.trim() || '',
       email: form.email?.value?.trim() || '',
       phone: form.phone?.value?.trim() || '',
-      course: form.course?.value?.trim() || '',
-      message: form.message?.value?.trim() || '',
+      course: courseVal,
+      message: messageVal,
       source: sourceFromUrl === 'enrollment' ? 'enrollment' : 'free_trial',
     };
     submitTrial(data)
@@ -43,6 +51,7 @@ export default function Contact() {
         }
         setMessage({ type: 'success', text: 'Thank you! Your inquiry has been received. We will contact you soon for your free trial.' });
         form.reset();
+        setSelectedCourse('Select Course');
       })
       .catch((err) => {
         const msg = err.response?.data?.message || 'Failed to send. Please try again.';
@@ -56,6 +65,7 @@ export default function Contact() {
       <Seo
         title="Contact"
         description="Contact Babul Quran for free trial or enrollment. Send your inquiry for online Quran classes. We'll help you schedule classes and get started."
+        canonicalPath="/contact"
       />
       <section className="py-14 md:py-16 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 text-center animate-fade-in-up flex items-center justify-center gap-2">
@@ -76,11 +86,22 @@ export default function Contact() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Phone / WhatsApp" name="phone" type="tel" placeholder="+92 312 4810000" />
-            <Select
-              label="Select Course"
-              name="course"
-              options={courseOptions}
-            />
+            <div className="space-y-2">
+              <Select
+                label="Select Course"
+                name="course"
+                options={courseOptions}
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+              />
+              {selectedCourse === 'Any other' && (
+                <Input
+                  label="Specify what you want to learn"
+                  name="courseOther"
+                  placeholder="e.g. Arabic language, specific Surah, etc."
+                />
+              )}
+            </div>
           </div>
           <Textarea label="Your Message" name="message" rows={4} placeholder="Your message..." />
           {message.text && (

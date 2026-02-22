@@ -2,11 +2,13 @@ import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import GlobalSchema from './components/GlobalSchema';
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Details from './pages/Details';
 import DonationDetail from './pages/DonationDetail';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 // Scroll to top on route change (e.g. footer link click)
 function ScrollToTop() {
@@ -20,6 +22,7 @@ function ScrollToTop() {
 function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans overflow-x-hidden">
+      <GlobalSchema />
       <ScrollToTop />
       <Navbar />
       <main className="flex-1 pb-16 md:pb-0 -mt-5">
@@ -29,6 +32,7 @@ function App() {
           <Route path="/donate/:type" element={<DonationDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/details/:id" element={<Details />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Routes>
       </main>
       <Footer />

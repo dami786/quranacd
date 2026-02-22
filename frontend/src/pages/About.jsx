@@ -8,6 +8,7 @@ export default function About() {
       <Seo
         title="About Us"
         description="Learn about Babul Quran – online Quran academy. Qualified teachers, flexible schedule, Noorani Qaida, Tajweed, Hifz. Quality Islamic education for all ages."
+        canonicalPath="/about"
       />
       <section className="py-16 md:py-20 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-left md:text-center animate-fade-in-up flex flex-row items-start justify-start md:justify-center gap-2 md:gap-3">

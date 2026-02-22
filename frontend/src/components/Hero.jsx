@@ -1,12 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from './Buttons';
+
+// Count-up: 0 se target tak animate (duration ms), ease-out
+function CountUp({ target, suffix = '', duration = 1800 }) {
+  const [value, setValue] = useState(0);
+  const startRef = useRef(null);
+
+  useEffect(() => {
+    startRef.current = performance.now();
+    const step = (now) => {
+      const start = startRef.current ?? now;
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 2); // ease-out quad
+      setValue(Math.round(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    const id = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(id);
+  }, [target, duration]);
+
+  return <>{value}{suffix}</>;
+}
 
 // Hero images from public/images (use 1920px+ wide for sharp display)
 const statsCounter = [
-  { number: '500+', label: 'Students', description: 'Students taught online.' },
-  { number: '15+', label: 'Expert Teachers', description: 'Qualified Quran instructors.' },
-  { number: '8', label: 'Courses', description: 'From Noorani Qaida to Tafseer.' },
-  { number: '98%', label: 'Satisfaction', description: 'Families satisfied with our classes.' },
+  { target: 500, suffix: '+', label: 'Students', description: 'Students taught online.' },
+  { target: 15, suffix: '+', label: 'Expert Teachers', description: 'Qualified Quran instructors.' },
+  { target: 8, suffix: '', label: 'Courses', description: 'From Noorani Qaida to Tafseer.' },
+  { target: 98, suffix: '%', label: 'Satisfaction', description: 'Families satisfied with our classes.' },
 ];
 
 const slides = [
@@ -88,7 +110,9 @@ export default function Hero() {
             <div className="md:hidden grid grid-cols-2 gap-2 w-full max-w-xs mx-auto mt-4">
               {statsCounter.map((stat) => (
                 <div key={stat.label} className="hero-stat-card bg-white/95 backdrop-blur rounded-xl p-3 text-center border border-white/30 shadow-lg">
-                  <p className="text-lg font-bold text-primary">{stat.number}</p>
+                  <p className="text-lg font-bold text-primary">
+                    <CountUp target={stat.target} suffix={stat.suffix} duration={1800} />
+                  </p>
                   <p className="font-bold text-gray-800 text-xs">{stat.label}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">{stat.description}</p>
                 </div>
@@ -98,7 +122,9 @@ export default function Hero() {
             <div className="hidden md:grid grid-cols-2 gap-2 lg:gap-3 w-full max-w-[280px] lg:max-w-[320px] md:flex-shrink-0">
               {statsCounter.map((stat, idx) => (
                 <div key={stat.label} className="hero-stat-card bg-white/95 backdrop-blur rounded-xl p-3 lg:p-4 text-center border border-white/30 shadow-lg hover:shadow-xl hover:bg-white transition-all duration-300 animate-fade-in-up" style={{ animationDelay: `${200 + idx * 80}ms`, animationFillMode: 'forwards' }}>
-                  <p className="text-xl lg:text-2xl font-bold text-primary">{stat.number}</p>
+                  <p className="text-xl lg:text-2xl font-bold text-primary">
+                    <CountUp target={stat.target} suffix={stat.suffix} duration={1800} />
+                  </p>
                   <p className="font-bold text-gray-800 text-xs lg:text-sm">{stat.label}</p>
                   <p className="text-gray-500 text-[10px] lg:text-xs mt-1">{stat.description}</p>
                 </div>

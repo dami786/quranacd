@@ -60,10 +60,19 @@ export default function Details() {
 
   const imageUrl = getCourseImageUrl(item);
   const metaDesc = item.description ? (item.description.slice(0, 155) + (item.description.length > 155 ? '...' : '')) : `Learn ${item.title} with Babul Quran. Online Quran classes.`;
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const courseSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: item.title,
+    description: metaDesc,
+    provider: { '@type': 'Organization', name: 'Babul Quran' },
+    ...(origin && imageUrl && { image: imageUrl.startsWith('http') ? imageUrl : `${origin}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}` }),
+  };
 
   return (
     <div className="min-h-screen bg-white py-14">
-      <Seo title={item.title} description={metaDesc} image={imageUrl || undefined} />
+      <Seo title={item.title} description={metaDesc} image={imageUrl || undefined} canonicalPath={`/details/${id}`} schema={courseSchema} />
       <div className="max-w-container mx-auto px-5">
         <div className="max-w-2xl mx-auto">
           {imageUrl ? (
@@ -84,7 +93,7 @@ export default function Details() {
             </p>
           )}
           <p className="text-gray-600 leading-relaxed whitespace-pre-wrap animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.description}</p>
-          <div className="mt-8 flex gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
+          <div className="mt-8 flex flex-wrap gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
             <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
               <HiAcademicCap className="w-4 h-4" /> Enroll Now
             </Button>
@@ -92,6 +101,46 @@ export default function Details() {
               <HiArrowLeft className="w-4 h-4" /> Back to Courses
             </Button>
           </div>
+
+          {/* Related courses – nichay, current ke ilawa baaki courses */}
+          {manualCourses.length > 1 && (
+            <section className="mt-16 pt-12 border-t border-gray-200">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <HiAcademicCap className="w-6 h-6 text-primary" /> Related Courses
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 -mx-1">
+                {manualCourses.map((course, index) => {
+                  const currentManualIndex = isManual && !Number.isNaN(parseInt(id, 10)) ? parseInt(id, 10) : -1;
+                  if (index === currentManualIndex) return null;
+                  const courseImage = getCourseImageUrl(course);
+                  return (
+                    <Link
+                      key={course.titleEn}
+                      to={`/details/${index}`}
+                      className="group block bg-bg-alt rounded-xl border border-gray-200 overflow-hidden hover:shadow-card-hover hover:border-primary/30 transition-all duration-300"
+                    >
+                      <div className="h-36 w-full overflow-hidden bg-gray-200">
+                        <img
+                          src={courseImage}
+                          alt={course.titleEn}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            const img = e.target;
+                            if (img.src && !img.src.includes('image.png')) img.src = '/images/image.png';
+                          }}
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-2">{course.titleEn}</h3>
+                        <p className="text-gray-600 text-sm mt-1 line-clamp-2">{course.description}</p>
+                        <span className="inline-block mt-2 text-primary text-sm font-medium group-hover:underline">View course →</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>
