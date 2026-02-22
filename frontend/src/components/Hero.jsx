@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 import { Button } from './Buttons';
 
 // Hero images from public/images (use 1920px+ wide for sharp display)
+const statsCounter = [
+  { number: '500+', label: 'Students', description: 'Students taught online.' },
+  { number: '15+', label: 'Expert Teachers', description: 'Qualified Quran instructors.' },
+  { number: '8', label: 'Courses', description: 'From Noorani Qaida to Tafseer.' },
+  { number: '98%', label: 'Satisfaction', description: 'Families satisfied with our classes.' },
+];
+
 const slides = [
   {
     image: '/images/hero%202.jpg',
@@ -66,24 +73,36 @@ export default function Hero() {
               background: 'linear-gradient(to bottom, rgba(15, 118, 110, 0.42) 0%, rgba(15, 118, 110, 0.58) 50%, rgba(19, 78, 74, 0.82) 100%)',
             }}
           />
-          {/* Content */}
-          <div className="absolute inset-0 z-[2] flex flex-col items-center justify-center px-5 text-center text-white">
-            <p className="text-sm uppercase tracking-wider mb-3 opacity-95 animate-fade-in-up">
-              {slide.sub}
-            </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight max-w-3xl animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>
-              {slide.title}
-            </h1>
-            <p className="text-base md:text-lg mb-8 opacity-95 max-w-2xl animate-fade-in-up animate-delay-200" style={{ animationFillMode: 'forwards' }}>
-              {slide.tag}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
-              <Button to="/contact" variant="primary">
-                Register Now
-              </Button>
-              <Button to="/contact" variant="outline" className="hover:text-primary">
-                Start Free Trial
-              </Button>
+          {/* Content – sab 4 slides: same layout – left text + right 4 cards (2x2) */}
+          <div className="absolute inset-0 z-[2] flex flex-col md:flex-row items-center justify-center md:justify-between px-5 md:px-8 lg:px-12 text-white">
+            <div className="flex flex-col items-center md:items-start max-w-3xl md:max-w-xl lg:max-w-2xl md:text-left text-center">
+              <p className="text-sm uppercase tracking-wider mb-3 opacity-95 animate-fade-in-up">{slide.sub}</p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>{slide.title}</h1>
+              <p className="text-base md:text-lg mb-6 md:mb-8 opacity-95 max-w-2xl animate-fade-in-up animate-delay-200" style={{ animationFillMode: 'forwards' }}>{slide.tag}</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
+                <Button to="/contact" variant="primary">Register Now</Button>
+                <Button to="/contact" variant="outline" className="hover:text-primary">Start Free Trial</Button>
+              </div>
+            </div>
+            {/* Mobile: 4 cards 2x2 neeche */}
+            <div className="md:hidden grid grid-cols-2 gap-2 w-full max-w-xs mx-auto mt-4">
+              {statsCounter.map((stat) => (
+                <div key={stat.label} className="hero-stat-card bg-white/95 backdrop-blur rounded-xl p-3 text-center border border-white/30 shadow-lg">
+                  <p className="text-lg font-bold text-primary">{stat.number}</p>
+                  <p className="font-bold text-gray-800 text-xs">{stat.label}</p>
+                  <p className="text-gray-500 text-[10px] mt-0.5">{stat.description}</p>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: 4 cards 2x2 right side – pehle slide jaisa */}
+            <div className="hidden md:grid grid-cols-2 gap-2 lg:gap-3 w-full max-w-[280px] lg:max-w-[320px] md:flex-shrink-0">
+              {statsCounter.map((stat, idx) => (
+                <div key={stat.label} className="hero-stat-card bg-white/95 backdrop-blur rounded-xl p-3 lg:p-4 text-center border border-white/30 shadow-lg hover:shadow-xl hover:bg-white transition-all duration-300 animate-fade-in-up" style={{ animationDelay: `${200 + idx * 80}ms`, animationFillMode: 'forwards' }}>
+                  <p className="text-xl lg:text-2xl font-bold text-primary">{stat.number}</p>
+                  <p className="font-bold text-gray-800 text-xs lg:text-sm">{stat.label}</p>
+                  <p className="text-gray-500 text-[10px] lg:text-xs mt-1">{stat.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

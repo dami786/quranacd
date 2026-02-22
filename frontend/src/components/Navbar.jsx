@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { HiMail, HiPhone, HiMenu, HiX, HiChevronDown, HiHome, HiUser, HiAcademicCap, HiInformationCircle } from 'react-icons/hi';
+import { Link, useLocation } from 'react-router-dom';
+import { HiMail, HiPhone, HiMenu, HiX, HiChevronDown, HiHome, HiAcademicCap, HiInformationCircle } from 'react-icons/hi';
 import { Button } from './Buttons';
 import { manualCourses } from '../data/courses';
 
@@ -153,15 +153,21 @@ function getCurrentTranslateLabel() {
 export default function Navbar() {
   const [leftMenuOpen, setLeftMenuOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
+  const location = useLocation();
+  const { pathname, hash } = location;
+  const isHome = pathname === '/';
+  const isAbout = pathname === '/about';
+  const isCourses = (pathname === '/' && hash === '#courses') || pathname.startsWith('/details');
+  const isZakat = pathname === '/' && hash === '#zakat-donation';
+  const isContact = pathname === '/contact';
+  const navLinkBase = 'px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-1.5';
+  const navLinkActive = 'bg-primary/15 text-primary';
+  const navLinkInactive = 'hover:bg-bg-alt hover:text-primary text-gray-800';
   const [translateOpen, setTranslateOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState(() => getCurrentTranslateLabel());
-  const [token, setToken] = useState(null);
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'user');
   const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
   const [headerTop, setHeaderTop] = useState(40); // pehli paint pe top bar ke neeche; effect se update
   const [spacerHeight, setSpacerHeight] = useState(74); // top bar + header approx, content navbar ke saath
-  const showDashboard = isSuperAdmin || userRole === 'admin';
 
   useEffect(() => setCurrentLang(getCurrentTranslateLabel()), []);
 
@@ -190,18 +196,13 @@ export default function Navbar() {
 
   useEffect(() => {
     const updateAuth = () => {
-      setToken(localStorage.getItem('token'));
-      setIsSuperAdmin(localStorage.getItem('isSuperAdmin') === 'true');
-      setUserRole(localStorage.getItem('userRole') || 'user');
       setHasInquiry(localStorage.getItem('hasInquiry') === 'true');
     };
     updateAuth();
     window.addEventListener('storage', updateAuth);
-    window.addEventListener('auth-change', updateAuth);
     window.addEventListener('inquiry-change', updateAuth);
     return () => {
       window.removeEventListener('storage', updateAuth);
-      window.removeEventListener('auth-change', updateAuth);
       window.removeEventListener('inquiry-change', updateAuth);
     };
   }, []);
@@ -324,20 +325,15 @@ export default function Navbar() {
           </div>
 
           <nav className="hidden md:flex flex-1 items-center justify-center gap-1 min-w-0">
-            <Link to="/" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors flex items-center gap-1.5">
+            <Link to="/" className={`${navLinkBase} ${isHome && !hash ? navLinkActive : navLinkInactive}`}>
               <HiHome className="w-4 h-4" /> Home
             </Link>
-            <Link to="/about" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
+            <Link to="/about" className={`px-4 py-2.5 rounded-lg font-medium transition-colors ${isAbout ? navLinkActive : navLinkInactive}`}>
               About Us
             </Link>
-            <Link to="/#courses" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors flex items-center gap-1.5">
+            <Link to="/#courses" className={`${navLinkBase} ${isCourses ? navLinkActive : navLinkInactive}`}>
               <HiAcademicCap className="w-4 h-4" /> Courses
             </Link>
-            {token && showDashboard && (
-              <Link to="/dashboard" className="px-4 py-2.5 rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors">
-                Dashboard
-              </Link>
-            )}
           </nav>
 
           {/* Mobile: logo in flex middle so it doesn't overlap the button */}
@@ -348,25 +344,9 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
-            {token ? (
-              <>
-                <Link to="/profile" className="hidden md:flex p-2.5 rounded-full hover:bg-bg-alt hover:text-primary text-gray-700 transition-colors border border-gray-200" aria-label="Profile">
-                  <HiUser className="w-5 h-5" />
-                </Link>
-                <Button to={hasInquiry ? '/contact?source=enrollment' : '/contact?source=free_trial'} variant="free" className="inline-flex text-xs px-3 py-1.5 md:text-sm md:px-5 md:py-2.5">
-                  {hasInquiry ? 'Get Admission' : 'Free Trial'}
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="px-3 py-1.5 text-sm rounded-lg hover:bg-bg-alt hover:text-primary font-medium text-gray-800 transition-colors border border-gray-200 md:px-4 md:py-2.5">
-                  Login
-                </Link>
-                <Button to="/contact?source=free_trial" variant="free" className="hidden md:inline-flex md:text-sm md:px-5 md:py-2.5">
-                  FREE TRIAL
-                </Button>
-              </>
-            )}
+            <Button to={hasInquiry ? '/contact?source=enrollment' : '/contact?source=free_trial'} variant="free" className="inline-flex text-xs px-3 py-1.5 md:text-sm md:px-5 md:py-2.5">
+              {hasInquiry ? 'Get Admission' : 'Free Trial'}
+            </Button>
           </div>
         </div>
       </header>
@@ -380,27 +360,21 @@ export default function Navbar() {
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-around h-14 px-1">
-          {mobileBottomNavItems.map(({ to, label, Icon }) => (
-            <Link
-              key={label}
-              to={to}
-              className="flex flex-col items-center justify-center flex-1 min-w-0 py-2 text-gray-500 hover:text-primary active:text-primary transition-colors"
-              title={label}
-              aria-label={label}
-            >
-              <Icon className="w-6 h-6 flex-shrink-0" />
-            </Link>
-          ))}
-          {token && (
-            <Link
-              to="/profile"
-              className="flex flex-col items-center justify-center flex-1 min-w-0 py-2 text-gray-500 hover:text-primary active:text-primary transition-colors"
-              title="Profile"
-              aria-label="Profile"
-            >
-              <HiUser className="w-6 h-6 flex-shrink-0" />
-            </Link>
-          )}
+          {mobileBottomNavItems.map(({ to, label, Icon }) => {
+            const isActive = (to === '/' && isHome && !hash) || (to === '/about' && isAbout) || (to === '/#courses' && isCourses);
+            return (
+              <Link
+                key={label}
+                to={to}
+                className={`flex flex-col items-center justify-center flex-1 min-w-0 py-2 transition-colors ${isActive ? 'text-primary font-semibold' : 'text-gray-500 hover:text-primary active:text-primary'}`}
+                title={label}
+                aria-label={label}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <Icon className="w-6 h-6 flex-shrink-0" />
+              </Link>
+            );
+          })}
         </div>
       </nav>
 
@@ -440,27 +414,19 @@ export default function Navbar() {
                     </li>
                   ) : (
                     <li key={item.label}>
-                      <Link to={item.to} className="block px-4 py-3 rounded-lg hover:bg-bg-alt text-gray-800 font-medium" onClick={closeLeftMenu}>
+                      <Link
+                        to={item.to}
+                        className={`block px-4 py-3 rounded-lg font-medium ${(item.to === '/' && isHome && !hash) || (item.to === '/about' && isAbout) || (item.to === '/#zakat-donation' && isZakat) || (item.to === '/contact' && isContact) ? 'bg-primary/15 text-primary' : 'hover:bg-bg-alt text-gray-800'}`}
+                        onClick={closeLeftMenu}
+                      >
                         {item.label}
                       </Link>
                     </li>
                   )
                 )}
               </ul>
-              <div className="mt-4 pt-4 border-t space-y-2">
-                {token ? (
-                  <>
-                    <Link to="/profile" className="block px-4 py-3 rounded-lg bg-bg-alt text-primary font-medium text-center" onClick={closeLeftMenu}>Profile</Link>
-                    {showDashboard && (
-                      <Link to="/dashboard" className="block px-4 py-3 rounded-lg bg-primary text-white font-medium text-center" onClick={closeLeftMenu}>Dashboard</Link>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" className="block px-4 py-3 rounded-lg bg-bg-alt text-primary font-medium text-center" onClick={closeLeftMenu}>Login</Link>
-                    <Link to="/register" className="block px-4 py-3 rounded-lg bg-primary text-white font-medium text-center" onClick={closeLeftMenu}>Register</Link>
-                  </>
-                )}
+              <div className="mt-4 pt-4 border-t">
+                <Link to="/contact?source=free_trial" className="block px-4 py-3 rounded-lg bg-primary text-white font-medium text-center" onClick={closeLeftMenu}>Free Trial / Get Admission</Link>
               </div>
             </nav>
           </aside>

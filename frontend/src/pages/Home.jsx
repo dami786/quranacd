@@ -3,13 +3,16 @@ import { createPortal } from 'react-dom';
 import { useLocation, Link } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { Input } from '../components/Forms';
-import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaComments } from 'react-icons/fa';
+import { FaClock, FaMoneyBillWave, FaTag, FaChalkboardTeacher, FaBook, FaAward, FaWhatsapp, FaQuestionCircle, FaHandHoldingHeart, FaMosque, FaChild, FaQuoteLeft, FaQuoteRight /* FaComments - chatbot */ } from 'react-icons/fa';
 import Hero from '../components/Hero';
 import StepsSection from '../components/StepsSection';
 import ScrollReveal from '../components/ScrollReveal';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
-import { getCourseImageUrl, submitQuery } from '../services/api';
+import { getCourseImageUrl } from '../services/api';
+// import { submitQuery, getRepliesByEmail } from '../services/api';
+
+// const LAST_QUERY_EMAIL_KEY = 'lastQueryEmail';
 
 const featureIcons = [
   { Icon: FaClock, iconLabel: 'Schedule' },
@@ -51,16 +54,25 @@ const teacherSlides = [
   },
 ];
 
+const testimonials = [
+  { name: 'Mrs. Zainab Sheikh', role: 'Mother of Ayesha (Nazra Quran student)', quote: "I saw Babul Quran's ad and wasn't sure at first. Now my daughter reads Quran with correct pronunciation after enrolling here. Very satisfied with the results." },
+  { name: 'Mrs. Salma Raza', role: 'Mother of Iqra (Quran Studies student)', quote: "I am from Italy and enrolled my daughter after seeing their page. The teacher taught with excellent Tajweed and Islamic guidance. My daughter now recites with confidence and beauty." },
+  { name: 'Mr. Ahmed Hassan', role: 'Father of two (Hifz students)', quote: 'Flexible timings and qualified teachers made all the difference. Both my sons are progressing in Hifz. May Allah reward the team at Babul Quran.' },
+  { name: 'Mrs. Fatima Khan', role: 'Parent (Free trial then enrolled)', quote: 'The free trial convinced us. Professional setup, patient teacher, and my child looks forward to every class. Highly recommend for online Quran learning.' },
+];
+
 export default function Home() {
   const location = useLocation();
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [querySent, setQuerySent] = useState(false);
-  const [queryLoading, setQueryLoading] = useState(false);
-  const [queryError, setQueryError] = useState('');
+  // --- chatbot (commented out) ---
+  // const [chatOpen, setChatOpen] = useState(false);
+  // const [chatMessages, setChatMessages] = useState([]);
+  // const [querySent, setQuerySent] = useState(false);
+  // const [queryLoading, setQueryLoading] = useState(false);
+  // const [queryError, setQueryError] = useState('');
   const [showOfferPopup, setShowOfferPopup] = useState(false);
   const offerTriggeredRef = useRef(false);
   const [teacherSlideIndex, setTeacherSlideIndex] = useState(0);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   // Show offer popup: 10s after load OR when user scrolls 50% down (whichever first)
   useEffect(() => {
@@ -95,6 +107,33 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Testimonials slider – hero jaisa auto-advance har 4 sec
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTestimonialIndex((i) => (i + 1) % testimonials.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // --- chatbot: fetch replies when chat opens (commented out) ---
+  // useEffect(() => {
+  //   if (!chatOpen) return;
+  //   let email = '';
+  //   try { email = localStorage.getItem(LAST_QUERY_EMAIL_KEY) || ''; } catch (_) {}
+  //   if (!email.trim()) return;
+  //   getRepliesByEmail(email.trim())
+  //     .then((res) => {
+  //       const data = Array.isArray(res.data) ? res.data : [];
+  //       const msgs = [];
+  //       data.forEach((item) => {
+  //         if (item.message) msgs.push({ from: 'user', text: item.message });
+  //         if (item.reply) msgs.push({ from: 'bot', text: item.reply });
+  //       });
+  //       if (msgs.length) setChatMessages(msgs);
+  //     })
+  //     .catch(() => {});
+  // }, [chatOpen]);
+
   const closeOfferPopup = () => setShowOfferPopup(false);
 
   // Nav link se #courses ya #zakat-donation pe click pe us section tak scroll
@@ -113,41 +152,43 @@ export default function Home() {
     'contact': 'You can contact us via the Contact page form, email babulquranacademy1@gmail.com or WhatsApp +92 312 4810000.',
   };
 
-  const askBot = (type) => {
-    const questionMap = {
-      courses: 'What courses do you offer?',
-      trial: 'How does the free trial work?',
-      fee: 'What is the monthly fee?',
-      contact: 'How can I contact you?',
-    };
-    const key = type;
-    const q = questionMap[key];
-    const a = faqAnswers[key];
-    if (!q || !a) return;
-    setChatMessages((prev) => [
-      ...prev,
-      { from: 'user', text: q },
-      { from: 'bot', text: a },
-    ]);
-  };
+  // --- chatbot: quick Q&A + send query (commented out) ---
+  // const askBot = (type) => {
+  //   const questionMap = {
+  //     courses: 'What courses do you offer?',
+  //     trial: 'How does the free trial work?',
+  //     fee: 'What is the monthly fee?',
+  //     contact: 'How can I contact you?',
+  //   };
+  //   const key = type;
+  //   const q = questionMap[key];
+  //   const a = faqAnswers[key];
+  //   if (!q || !a) return;
+  //   setChatMessages((prev) => [
+  //     ...prev,
+  //     { from: 'user', text: q },
+  //     { from: 'bot', text: a },
+  //   ]);
+  // };
 
-  const handleSendQuery = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const name = form.queryName?.value?.trim();
-    const email = form.queryEmail?.value?.trim();
-    const message = form.queryMessage?.value?.trim();
-    if (!name || !email || !message) return;
-    setQueryError('');
-    setQueryLoading(true);
-    submitQuery({ name, email, message, phone: form.queryPhone?.value?.trim() || '' })
-      .then(() => {
-        setQuerySent(true);
-        form.reset();
-      })
-      .catch((err) => setQueryError(err.response?.data?.message || 'Failed to send. Please try again.'))
-      .finally(() => setQueryLoading(false));
-  };
+  // const handleSendQuery = (e) => {
+  //   e.preventDefault();
+  //   const form = e.target;
+  //   const name = form.queryName?.value?.trim();
+  //   const email = form.queryEmail?.value?.trim();
+  //   const message = form.queryMessage?.value?.trim();
+  //   if (!name || !email || !message) return;
+  //   setQueryError('');
+  //   setQueryLoading(true);
+  //   submitQuery({ name, email, message, phone: form.queryPhone?.value?.trim() || '', package: form.queryPackage?.value?.trim() || '' })
+  //     .then(() => {
+  //       if (email) try { localStorage.setItem(LAST_QUERY_EMAIL_KEY, email); } catch (_) {}
+  //       setQuerySent(true);
+  //       form.reset();
+  //     })
+  //     .catch((err) => setQueryError(err.response?.data?.message || 'Failed to send. Please try again.'))
+  //     .finally(() => setQueryLoading(false));
+  // };
 
   return (
     <>
@@ -170,14 +211,14 @@ export default function Home() {
             <button
               type="button"
               onClick={closeOfferPopup}
-              className="absolute top-2 right-2 p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors z-10"
+              className="absolute top-2 right-2 p-1.5 rounded-lg  text-gray-500 hover:text-primary transition-colors z-10"
               aria-label="Close"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <div className="pt-6 pb-4 px-4 text-center">
+            <div className="pt-6 pb-4 px-5 text-center">
               <p className="text-lg font-bold text-primary mb-0.5 leading-tight">20% off on first Admission</p>
-              <p className="text-gray-600 text-sm font-medium mb-4">Limited offer</p>
+              <p className="text-gray-600 text-sm font-medium mb-3">Limited offer</p>
               <Button to="/contact?source=offer" variant="primary" className="w-full py-2.5 text-sm" onClick={closeOfferPopup}>
                 Avail this offer
               </Button>
@@ -245,14 +286,14 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
-      {/* Why Choose Babul Quran - redesigned */}
+      {/* Reason to learn with us (formerly Why Choose) */}
       <ScrollReveal direction="left">
       <section id="about" className="py-16 md:py-20 bg-bg-alt overflow-hidden">
         <div className="max-w-container mx-auto px-5">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="inline-block text-primary font-semibold text-sm uppercase tracking-wider mb-3 animate-fade-in-up">Why Choose Us</span>
+            <span className="inline-block text-primary font-semibold text-sm uppercase tracking-wider mb-3 animate-fade-in-up">Reason to learn with us</span>
             <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-4 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-              Why Choose Babul Quran?
+              Reason to learn with us
             </h2>
             <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-4 animate-fade-in-up animate-delay-200 opacity-0" style={{ animationFillMode: 'forwards' }} />
             <p className="text-gray-600 text-base md:text-lg animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
@@ -321,38 +362,85 @@ export default function Home() {
               </p>
             </div>
           </div>
-          {/* Reason to learn with us - features */}
-          <div className="mt-10 pt-8 border-t border-gray-200 max-w-5xl mx-auto">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+          {/* Reason to learn with us – section commented out
+          <div className="mt-12 max-w-6xl mx-auto">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 text-center mb-8">
               Reason to learn with us
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {featureIcons.map(({ Icon, iconLabel }, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+              {[
+                {
+                  title: 'FLEXIBLE SCHEDULE',
+                  text: 'At Babul Quran, we understand busy schedules. Our tutors offer flexible class timings so students can learn at their convenience without compromising on quality—whether you have a few days a week or more.',
+                  Icon: FaClock,
+                },
+                {
+                  title: 'PERSONALIZED LEARNING',
+                  text: 'Every student is unique. Our one-to-one sessions are tailored to individual pace, style, and goals—ensuring confidence, consistency, and long-term progress in Quran and Islamic studies.',
+                  Icon: FaChalkboardTeacher,
+                },
+                {
+                  title: 'QUALIFIED TUTORS',
+                  text: 'Learn from certified male and female Quran teachers who specialize in Noorani Qaida, Tajweed, Hifz, and Tafseer. Clear, engaging, and effective lessons every time.',
+                  Icon: FaBook,
+                },
+              ].map(({ title, text, Icon }, idx) => (
                 <div
-                  key={iconLabel}
-                  className="flex items-start gap-3 p-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300"
+                  key={title}
+                  className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-md hover:shadow-xl hover:border-primary/20 transition-all duration-300 text-center opacity-0 animate-fade-in-up"
+                  style={{ animationDelay: `${120 + idx * 100}ms`, animationFillMode: 'forwards' }}
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/15 to-primary-dark/15 text-primary flex items-center justify-center">
-                    <Icon className="w-6 h-6" />
+                  <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-7 h-7" />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-800 mb-0.5">{iconLabel}</h4>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {iconLabel === 'Schedule' && 'Learn at your convenience with 24/7 flexible class timings.'}
-                      {iconLabel === 'Money back' && 'Not satisfied? Get a refund within the first month.'}
-                      {iconLabel === 'Affordable' && 'Quality education at competitive fees and family discounts.'}
-                      {iconLabel === 'Teachers' && 'Certified male and female Quran teachers.'}
-                      {iconLabel === 'Curriculum' && 'Structured, authentic Islamic curriculum for all levels.'}
-                      {iconLabel === 'Certificate' && 'Receive a certificate upon course completion.'}
-                    </p>
-                  </div>
+                  <h4 className="font-bold text-gray-800 text-sm uppercase tracking-wide mb-3 text-primary">{title}</h4>
+                  <p className="text-gray-600 text-sm md:text-base leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>
           </div>
+          */}
         </div>
       </section>
       </ScrollReveal>
+
+      {/* Our Packages – few days / full week options for students */}
+      <ScrollReveal direction="up">
+      <section id="packages" className="py-14 md:py-16 bg-bg-alt">
+        <div className="max-w-container mx-auto px-5">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
+            Our Premium Packages
+          </h2>
+          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10">
+            We have flexible packages so students who can attend only a few days a week can still learn at their pace.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5 max-w-6xl mx-auto">
+            {[
+              { name: 'Basic', days: '2–3 days/week', desc: 'Ideal when time is limited. Two or three focused sessions weekly for steady progress.', icon: '◇' },
+              { name: 'Standard', days: '4 days/week', desc: 'Balanced option with four weekly sessions to maintain momentum and consistency.', icon: '★' },
+              { name: 'Plus', days: '5 days/week', desc: 'Five sessions weekly for deeper understanding and stronger improvement.', icon: '+' },
+              { name: 'Premium', days: '6 days/week', desc: 'Maximum support with six sessions weekly for intensive learning and mastery.', icon: '▣' },
+              { name: 'Flexi', days: 'Flexible days', desc: 'Choose your preferred days each week. Suits changing schedules and busy families.', icon: '◆' },
+            ].map((pkg, idx) => (
+              <div
+                key={pkg.name}
+                className="bg-white rounded-2xl p-5 md:p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 text-center opacity-0 animate-fade-in-up flex flex-col min-h-[280px]"
+                style={{ animationDelay: `${80 * idx}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3 text-xl font-bold">{pkg.icon}</div>
+                <h3 className="font-bold text-gray-800 text-lg mb-1">{pkg.name}</h3>
+                <p className="text-primary text-sm font-semibold mb-2">{pkg.days}</p>
+                <p className="text-gray-600 text-xs md:text-sm leading-relaxed flex-1">{pkg.desc}</p>
+                <Button to="/contact?source=packages" variant="primary" className="mt-4 w-full py-2 text-sm flex-shrink-0">
+                  Enquire
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      </ScrollReveal>
+
       {/* Teachers – background image slider + text flips with each slide */}
       <ScrollReveal direction="right">
       <section id="teachers" className="py-14 text-center relative overflow-hidden min-h-[420px] md:min-h-[480px] flex flex-col justify-center">
@@ -476,7 +564,7 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
-      {/* Price */}
+      {/* Price – commented out
       <ScrollReveal direction="left">
       <section id="fee" className="py-12 bg-white text-center">
         <div className="max-w-container mx-auto px-5">
@@ -490,6 +578,7 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
+      */}
       {/* Zakat & Donation - pehle jaisa: cards, button click pe form */}
       <ScrollReveal direction="right">
       <section id="zakat-donation" className="py-14 md:py-16 bg-bg-alt">
@@ -577,7 +666,81 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
-      {/* WhatsApp + Chatbot: body pe portal – hamesha viewport pe fixed, scroll ke sath nahi chalenge */}
+      {/* Testimonials – footer se pehle, image jaisa design (2 cards side-by-side, dots) */}
+      <ScrollReveal direction="up">
+      <section id="testimonials" className="py-14 md:py-16 bg-white">
+        <div className="max-w-container mx-auto px-5">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10">
+            See What Others Are Saying About Babul Quran
+          </h2>
+          <div className="max-w-5xl mx-auto">
+            {/* Desktop: 2 cards side-by-side per slide (2 slides) */}
+            <div className="hidden md:block overflow-hidden">
+              {[0, 1].map((page) => (
+                <div
+                  key={page}
+                  className={`grid grid-cols-2 gap-4 transition-opacity duration-400 ${Math.floor(testimonialIndex / 2) === page ? 'block' : 'hidden'}`}
+                >
+                  {testimonials.slice(page * 2, page * 2 + 2).map((t) => (
+                    <div key={t.name} className="bg-sky-50 rounded-2xl p-6 md:p-8 border border-sky-100 shadow-md relative min-h-[200px] flex flex-col">
+                      <FaQuoteLeft className="absolute top-4 left-4 w-7 h-7 text-primary/30" aria-hidden />
+                      <FaQuoteRight className="absolute bottom-4 right-4 w-7 h-7 text-primary/30" aria-hidden />
+                      <p className="text-gray-700 text-sm md:text-base leading-relaxed flex-1 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
+                      <p className="font-bold text-gray-800 text-base">{t.name}</p>
+                      <p className="text-gray-600 text-sm">{t.role}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            {/* Mobile: 1 card at a time */}
+            <div className="md:hidden">
+              {testimonials.map((t, idx) => (
+                <div key={t.name} className={`${testimonialIndex === idx ? 'block' : 'hidden'}`}>
+                  <div className="bg-sky-50 rounded-2xl p-6 border border-sky-100 shadow-md relative">
+                    <FaQuoteLeft className="absolute top-4 left-4 w-7 h-7 text-primary/30" aria-hidden />
+                    <FaQuoteRight className="absolute bottom-4 right-4 w-7 h-7 text-primary/30" aria-hidden />
+                    <p className="text-gray-700 text-sm leading-relaxed mb-4 pt-2 pr-8 pb-2 pl-8">{t.quote}</p>
+                    <p className="font-bold text-gray-800 text-base">{t.name}</p>
+                    <p className="text-gray-600 text-sm">{t.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Dots: 2 on desktop (2 slides), 4 on mobile (4 slides) */}
+            <div className="flex justify-center gap-2 mt-6">
+              <div className="hidden md:flex justify-center gap-2">
+                {[0, 1].map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => setTestimonialIndex(page * 2)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      Math.floor(testimonialIndex / 2) === page ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Slide ${page + 1}`}
+                  />
+                ))}
+              </div>
+              <div className="flex md:hidden justify-center gap-2">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setTestimonialIndex(idx)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      testimonialIndex === idx ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Testimonial ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      </ScrollReveal>
+      {/* WhatsApp (chatbot commented out) */}
       {createPortal(
         <>
           <a
@@ -589,6 +752,7 @@ export default function Home() {
           >
             <FaWhatsapp className="w-5 h-5 flex-shrink-0" /> <span className="hidden sm:inline">WhatsApp us</span>
           </a>
+          {/* --- chatbot button + panel (commented out) ---
           <div className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50">
             <Button
               type="button"
@@ -666,6 +830,14 @@ export default function Home() {
                     <input type="text" name="queryName" required placeholder="Your name" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
                     <input type="email" name="queryEmail" required placeholder="Email" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
                     <input type="tel" name="queryPhone" placeholder="Phone (optional)" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                    <select name="queryPackage" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white">
+                      <option value="">Package (if enquiring about one)</option>
+                      <option value="Basic">Basic (2–3 days/week)</option>
+                      <option value="Standard">Standard (4 days/week)</option>
+                      <option value="Plus">Plus (5 days/week)</option>
+                      <option value="Premium">Premium (6 days/week)</option>
+                      <option value="Flexi">Flexi (flexible days)</option>
+                    </select>
                     <textarea name="queryMessage" required rows={2} placeholder="Your question or message" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" />
                     {queryError && <p className="text-red-600 text-xs">{queryError}</p>}
                     <Button type="submit" variant="primary" className="w-full py-2 text-sm" disabled={queryLoading}>{queryLoading ? 'Sending...' : 'Send query'}</Button>
@@ -675,6 +847,7 @@ export default function Home() {
               </div>
             </div>
           )}
+          */}
         </>,
         document.body
       )}

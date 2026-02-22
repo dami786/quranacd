@@ -24,7 +24,7 @@ api.interceptors.response.use(
       localStorage.removeItem('isSuperAdmin');
       localStorage.removeItem('userRole');
       localStorage.removeItem('hasInquiry');
-      window.location.href = '/login';
+      window.location.href = '/';
     }
     return Promise.reject(err);
   }
@@ -58,9 +58,11 @@ export const deleteTrial = (id) => api.delete(`/trials/${id}`);
 export const submitDonation = (data) => api.post('/donations', data);
 export const getDonations = () => api.get('/donations');
 
-// Queries (POST public – send question; GET admin – list queries for reply)
+// Queries (POST public – send question; GET admin – list; PATCH admin – status + reply; GET public – my replies)
 export const submitQuery = (data) => api.post('/queries', data);
 export const getQueries = () => api.get('/queries');
+export const updateQueryStatus = (id, payload) => api.patch(`/queries/${id}`, payload);
+export const getRepliesByEmail = (email) => api.get('/queries/replies', { params: { email } });
 
 // Resolve course image URL (uploaded files are at /uploads/...)
 export const getImageUrl = (image) => {

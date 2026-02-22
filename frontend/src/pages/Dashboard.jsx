@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HiViewGrid, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart, HiChat } from 'react-icons/hi';
+import { HiViewGrid, HiPencil, HiTrash, HiUser, HiUserGroup, HiInbox, HiHeart, HiCube } from 'react-icons/hi';
 import { Button } from '../components/Buttons';
 import Seo from '../components/Seo';
 import { ItemFormModal } from '../components/Modals';
-import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations, getQueries, getUsers, updateUserRole } from '../services/api';
+import { getItems, createItem, updateItem, deleteItem, getTrials, updateTrialStatus, deleteTrial, getDonations, getQueries, updateQueryStatus, getImageUrl, getUsers, updateUserRole } from '../services/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -192,10 +192,10 @@ export default function Dashboard() {
           </button>
           <button
             type="button"
-            onClick={() => showSection('dashboard-queries')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-queries' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
+            onClick={() => showSection('dashboard-packages')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === 'dashboard-packages' ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-700 hover:border-primary hover:text-primary'}`}
           >
-            <HiChat className="w-4 h-4 inline-block mr-1.5 align-middle" /> Queries
+            <HiCube className="w-4 h-4 inline-block mr-1.5 align-middle" /> Packages
           </button>
           <button
             type="button"
@@ -432,13 +432,13 @@ export default function Dashboard() {
         </section>
         )}
 
-        {/* Queries – from Chat widget "Send query" */}
-        {activeSection === 'dashboard-queries' && (
-        <section id="dashboard-queries" className="mb-10">
+        {/* Packages – queries jinhon ne package select karke send ki (same API, filter by package) */}
+        {activeSection === 'dashboard-packages' && (
+        <section id="dashboard-packages" className="mb-10">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <HiChat className="w-6 h-6 text-primary" /> Chat Queries
+            <HiCube className="w-6 h-6 text-primary" /> Package Enquiries
           </h2>
-          <p className="text-sm text-gray-600 mb-3">Replies can be sent via email or WhatsApp to the contact details below.</p>
+          <p className="text-sm text-gray-600 mb-3">Queries sent with a package selected (Basic, Standard, Plus, etc.). Data from same Queries API.</p>
           {queriesLoading ? (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="h-6 bg-gray-200 rounded w-1/3 mb-4 animate-pulse" />
@@ -448,53 +448,76 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-          ) : queries.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
-              No queries yet.
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-bg-alt border-b border-gray-200">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
-                    <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
-                    <th className="px-4 py-3 font-semibold text-gray-800 hidden sm:table-cell">Phone</th>
-                    <th className="px-4 py-3 font-semibold text-gray-800">Message</th>
-                    <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
-                    <th className="px-4 py-3 font-semibold text-gray-800">Reply</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {queries.map((q) => (
-                    <tr key={q._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
-                      <td className="px-4 py-3 text-gray-800 font-medium">{q.name}</td>
-                      <td className="px-4 py-3">
-                        <a href={`mailto:${q.email}?subject=Re: Your query to Babul Quran`} className="text-primary hover:underline">{q.email}</a>
-                      </td>
-                      <td className="px-4 py-3 hidden sm:table-cell text-gray-600">{q.phone || '–'}</td>
-                      <td className="px-4 py-3 text-gray-600 max-w-[200px]" title={q.message || ''}>
-                        <span className="line-clamp-2">{q.message || '–'}</span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                        {q.createdAt ? new Date(q.createdAt).toLocaleDateString() : '–'}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a href={`mailto:${q.email}?subject=Re: Your query to Babul Quran`} className="px-2.5 py-1 rounded bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors inline-block mr-1">
-                          Email
-                        </a>
-                        {q.phone && (() => { const d = (q.phone || '').replace(/\D/g, ''); const wa = (d.length === 10 && d.startsWith('3')) ? '92' + d : d; return wa ? (
-                          <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200 transition-colors inline-block">
-                            WhatsApp
-                          </a>
-                        ) : null; })()}
-                      </td>
+          ) : (() => {
+            const packageQueries = queries.filter((q) => q.package && String(q.package).trim());
+            return packageQueries.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500">
+                No package enquiries yet. Queries with a selected package will appear here.
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-bg-alt border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Name</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Email</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800 hidden sm:table-cell">Phone</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Package</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Message</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Status</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Your reply</th>
+                      <th className="px-4 py-3 font-semibold text-gray-800">Contact</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody>
+                    {packageQueries.map((q) => (
+                      <tr key={q._id} className="border-b border-gray-100 hover:bg-bg-alt/50">
+                        <td className="px-4 py-3 text-gray-800 font-medium">{q.name}</td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${q.email}?subject=Re: Package enquiry - Babul Quran`} className="text-primary hover:underline">{q.email}</a>
+                        </td>
+                        <td className="px-4 py-3 hidden sm:table-cell text-gray-600">{q.phone || '–'}</td>
+                        <td className="px-4 py-3"><span className="font-semibold text-primary">{q.package}</span></td>
+                        <td className="px-4 py-3 text-gray-600 max-w-[180px]" title={q.message || ''}>
+                          <span className="line-clamp-2">{q.message || '–'}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                            q.status === 'accepted' ? 'bg-green-100 text-green-800' : q.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {q.status === 'accepted' ? 'Accepted' : q.status === 'rejected' ? 'Rejected' : 'Pending'}
+                          </span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {q.status !== 'accepted' && (
+                              <button type="button" onClick={() => updateQueryStatus(q._id, { status: 'accepted' }).then(() => fetchQueries())} className="px-2 py-0.5 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200">Accept</button>
+                            )}
+                            {q.status !== 'rejected' && (
+                              <button type="button" onClick={() => updateQueryStatus(q._id, { status: 'rejected' }).then(() => fetchQueries())} className="px-2 py-0.5 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200">Reject</button>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                          {q.createdAt ? new Date(q.createdAt).toLocaleDateString() : '–'}
+                        </td>
+                        <td className="px-4 py-3 max-w-[200px]">
+                          {q.reply && <p className="text-gray-700 text-xs mb-1 line-clamp-2" title={q.reply}>{q.reply}</p>}
+                          <textarea data-query-id={q._id} defaultValue={q.reply} placeholder="Type reply..." rows={2} className="w-full px-2 py-1 border border-gray-300 rounded text-xs resize-none" />
+                          <button type="button" onClick={() => { const el = document.querySelector(`textarea[data-query-id="${q._id}"]`); if (el && el.value.trim()) updateQueryStatus(q._id, { reply: el.value.trim() }).then(() => fetchQueries()); }} className="mt-1 px-2 py-1 rounded bg-primary text-white text-xs font-medium hover:bg-primary-dark">Send reply</button>
+                        </td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${q.email}?subject=Re: Package enquiry - Babul Quran`} className="px-2.5 py-1 rounded bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors inline-block mr-1">Email</a>
+                          {q.phone && (() => { const d = (q.phone || '').replace(/\D/g, ''); const wa = (d.length === 10 && d.startsWith('3')) ? '92' + d : d; return wa ? (
+                            <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 rounded bg-green-100 text-green-800 text-xs font-medium hover:bg-green-200 transition-colors inline-block">WhatsApp</a>
+                          ) : null; })()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
         </section>
         )}
 
@@ -526,6 +549,7 @@ export default function Dashboard() {
                     <th className="px-4 py-3 font-semibold text-gray-800">Phone</th>
                     <th className="px-4 py-3 font-semibold text-gray-800">Amount (PKR)</th>
                     <th className="px-4 py-3 font-semibold text-gray-800">Donate for</th>
+                    <th className="px-4 py-3 font-semibold text-gray-800">Receipt</th>
                     <th className="px-4 py-3 font-semibold text-gray-800">Date</th>
                   </tr>
                 </thead>
@@ -536,6 +560,14 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-gray-600">{d.phone || '–'}</td>
                       <td className="px-4 py-3 text-gray-800 font-medium">{d.amount}</td>
                       <td className="px-4 py-3 text-gray-600">{d.donateType || '–'}</td>
+                      <td className="px-4 py-3">
+                        {d.receipt ? (
+                          <a href={getImageUrl(d.receipt)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-primary hover:underline text-sm">
+                            <img src={getImageUrl(d.receipt)} alt="Receipt" className="w-10 h-10 object-cover rounded border border-gray-200" onError={(e) => { e.target.style.display = 'none'; }} />
+                            <span>View</span>
+                          </a>
+                        ) : '–'}
+                      </td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
                         {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '–'}
                       </td>

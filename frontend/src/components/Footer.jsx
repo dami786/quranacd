@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaPhone, FaWhatsapp, FaEnvelope, FaBookOpen, FaMap } from 'react-icons/fa';
+import { FaPhone, FaWhatsapp, FaEnvelope, FaBookOpen, FaMap, FaFacebookF, FaInstagram, FaYoutube, FaTwitter } from 'react-icons/fa';
 import { manualCourses } from '../data/courses';
 
 const courseLinks = manualCourses.map((course, index) => ({
@@ -61,10 +61,25 @@ export default function Footer() {
             <h4 className="text-white font-semibold text-lg mb-3 flex items-center gap-2">
               <FaBookOpen className="text-primary-light" /> About
             </h4>
-            <p className="text-sm leading-relaxed opacity-90">
+            <p className="text-sm leading-relaxed opacity-90 mb-4">
               At Babul Quran, we provide convenient and flexible online Quran classes for
               learners of all ages and backgrounds. Our tailored programs cater to individual needs.
             </p>
+            <p className="text-white font-medium text-sm mb-3">Explore our social media accounts</p>
+            <div className="flex flex-wrap gap-3">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-white transition-colors" aria-label="Facebook">
+                <FaFacebookF className="w-5 h-5" />
+              </a>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-white transition-colors" aria-label="Instagram">
+                <FaInstagram className="w-5 h-5" />
+              </a>
+              <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-white transition-colors" aria-label="YouTube">
+                <FaYoutube className="w-5 h-5" />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-primary hover:text-white transition-colors" aria-label="Twitter">
+                <FaTwitter className="w-5 h-5" />
+              </a>
+            </div>
           </div>
           <div className="opacity-0 animate-fade-in-up animate-delay-200" style={{ animationFillMode: 'forwards' }}>
             <h4 className="text-white font-semibold text-lg mb-3">Courses</h4>
