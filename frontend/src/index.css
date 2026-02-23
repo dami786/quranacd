@@ -370,3 +370,13 @@ body .goog-te-banner-frame {
 @media (prefers-reduced-motion: reduce) {
   .courses-split-reveal.in-view > * { animation: none; opacity: 1; transform: none; }
 }
+
+/* Donation detail – video HD nazar aaye (GPU layer + sharp render) */
+.video-hd-wrapper {
+  isolation: isolate;
+}
+.video-hd {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { Input } from '../components/Forms';
 import { Button } from '../components/Buttons';
 import { FaChild, FaMosque, FaHandHoldingHeart } from 'react-icons/fa';
 import { submitDonation } from '../services/api';
+
+// Media for each donate type (video or image) – View Detail page pe dikhega
+const DONATE_MEDIA = {
+  madrasa: { type: 'video', src: '/classes%20video.mp4', label: 'Madrasa classes' },
+  mosque: { type: 'video', src: '/masjid%20video.mp4', label: 'Mosque' },
+  fitrana: { type: 'image', src: '/sadka%20fitrana.jpg', alt: 'Children in Islamic learning – Sadaqa and Fitrana' },
+};
 
 // Single-topic detail: 10–12 lines each. id must match URL :type (madrasa, mosque, fitrana).
 const TOPICS = {
@@ -51,10 +58,21 @@ export default function DonationDetail() {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const topic = type ? TOPICS[type] : null;
+  const videoRef = useRef(null);
   if (!topic) {
     return <Navigate to="/#zakat-donation" replace />;
   }
   const Icon = topic.Icon;
+
+  // Video ko play karo jab element mount ho (kuch browsers mein autoPlay kaam nahi karta)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const play = () => video.play().catch(() => {});
+    play();
+    video.addEventListener('loadeddata', play);
+    return () => video.removeEventListener('loadeddata', play);
+  }, [type]);
 
   const openForm = () => {
     setDonateType(DONATE_TYPE_OPTIONS[0]);
@@ -110,7 +128,32 @@ const refLabel = donateType || DONATE_TYPE_OPTIONS[0];
       />
       <section className="py-14 md:py-16 max-w-container mx-auto px-5">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-soft">
+          <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-soft">
+            {/* Video / Image – type ke hisaab se */}
+            {DONATE_MEDIA[type] && (
+              <div className="relative w-full aspect-video bg-gray-100 flex-shrink-0 max-w-[1280px] mx-auto video-hd-wrapper">
+                {DONATE_MEDIA[type].type === 'video' ? (
+                  <video
+                    ref={videoRef}
+                    src={DONATE_MEDIA[type].src}
+                    className="absolute inset-0 w-full h-full object-cover video-hd"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    aria-label={DONATE_MEDIA[type].label}
+                  />
+                ) : (
+                  <img
+                    src={DONATE_MEDIA[type].src}
+                    alt={DONATE_MEDIA[type].alt}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
+              </div>
+            )}
+            <div className="p-6 md:p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
                 <Icon className="w-7 h-7" />
@@ -130,6 +173,7 @@ const refLabel = donateType || DONATE_TYPE_OPTIONS[0];
             >
               Donate Now
             </Button>
+            </div>
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-8">
