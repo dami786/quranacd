@@ -262,3 +262,111 @@ body .goog-te-banner-frame {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Scroll-triggered keyframe animations (MyWiseTutor-style) – SCROLL_ANIMATIONS_SPEC.md */
+@keyframes scroll-left-in {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scroll-right-in {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scroll-top-in {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scroll-bottom-in {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scroll-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scroll-zoom-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.scroll-left-in, .scroll-right-in, .scroll-top-in, .scroll-bottom-in, .scroll-fade-in, .scroll-zoom-in {
+  opacity: 0;
+}
+.scroll-left-in.in-view   { animation: scroll-left-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.scroll-right-in.in-view  { animation: scroll-right-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.scroll-top-in.in-view    { animation: scroll-top-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.scroll-bottom-in.in-view { animation: scroll-bottom-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.scroll-fade-in.in-view   { animation: scroll-fade-in 0.5s ease-out forwards; }
+.scroll-zoom-in.in-view   { animation: scroll-zoom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Stagger: parent pe .scroll-stagger-children, har child ko delay */
+.scroll-stagger-children > * { opacity: 0; }
+.scroll-stagger-children.in-view > *:nth-child(1) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0s; }
+.scroll-stagger-children.in-view > *:nth-child(2) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.1s; }
+.scroll-stagger-children.in-view > *:nth-child(3) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.2s; }
+.scroll-stagger-children.in-view > *:nth-child(4) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.3s; }
+.scroll-stagger-children.in-view > *:nth-child(5) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.4s; }
+.scroll-stagger-children.in-view > *:nth-child(6) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.5s; }
+.scroll-stagger-children.in-view > *:nth-child(n+7) { animation: scroll-bottom-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; animation-delay: 0.6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-left-in.in-view, .scroll-right-in.in-view, .scroll-top-in.in-view,
+  .scroll-bottom-in.in-view, .scroll-fade-in.in-view, .scroll-zoom-in.in-view {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .scroll-stagger-children.in-view > * { animation: none; opacity: 1; transform: none; }
+}
+
+/* Line-by-line reveal: aik aik line left / right / up se aati hai */
+.line-reveal-wrap > .line-left,
+.line-reveal-wrap > .line-right,
+.line-reveal-wrap > .line-up {
+  opacity: 0;
+}
+.line-reveal-wrap.in-view > .line-left  { animation: scroll-left-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.line-reveal-wrap.in-view > .line-right { animation: scroll-right-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.line-reveal-wrap.in-view > .line-up    { animation: scroll-bottom-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.line-reveal-wrap.in-view > *:nth-child(1) { animation-delay: 0s; }
+.line-reveal-wrap.in-view > *:nth-child(2) { animation-delay: 0.12s; }
+.line-reveal-wrap.in-view > *:nth-child(3) { animation-delay: 0.24s; }
+.line-reveal-wrap.in-view > *:nth-child(4) { animation-delay: 0.36s; }
+.line-reveal-wrap.in-view > *:nth-child(5) { animation-delay: 0.48s; }
+.line-reveal-wrap.in-view > *:nth-child(6) { animation-delay: 0.6s; }
+.line-reveal-wrap.in-view > *:nth-child(n+7) { animation-delay: 0.72s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .line-reveal-wrap.in-view > .line-left,
+  .line-reveal-wrap.in-view > .line-right,
+  .line-reveal-wrap.in-view > .line-up { animation: none; opacity: 1; transform: none; }
+}
+
+/* Courses: aik card se saari cards nikal ke separate – center se scale + stagger */
+@keyframes course-card-split-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.courses-split-reveal > * {
+  opacity: 0;
+}
+.courses-split-reveal.in-view > * {
+  animation: course-card-split-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.courses-split-reveal.in-view > *:nth-child(1) { animation-delay: 0.05s; }
+.courses-split-reveal.in-view > *:nth-child(2) { animation-delay: 0.15s; }
+.courses-split-reveal.in-view > *:nth-child(3) { animation-delay: 0.25s; }
+.courses-split-reveal.in-view > *:nth-child(4) { animation-delay: 0.35s; }
+.courses-split-reveal.in-view > *:nth-child(5) { animation-delay: 0.45s; }
+.courses-split-reveal.in-view > *:nth-child(6) { animation-delay: 0.55s; }
+.courses-split-reveal.in-view > *:nth-child(n+7) { animation-delay: 0.65s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .courses-split-reveal.in-view > * { animation: none; opacity: 1; transform: none; }
+}

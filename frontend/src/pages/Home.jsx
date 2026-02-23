@@ -297,16 +297,16 @@ export default function Home() {
       <ScrollReveal direction="left">
       <section id="about" className="py-16 md:py-20 bg-bg-alt overflow-hidden">
         <div className="max-w-container mx-auto px-5">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="inline-block text-primary font-semibold text-sm uppercase tracking-wider mb-3 animate-fade-in-up">Reason to learn with us</span>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-4 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
+          <ScrollReveal wrapOnly className="line-reveal-wrap text-center max-w-2xl mx-auto mb-12">
+            <span className="line-left inline-block text-primary font-semibold text-sm uppercase tracking-wider mb-3">Reason to learn with us</span>
+            <h2 className="line-right text-2xl md:text-4xl font-bold text-gray-800 mb-4">
               Reason to learn with us
             </h2>
-            <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-4 animate-fade-in-up animate-delay-200 opacity-0" style={{ animationFillMode: 'forwards' }} />
-            <p className="text-gray-600 text-base md:text-lg animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            <div className="line-up w-16 h-1 bg-primary rounded-full mx-auto mb-4" />
+            <p className="line-up text-gray-600 text-base md:text-lg">
               Our Competitive Features
             </p>
-          </div>
+          </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {[
               { title: 'Flexible Schedule 24/7', text: 'Our dedicated team ensures 24/7 availability of our online Quran teachers. Engage in online Quran classes conveniently, regardless of your location.' },
@@ -415,12 +415,14 @@ export default function Home() {
       <ScrollReveal direction="up">
       <section id="packages" className="py-14 md:py-16 bg-bg-alt">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
-            Our Premium Packages
-          </h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10">
-            We have flexible packages so students who can attend only a few days a week can still learn at their pace.
-          </p>
+          <ScrollReveal wrapOnly className="line-reveal-wrap text-center max-w-2xl mx-auto mb-10">
+            <h2 className="line-left text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              Our Premium Packages
+            </h2>
+            <p className="line-right text-gray-600">
+              We have flexible packages so students who can attend only a few days a week can still learn at their pace.
+            </p>
+          </ScrollReveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5 max-w-6xl mx-auto">
             {[
               { name: 'Basic', days: '2–3 days/week', desc: 'Ideal when time is limited. Two or three focused sessions weekly for steady progress.', icon: '◇' },
@@ -518,22 +520,23 @@ export default function Home() {
       </section>
       </ScrollReveal>
       {/* Courses from API - moved below Teachers */}
-      <ScrollReveal direction="up">
       <section id="courses" className="py-14 md:py-16 bg-white">
         <div className="max-w-container mx-auto px-5">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-3 animate-fade-in-up">
-            We Offer Various Courses to Learn Quran Online
-          </h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-            Our mission is to provide convenient Quranic education to individuals from all walks of life.
-          </p>
-          {/* Manual courses – detail ke sath */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ScrollReveal wrapOnly className="line-reveal-wrap text-center max-w-2xl mx-auto mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+              <span className="line-left block">We Offer Various Courses</span>
+              <span className="line-right block">to Learn Quran Online</span>
+            </h2>
+            <p className="line-up text-gray-600 max-w-2xl mx-auto">
+              Our mission is to provide convenient Quranic education to individuals from all walks of life.
+            </p>
+          </ScrollReveal>
+          {/* Manual courses – aik card se nikal ke separate (stagger) */}
+          <ScrollReveal wrapOnly className="courses-split-reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {manualCourses.map((course, index) => (
               <div
                 key={course.titleEn}
-                className="bg-bg-alt rounded-xl border border-gray-200 overflow-hidden hover:shadow-card-hover hover:border-primary/30 transition-all duration-300 opacity-0 animate-fade-in-up flex flex-col"
-                style={{ animationDelay: `${80 * index}ms`, animationFillMode: 'forwards' }}
+                className="bg-bg-alt rounded-xl border border-gray-200 overflow-hidden hover:shadow-card-hover hover:border-primary/30 transition-all duration-300 flex flex-col"
               >
                 <div className="h-40 w-full flex-shrink-0 overflow-hidden bg-gray-200">
                   <img
@@ -560,7 +563,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </ScrollReveal>
           {/* Know More – in courses ke ilawa parhna/janana ho to contact pe */}
           <div className="mt-10 text-center">
             <p className="text-gray-600 mb-4">Want to study something else or need more information?</p>
@@ -570,7 +573,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      </ScrollReveal>
       {/* Price – commented out
       <ScrollReveal direction="left">
       <section id="fee" className="py-12 bg-white text-center">
@@ -661,6 +663,8 @@ export default function Home() {
               { q: 'Is there a trial period available?', a: 'Yes, we offer a trial period for interested students. It\'s an excellent opportunity to experience our online Quran classes and interact with our teachers.' },
               { q: 'Can I schedule classes according to my kid\'s availability?', a: 'Absolutely! We offer flexible online Quran classes for kids to accommodate your child\'s schedule and routines.' },
               { q: 'What is the duration of each class?', a: 'Generally, classes are scheduled for 30-minute or 60-minute sessions to accommodate various learning needs.' },
+              { q: 'How you take classes?', a: 'We take online live classes via Zoom, Google Meet, Microsoft Teams, or WhatsApp. Every student is taught separately.' },
+              { q: 'How you accept the Hadyah/Payments?', a: 'We accept payments via International and national payment gateways, including PayPal, TapTap, Visa Card/Master Card, and Bank Transfer.' },
             ].map(({ q, a }, idx) => (
               <div key={q} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-soft hover:shadow-card transition-shadow duration-300 opacity-0 animate-fade-in-up" style={{ animationDelay: `${100 + idx * 100}ms`, animationFillMode: 'forwards' }}>
                 <h3 className="font-semibold text-gray-800 px-5 py-4 flex items-center gap-2">
