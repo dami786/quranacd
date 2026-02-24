@@ -9,7 +9,7 @@ import { submitDonation } from '../services/api';
 // Media for each donate type (video or image) – View Detail page pe dikhega
 const DONATE_MEDIA = {
   madrasa: { type: 'video', src: '/classes%20video.mp4', label: 'Madrasa classes' },
-  mosque: { type: 'video', src: '/masjid%20video.mp4', label: 'Mosque' },
+  mosque: { type: 'image', src: '/images/pexels-enginakyurt-2894233.jpg', alt: 'Mosque under construction – Donate for Mosque' },
   fitrana: { type: 'image', src: '/sadka%20fitrana.jpg', alt: 'Children in Islamic learning – Sadaqa and Fitrana' },
 };
 
