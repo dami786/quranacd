@@ -2,6 +2,79 @@ import mongoose from 'mongoose';
 import Attendance from '../models/Attendance.js';
 import Student from '../models/Student.js';
 
+// Ek date ki attendance lao – attendance leny wale page ke liye (GET /api/attendance?date=YYYY-MM-DD)
+export const getAttendanceByDate = async (req, res) => {
+  try {
+    const dateStr = req.query.date;
+    const d = dateStr ? new Date(dateStr) : new Date();
+    if (Number.isNaN(d.getTime())) {
+      return res.status(400).json({ message: 'Invalid date. Use YYYY-MM-DD.' });
+    }
+    d.setHours(0, 0, 0, 0);
+    const nextDay = new Date(d);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const records = await Attendance.find({
+      date: { $gte: d, $lt: nextDay },
+    })
+      .populate('student', 'rollNo name')
+      .lean();
+
+    const list = records
+      .filter((r) => r.student)
+      .map((r) => ({
+        _id: r._id,
+        studentId: r.student._id,
+        rollNo: r.student.rollNo,
+        name: r.student.name,
+        status: r.status,
+        date: r.date,
+      }));
+
+    res.json({ date: d.toISOString().split('T')[0], records: list });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Failed to fetch attendance.' });
+  }
+};
+
+// Ek month ke saare attendance records – table mein har bachhe ka record dikhane ke liye
+// GET /api/attendance/records?year=2025&month=1
+export const getAttendanceRecords = async (req, res) => {
+  try {
+    const year = Number(req.query.year) || new Date().getFullYear();
+    const month = Number(req.query.month) || (new Date().getMonth() + 1);
+    if (month < 1 || month > 12) {
+      return res.status(400).json({ message: 'Invalid month. Use 1-12.' });
+    }
+
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0);
+    end.setHours(23, 59, 59, 999);
+
+    const records = await Attendance.find({
+      date: { $gte: start, $lte: end },
+    })
+      .populate('student', 'rollNo name')
+      .sort({ date: 1, 'student.rollNo': 1 })
+      .lean();
+
+    const list = records
+      .filter((r) => r.student)
+      .map((r) => ({
+        _id: r._id,
+        date: r.date,
+        studentId: r.student._id,
+        rollNo: r.student.rollNo,
+        name: r.student.name,
+        status: r.status,
+      }));
+
+    res.json({ year, month, records: list });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Failed to fetch attendance records.' });
+  }
+};
+
 // Ek din ki attendance mark karo – body: { date, records: [{ studentId, status }] }
 export const markAttendance = async (req, res) => {
   try {
