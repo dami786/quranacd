@@ -12,10 +12,7 @@ const courseMenuItems = manualCourses.map((course, index) => ({
 const leftMenuLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About Us' },
-  {
-    label: 'Courses',
-    children: courseMenuItems,
-  },
+  { label: 'Courses', children: courseMenuItems },
   { to: '/#zakat-donation', label: 'Zakat & Donation' },
   { to: '/contact', label: 'Contact' },
   { to: '/privacy-policy', label: 'Privacy Policy' },
@@ -168,8 +165,8 @@ export default function Navbar() {
   const [translateOpen, setTranslateOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState(() => getCurrentTranslateLabel());
   const [hasInquiry, setHasInquiry] = useState(() => localStorage.getItem('hasInquiry') === 'true');
-  const [headerTop, setHeaderTop] = useState(40); // pehli paint pe top bar ke neeche; effect se update
-  const [spacerHeight, setSpacerHeight] = useState(74); // top bar + header approx, content navbar ke saath
+  const [headerTop, setHeaderTop] = useState(40);
+  const [spacerHeight, setSpacerHeight] = useState(74);
 
   useEffect(() => setCurrentLang(getCurrentTranslateLabel()), []);
 

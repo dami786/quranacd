@@ -4,7 +4,7 @@ import Seo from '../components/Seo';
 import { FaPaperPlane, FaEnvelope } from 'react-icons/fa';
 import { Input, Textarea, Select } from '../components/Forms';
 import { Button } from '../components/Buttons';
-import { submitTrial } from '../services/api';
+import { submitTrial, submitQuery } from '../services/api';
 
 const courseOptions = [
   'Select Course',
@@ -20,6 +20,9 @@ const courseOptions = [
 export default function Contact() {
   const [searchParams] = useSearchParams();
   const sourceFromUrl = searchParams.get('source');
+  const packageFromUrl = searchParams.get('pkg') || '';
+  const isEnrollment = sourceFromUrl === 'enrollment';
+  const isPackages = sourceFromUrl === 'packages';
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [selectedCourse, setSelectedCourse] = useState('Select Course');
@@ -35,21 +38,43 @@ export default function Contact() {
     if (courseVal === 'Any other' && otherText) {
       messageVal = (messageVal ? messageVal + '\n\n' : '') + 'Course/Subject requested: ' + otherText;
     }
-    const data = {
-      name: form.name?.value?.trim() || '',
-      email: form.email?.value?.trim() || '',
-      phone: form.phone?.value?.trim() || '',
+    const name = form.name?.value?.trim() || '';
+    const email = form.email?.value?.trim() || '';
+    const phone = form.phone?.value?.trim() || '';
+
+    const trialPayload = {
+      name,
+      email,
+      phone,
       course: courseVal,
       message: messageVal,
-      source: sourceFromUrl === 'enrollment' ? 'enrollment' : 'free_trial',
+      source: isEnrollment ? 'enrollment' : 'free_trial',
     };
-    submitTrial(data)
+
+    // Packages section se aaye hue enquiries Queries API pe jaayengi (package + course save hoga)
+    const request = isPackages
+      ? submitQuery({
+          name,
+          email,
+          phone,
+          message: messageVal || `Package enquiry${packageFromUrl ? ` for ${packageFromUrl}` : ''}.`,
+          package: packageFromUrl,
+          course: courseVal,
+        })
+      : submitTrial(trialPayload);
+
+    request
       .then(() => {
         if (localStorage.getItem('token')) {
           localStorage.setItem('hasInquiry', 'true');
           window.dispatchEvent(new Event('inquiry-change'));
         }
-        setMessage({ type: 'success', text: 'Thank you! Your inquiry has been received. We will contact you soon for your free trial.' });
+        const successText = isEnrollment
+          ? 'Thank you! Your enrollment enquiry has been received. We will contact you soon.'
+          : isPackages
+          ? 'Thank you! Your package enquiry has been received. We will contact you soon.'
+          : 'Thank you! Your inquiry has been received. We will contact you soon for your free trial.';
+        setMessage({ type: 'success', text: successText });
         form.reset();
         setSelectedCourse('Select Course');
       })

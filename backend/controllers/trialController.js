@@ -14,6 +14,9 @@ export const submitTrial = async (req, res) => {
       });
     }
     const inquirySource = source === 'enrollment' ? 'enrollment' : 'free_trial';
+    // Free trial wali inquiries ka status by default 'free_trial' rakho;
+    // enrollment wali ko 'pending' hi rehne do (jab tak approve na karo).
+    const initialStatus = inquirySource === 'enrollment' ? 'pending' : 'free_trial';
     const trial = await Trial.create({
       name: name.trim(),
       email: emailLower,
@@ -21,6 +24,7 @@ export const submitTrial = async (req, res) => {
       course: course || '',
       message: message || '',
       source: inquirySource,
+      status: initialStatus,
     });
     res.status(201).json(trial);
   } catch (error) {

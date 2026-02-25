@@ -150,11 +150,6 @@ export default function Profile() {
           <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-6 animate-fade-in-up">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Account</h2>
             <div className="flex flex-wrap gap-3">
-              {showDashboardLink && (
-                <Button to="/dashboard" variant="primary" className="inline-flex items-center gap-2">
-                  <HiAcademicCap className="w-4 h-4" /> Dashboard
-                </Button>
-              )}
               <Button type="button" variant="outlinePrimary" className="inline-flex items-center gap-2 hover:text-white" onClick={() => { setShowChangePassword(!showChangePassword); setChangePasswordError(''); setChangePasswordSuccess(''); }}>
                 <HiKey className="w-4 h-4" /> Change Password
               </Button>

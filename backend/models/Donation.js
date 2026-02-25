@@ -9,6 +9,7 @@ const donationSchema = new mongoose.Schema(
     amount: { type: String, required: true, trim: true },
     donateType: { type: String, enum: DONATE_TYPES, required: true },
     receipt: { type: String, trim: true, default: '' }, // path to uploaded receipt file
+    submittedAt: { type: Date, default: Date.now }, // jis din/time bande ne form submit kiya
   },
   { timestamps: true }
 );

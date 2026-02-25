@@ -69,12 +69,6 @@ const testimonials = [
 
 export default function Home() {
   const location = useLocation();
-  // --- chatbot (commented out) ---
-  // const [chatOpen, setChatOpen] = useState(false);
-  // const [chatMessages, setChatMessages] = useState([]);
-  // const [querySent, setQuerySent] = useState(false);
-  // const [queryLoading, setQueryLoading] = useState(false);
-  // const [queryError, setQueryError] = useState('');
   const [showOfferPopup, setShowOfferPopup] = useState(false);
   const offerTriggeredRef = useRef(false);
   const [teacherSlideIndex, setTeacherSlideIndex] = useState(0);
@@ -440,7 +434,11 @@ export default function Home() {
                 <h3 className="font-bold text-gray-800 text-lg mb-1">{pkg.name}</h3>
                 <p className="text-primary text-sm font-semibold mb-2">{pkg.days}</p>
                 <p className="text-gray-600 text-xs md:text-sm leading-relaxed flex-1">{pkg.desc}</p>
-                <Button to="/contact?source=packages" variant="primary" className="mt-4 w-full py-2 text-sm flex-shrink-0">
+                <Button
+                  to={`/contact?source=packages&pkg=${encodeURIComponent(pkg.name)}`}
+                  variant="primary"
+                  className="mt-4 w-full py-2 text-sm flex-shrink-0"
+                >
                   Enquire
                 </Button>
               </div>
@@ -519,7 +517,7 @@ export default function Home() {
         </div>
       </section>
       </ScrollReveal>
-      {/* Courses from API - moved below Teachers */}
+      {/* Courses – manual list from data/courses */}
       <section id="courses" className="py-14 md:py-16 bg-white">
         <div className="max-w-container mx-auto px-5">
           <ScrollReveal wrapOnly className="line-reveal-wrap text-center max-w-2xl mx-auto mb-10">
@@ -531,7 +529,6 @@ export default function Home() {
               Our mission is to provide convenient Quranic education to individuals from all walks of life.
             </p>
           </ScrollReveal>
-          {/* Manual courses – aik card se nikal ke separate (stagger) */}
           <ScrollReveal wrapOnly className="courses-split-reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {manualCourses.map((course, index) => (
               <div

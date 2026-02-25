@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import connectDB from './config/db.js';
@@ -8,8 +9,16 @@ import dataRoutes from './routes/dataRoutes.js';
 import trialRoutes from './routes/trialRoutes.js';
 import donationRoutes from './routes/donationRoutes.js';
 import queryRoutes from './routes/queryRoutes.js';
+import studentRoutes from './routes/studentRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Donation receipt uploads – folder ensure karo taake multer fail na ho
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 const app = express();
 
@@ -32,6 +41,8 @@ app.use('/api/items', dataRoutes);
 app.use('/api/trials', trialRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/queries', queryRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

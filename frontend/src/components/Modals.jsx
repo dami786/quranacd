@@ -125,8 +125,8 @@ export function ItemFormModal({ open, onClose, onSubmit, initialValues, loading 
           step="0.01"
           min="0"
           required
-          defaultValue={initialValues?.price}
-          placeholder="30"
+          defaultValue={initialValues?.price ?? 0}
+          placeholder="0"
         />
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="outlinePrimary" onClick={onClose}>

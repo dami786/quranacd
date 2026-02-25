@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaBookOpen } from 'react-icons/fa';
 import { HiArrowLeft, HiAcademicCap } from 'react-icons/hi';
 import Seo from '../components/Seo';
-import { getItemById, getCourseImageUrl } from '../services/api';
+import { getCourseImageUrl } from '../services/api';
 import { Button } from '../components/Buttons';
 import { manualCourses } from '../data/courses';
 
@@ -12,7 +12,6 @@ export default function Details() {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isManual, setIsManual] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -24,19 +23,11 @@ export default function Details() {
         titleEn: course.titleEn,
         description: course.description,
         image: course.image,
-        price: null,
       });
-      setIsManual(true);
-      setLoading(false);
-      return;
+    } else {
+      setError('Course not found.');
     }
-    getItemById(id)
-      .then((res) => {
-        setItem(res.data);
-        setIsManual(false);
-      })
-      .catch((err) => setError(err.response?.data?.message || 'Course not found.'))
-      .finally(() => setLoading(false));
+    setLoading(false);
   }, [id]);
 
   if (loading) {
@@ -70,6 +61,9 @@ export default function Details() {
     ...(origin && imageUrl && { image: imageUrl.startsWith('http') ? imageUrl : `${origin}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}` }),
   };
 
+  const index = parseInt(id, 10);
+  const relatedCourses = manualCourses.filter((_, i) => i !== index);
+
   return (
     <div className="min-h-screen bg-white py-14">
       <Seo title={item.title} description={metaDesc} image={imageUrl || undefined} canonicalPath={`/details/${id}`} schema={courseSchema} />
@@ -87,11 +81,6 @@ export default function Details() {
             </div>
           )}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.title}</h1>
-          {item.price != null && (
-            <p className="text-primary font-semibold text-lg mb-4 animate-fade-in-up animate-delay-200 opacity-0 flex items-center gap-2" style={{ animationFillMode: 'forwards' }}>
-              <HiAcademicCap className="w-5 h-5" /> ${Number(item.price).toFixed(2)}/month
-            </p>
-          )}
           <p className="text-gray-600 leading-relaxed whitespace-pre-wrap animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.description}</p>
           <div className="mt-8 flex flex-wrap gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
             <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
@@ -102,21 +91,19 @@ export default function Details() {
             </Button>
           </div>
 
-          {/* Related courses – nichay, current ke ilawa baaki courses */}
-          {manualCourses.length > 1 && (
+          {relatedCourses.length > 0 && (
             <section className="mt-16 pt-12 border-t border-gray-200">
               <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                 <HiAcademicCap className="w-6 h-6 text-primary" /> Related Courses
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 -mx-1">
-                {manualCourses.map((course, index) => {
-                  const currentManualIndex = isManual && !Number.isNaN(parseInt(id, 10)) ? parseInt(id, 10) : -1;
-                  if (index === currentManualIndex) return null;
+                {manualCourses.map((course, i) => {
+                  if (i === index) return null;
                   const courseImage = getCourseImageUrl(course);
                   return (
                     <Link
                       key={course.titleEn}
-                      to={`/details/${index}`}
+                      to={`/details/${i}`}
                       className="group block bg-bg-alt rounded-xl border border-gray-200 overflow-hidden hover:shadow-card-hover hover:border-primary/30 transition-all duration-300"
                     >
                       <div className="h-36 w-full overflow-hidden bg-gray-200">

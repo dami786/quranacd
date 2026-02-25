@@ -46,6 +46,7 @@ export const getItemById = (id) => api.get(`/items/${id}`);
 export const createItem = (data) => api.post('/items', data);
 export const updateItem = (id, data) => api.put(`/items/${id}`, data);
 export const deleteItem = (id) => api.delete(`/items/${id}`);
+export const seedItems = () => api.post('/items/seed');
 
 // Trials / Free trial & query submissions (POST public, GET superadmin)
 export const submitTrial = (data) => api.post('/trials', data);

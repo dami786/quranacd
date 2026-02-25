@@ -17,11 +17,7 @@ const itemSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
-    price: {
-      type: Number,
-      required: [true, 'Price is required'],
-      min: 0,
-    },
+    price: { type: Number, min: 0, default: 0 },
   },
   { timestamps: true }
 );
