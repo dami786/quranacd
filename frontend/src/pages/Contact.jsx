@@ -23,6 +23,7 @@ export default function Contact() {
   const packageFromUrl = searchParams.get('pkg') || '';
   const isEnrollment = sourceFromUrl === 'enrollment';
   const isPackages = sourceFromUrl === 'packages';
+  const showCourseField = isEnrollment || isPackages;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [selectedCourse, setSelectedCourse] = useState('Select Course');
@@ -30,11 +31,17 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
-    setLoading(true);
     const form = e.target;
     const courseVal = form.course?.value?.trim() || '';
     const otherText = form.courseOther?.value?.trim() || '';
     let messageVal = form.message?.value?.trim() || '';
+
+    if (isEnrollment && (!courseVal || courseVal === 'Select Course')) {
+      setMessage({ type: 'error', text: 'Please select a course for enrollment.' });
+      return;
+    }
+
+    setLoading(true);
     if (courseVal === 'Any other' && otherText) {
       messageVal = (messageVal ? messageVal + '\n\n' : '') + 'Course/Subject requested: ' + otherText;
     }
@@ -105,28 +112,31 @@ export default function Contact() {
           onSubmit={handleSubmit}
           className="max-w-xl mx-auto space-y-4"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 ${showCourseField ? 'sm:grid-cols-2' : ''} gap-4`}>
             <Input label="Your Name" name="name" required placeholder="Your name" />
             <Input label="Your Email" name="email" type="email" required placeholder="your@email.com" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Phone / WhatsApp" name="phone" type="tel" placeholder="+92 312 4810000" />
-            <div className="space-y-2">
-              <Select
-                label="Select Course"
-                name="course"
-                options={courseOptions}
-                value={selectedCourse}
-                onChange={(e) => setSelectedCourse(e.target.value)}
-              />
-              {selectedCourse === 'Any other' && (
-                <Input
-                  label="Specify what you want to learn"
-                  name="courseOther"
-                  placeholder="e.g. Arabic language, specific Surah, etc."
+            {showCourseField && (
+              <div className="space-y-2">
+                <Select
+                  label={isEnrollment ? 'Select Course (required)' : 'Select Course'}
+                  name="course"
+                  options={courseOptions}
+                  value={selectedCourse}
+                  onChange={(e) => setSelectedCourse(e.target.value)}
+                  required={isEnrollment}
                 />
-              )}
-            </div>
+                {selectedCourse === 'Any other' && (
+                  <Input
+                    label="Specify what you want to learn"
+                    name="courseOther"
+                    placeholder="e.g. Arabic language, specific Surah, etc."
+                  />
+                )}
+              </div>
+            )}
           </div>
           <Textarea label="Your Message" name="message" rows={4} placeholder="Your message..." />
           {message.text && (

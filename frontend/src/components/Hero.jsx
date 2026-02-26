@@ -134,8 +134,8 @@ export default function Hero() {
         </div>
       ))}
 
-      {/* Slider dots - neeche */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      {/* Slider dots - neeche (thoda aur bottom ke kareeb) */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {slides.map((_, i) => (
           <button
             key={i}

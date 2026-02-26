@@ -148,9 +148,16 @@ function getCurrentTranslateLabel() {
   return found ? found.label : 'Language';
 }
 
+const BRAND_LINE1 = 'Babul Quran';
+const BRAND_LINE2 = 'Knowledge & Faith';
+const TYPING_DELAY_MS = 85;
+const DELAY_BEFORE_LINE2_MS = 200;
+
 export default function Navbar() {
   const [leftMenuOpen, setLeftMenuOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
+  const [typedLen1, setTypedLen1] = useState(0);
+  const [typedLen2, setTypedLen2] = useState(0);
   const location = useLocation();
   const { pathname, hash } = location;
   const isHome = pathname === '/';
@@ -159,6 +166,22 @@ export default function Navbar() {
   const isZakat = pathname === '/' && hash === '#zakat-donation';
   const isContact = pathname === '/contact';
   const isPrivacy = pathname === '/privacy-policy';
+
+  // Typing effect for brand text (no cursor)
+  useEffect(() => {
+    if (typedLen1 < BRAND_LINE1.length) {
+      const t = setTimeout(() => setTypedLen1((n) => n + 1), TYPING_DELAY_MS);
+      return () => clearTimeout(t);
+    }
+    if (typedLen1 === BRAND_LINE1.length && typedLen2 < BRAND_LINE2.length) {
+      const t = setTimeout(
+        () => setTypedLen2((n) => n + 1),
+        typedLen2 === 0 ? DELAY_BEFORE_LINE2_MS : TYPING_DELAY_MS
+      );
+      return () => clearTimeout(t);
+    }
+  }, [typedLen1, typedLen2]);
+
   const navLinkBase = 'px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-1.5';
   const navLinkActive = 'bg-primary/15 text-primary';
   const navLinkInactive = 'hover:bg-bg-alt hover:text-primary text-gray-800';
@@ -318,8 +341,18 @@ export default function Navbar() {
             >
               <HiMenu className="w-6 h-6 text-gray-700" />
             </button>
-            <Link to="/" className="hidden md:inline-block text-xl font-bold text-primary whitespace-nowrap hover:text-primary-dark transition-colors">
-              Babul Quran
+            <Link to="/" className="hidden md:inline-flex items-center gap-2 shrink-0 select-none" style={{ caretColor: 'transparent' }}>
+              <img
+                src={`/images/${encodeURIComponent('WhatsApp Image 2026-02-26 at 10.00.07 PM.jpeg')}`}
+                alt="Babul Quran Academy"
+                className="h-9 w-9 object-contain drop-shadow-sm"
+                loading="eager"
+                decoding="async"
+              />
+              <div className="flex flex-col items-start leading-tight w-[140px]">
+                <span className="text-sm font-bold text-primary tracking-tight" aria-hidden>{BRAND_LINE1.slice(0, typedLen1)}</span>
+                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider hidden lg:inline min-h-[12px]" aria-hidden>{BRAND_LINE2.slice(0, typedLen2)}</span>
+              </div>
             </Link>
           </div>
 
@@ -337,8 +370,15 @@ export default function Navbar() {
 
           {/* Mobile: logo in flex middle so it doesn't overlap the button */}
           <div className="flex-1 min-w-0 flex justify-center md:hidden overflow-hidden">
-            <Link to="/" className="text-base font-bold text-primary whitespace-nowrap hover:text-primary-dark transition-colors truncate">
-              Babul Quran
+            <Link to="/" className="inline-flex items-center gap-1.5 shrink-0 select-none" style={{ caretColor: 'transparent' }}>
+              <img
+                src={`/images/${encodeURIComponent('WhatsApp Image 2026-02-26 at 10.00.07 PM.jpeg')}`}
+                alt="Babul Quran Academy"
+                className="h-8 w-8 object-contain drop-shadow-sm"
+                loading="eager"
+                decoding="async"
+              />
+              <span className="text-xs font-bold text-primary tracking-tight leading-none" aria-hidden>{BRAND_LINE1.slice(0, typedLen1)}</span>
             </Link>
           </div>
 
