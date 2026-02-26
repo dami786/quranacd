@@ -1,4 +1,5 @@
 import Student from '../models/Student.js';
+import Attendance from '../models/Attendance.js';
 
 // Student add karo (roll number + name)
 export const createStudent = async (req, res) => {
@@ -29,6 +30,22 @@ export const getStudents = async (req, res) => {
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to fetch students.' });
+  }
+};
+
+// Student delete karo (uski attendance bhi saath mein delete ho jati hai)
+export const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const student = await Student.findByIdAndDelete(id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+    await Attendance.deleteMany({ student: id });
+    res.json({ message: 'Student deleted.' });
+  } catch (error) {
+    if (error.name === 'CastError') return res.status(404).json({ message: 'Student not found.' });
+    res.status(500).json({ message: error.message || 'Failed to delete student.' });
   }
 };
 
