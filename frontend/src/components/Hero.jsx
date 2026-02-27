@@ -54,7 +54,7 @@ const slides = [
     image: '/images/gh.jpg',
     sub: 'From Home, Anywhere',
     title: 'Flexible Schedule, Steady Progress',
-    tag: 'Four classes per month. Book your free trial and begin your journey today.',
+    tag: 'Study from home at times that suit your family. Join our online Quran classes and start your free 3-day trial today.',
   },
 ];
 

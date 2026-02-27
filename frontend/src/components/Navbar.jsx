@@ -286,7 +286,8 @@ export default function Navbar() {
       <div id="navbar-top-bar" className="bg-primary-dark text-white py-1.5 text-sm">
         <div className="max-w-container mx-auto px-5 flex flex-wrap items-center justify-center md:justify-between gap-4">
           {/* Translator - box ke andar; button click pe Google dropdown open */}
-          <div className="relative">
+          <div className="relative flex items-center gap-2">
+            <span className="hidden sm:inline text-xs text-white/80">Select language:</span>
             <button
               type="button"
               onClick={() => setTranslateOpen((o) => !o)}

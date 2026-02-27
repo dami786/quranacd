@@ -28,8 +28,8 @@ const teacherSlides = [
     image: '/images/teacher.jpg',
     heading: 'Meet Our Inspiring Online Quran Teacher Experts',
     intro: 'Discover a profound connection with the Quran through our dedicated Online Quran Teacher experts. Our instructors are committed to nurturing your spiritual growth.',
-    boxTitle: 'Four Classes per Month – Steady Progress, Lasting Impact',
-    boxText: "Consistency is the key to success. With four classes scheduled per month, you'll experience steady advancement.",
+    boxTitle: 'Gentle, Regular Classes – Step-by-Step Learning',
+    boxText: 'Your Quran journey grows with small, consistent steps. With our regular online classes, feedback, and encouragement, you build strong Tajweed and understanding without feeling rushed.',
   },
   {
     image: '/images/gh.jpg',
