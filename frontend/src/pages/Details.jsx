@@ -81,7 +81,16 @@ export default function Details() {
             </div>
           )}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.title}</h1>
-          <p className="text-gray-600 leading-relaxed whitespace-pre-wrap animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>{item.description}</p>
+          <p className="text-gray-600 leading-relaxed whitespace-pre-wrap animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            {item.description}
+          </p>
+          <p className="mt-4 text-gray-600 leading-relaxed animate-fade-in-up animate-delay-350 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            In this course you will study in one-to-one online classes with qualified teachers, following a structured plan of new lessons, revision and regular
+            feedback. Flexible timings allow you to choose slots that match your routine and time zone, while homework and practice ensure that you remember what
+            you learn and slowly build a strong, lifelong connection with the Quran. Classes are kept interactive and encouraging so that children and adults
+            both stay motivated, ask questions openly, and feel confident in their recitation and understanding. From the very first lesson, our aim is that
+            every student feels supported, progresses step by step, and sees real improvement in their Quran journey.
+          </p>
           <div className="mt-8 flex flex-wrap gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
             <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
               <HiAcademicCap className="w-4 h-4" /> Enroll Now

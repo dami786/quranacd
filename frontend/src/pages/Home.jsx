@@ -553,8 +553,8 @@ export default function Home() {
                   </Link>
                   <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-4 line-clamp-2">{course.description}</p>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button to="/contact?source=enrollment" variant="primary" className="w-fit text-sm">
-                      Enroll Now
+                    <Button to={`/details/${index}`} variant="primary" className="w-fit text-sm">
+                      View Detail
                     </Button>
                   </div>
                 </div>

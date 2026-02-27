@@ -370,7 +370,7 @@ export default function Navbar() {
 
           {/* Mobile: logo in flex middle so it doesn't overlap the button */}
           <div className="flex-1 min-w-0 flex justify-center md:hidden overflow-hidden">
-            <Link to="/" className="inline-flex items-center gap-1.5 shrink-0 select-none" style={{ caretColor: 'transparent' }}>
+            <Link to="/" className="inline-flex flex-col items-center gap-1 shrink-0 select-none" style={{ caretColor: 'transparent' }}>
               <img
                 src={`/images/${encodeURIComponent('WhatsApp Image 2026-02-26 at 10.00.07 PM.jpeg')}`}
                 alt="Babul Quran Academy"
@@ -378,7 +378,9 @@ export default function Navbar() {
                 loading="eager"
                 decoding="async"
               />
-              <span className="text-xs font-bold text-primary tracking-tight leading-none" aria-hidden>{BRAND_LINE1.slice(0, typedLen1)}</span>
+              <span className="text-[11px] font-bold text-primary tracking-tight leading-none mt-0.5 text-center" aria-hidden>
+                {BRAND_LINE1.slice(0, typedLen1)}
+              </span>
             </Link>
           </div>
 
@@ -395,7 +397,7 @@ export default function Navbar() {
 
       {/* Mobile: fixed bottom nav – Home, About Us, Courses + Profile (when logged in) */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] rounded-tr-2xl"
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-around h-14 px-1">
