@@ -190,11 +190,24 @@ export default function Profile() {
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-gray-600 text-sm font-medium">Status:</span>
-                  <span className={`inline-block px-3 py-1.5 rounded-lg text-sm font-semibold ${
-                    inquiry.status === 'pro' ? 'bg-green-100 text-green-800' :
-                    inquiry.status === 'free_trial' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'
-                  }`}>
-                    {inquiry.status === 'pro' ? 'Pro Plan' : inquiry.status === 'free_trial' ? 'Free Trial' : 'Pending'}
+                  <span
+                    className={`inline-block px-3 py-1.5 rounded-lg text-sm font-semibold ${
+                      inquiry.status === 'approved'
+                        ? 'bg-green-100 text-green-800'
+                        : inquiry.status === 'rejected'
+                        ? 'bg-red-100 text-red-800'
+                        : inquiry.status === 'free_trial'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {inquiry.status === 'approved'
+                      ? 'Approved'
+                      : inquiry.status === 'rejected'
+                      ? 'Rejected'
+                      : inquiry.status === 'free_trial'
+                      ? 'Free Trial'
+                      : 'Pending'}
                   </span>
                 </div>
                 <dl className="grid gap-2 text-sm border-t border-gray-100 pt-4">
@@ -224,7 +237,8 @@ export default function Profile() {
                   )}
                 </dl>
                 <p className="text-gray-600 text-sm pt-1">
-                  {inquiry.status === 'pro' && 'You are on a Pro plan. Enjoy full access to courses.'}
+                  {inquiry.status === 'approved' && 'Your request has been approved. We will contact you with further details.'}
+                  {inquiry.status === 'rejected' && 'Your request was reviewed and could not be approved at this time.'}
                   {inquiry.status === 'free_trial' && (
                     <span className="inline-block mt-1 px-4 py-2.5 rounded-lg bg-primary/25 backdrop-blur-md border border-primary/40 text-primary-dark font-medium shadow-sm">
                       Your free trial is active. We will contact you for classes.

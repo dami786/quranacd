@@ -7,7 +7,8 @@ const trialSchema = new mongoose.Schema(
     phone: { type: String, default: '', trim: true },
     course: { type: String, default: '', trim: true },
     message: { type: String, default: '', trim: true },
-    status: { type: String, enum: ['pending', 'free_trial', 'pro'], default: 'pending' },
+    // Status: pending (new), approved (accepted), rejected, or free_trial (for free trial submissions)
+    status: { type: String, enum: ['pending', 'approved', 'rejected', 'free_trial'], default: 'pending' },
     // source: kis button/flow se aaya (free_trial, enrollment, register_now, quick_admission, contact)
     source: {
       type: String,

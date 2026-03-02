@@ -565,7 +565,7 @@ export default function Home() {
             {/* Know More – in courses ke ilawa parhna/janana ho to contact pe */}
             <div>
               <p className="text-gray-600 mb-3">Want to study something else or need more information?</p>
-              <Button to="/contact?source=knowmore" variant="outlinePrimary" className="px-6 py-3">
+              <Button to="/contact?source=knowmore" variant="outlinePrimary" className="px-6 py-3 hover:text-white">
                 Know More
               </Button>
             </div>

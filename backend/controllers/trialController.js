@@ -61,6 +61,16 @@ export const getTrials = async (req, res) => {
   }
 };
 
+// Only "Register Now" submissions – dashboard me alag page ke liye
+export const getRegisterNowTrials = async (req, res) => {
+  try {
+    const trials = await Trial.find({ source: 'register_now' }).sort({ createdAt: -1 });
+    res.json(trials);
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Failed to fetch register-now inquiries.' });
+  }
+};
+
 // Logged-in user's own inquiry (by email)
 export const getMyTrial = async (req, res) => {
   try {
@@ -85,8 +95,8 @@ export const updateTrialStatus = async (req, res) => {
       });
     }
     const { status } = req.body;
-    if (!['pending', 'free_trial', 'pro'].includes(status)) {
-      return res.status(400).json({ message: 'Invalid status. Use pending, free_trial, or pro.' });
+    if (!['pending', 'approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Use pending, approved, or rejected.' });
     }
     trial.status = status;
     await trial.save();
