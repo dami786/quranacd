@@ -149,7 +149,7 @@ export default function Home() {
     'courses': 'We offer Noorani Qaida, Quran recitation, Tajweed, Tafseer, Memorization and Islamic Studies. All details and trial form are on the Courses and Contact pages.',
     'trial': 'You get 3 days of free one-to-one online Quran classes. Just fill the Contact form or WhatsApp us and we will schedule your trial.',
     'fee': 'Our standard fee is USD $30 per month for one-to-one classes (30 minutes, four classes per month).',
-    'contact': 'You can contact us via the Contact page form, email babulquranacademy1@gmail.com or WhatsApp +92 312 4810000.',
+    'contact': 'You can contact us via the Contact page form, email babulquranacademy1@gmail.com or WhatsApp +92 348 0709058.',
   };
 
   // --- chatbot: quick Q&A + send query (commented out) ---
@@ -759,7 +759,7 @@ export default function Home() {
       {createPortal(
         <>
           <a
-            href="https://wa.me/923124810000"
+            href="https://wa.me/923480709058"
             target="_blank"
             rel="noopener noreferrer"
             className="fixed bottom-20 left-4 md:bottom-6 md:left-6 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 md:px-5 md:py-3 rounded-full shadow-card flex items-center gap-2 font-semibold z-50 transition-all hover:scale-105 hover:shadow-card-hover text-sm md:text-base"

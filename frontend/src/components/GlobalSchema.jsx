@@ -20,7 +20,7 @@ export default function GlobalSchema() {
     logo,
     description: `Learn Quran online with ${SITE_NAME}. Free trial, qualified teachers, flexible schedule. Noorani Qaida, Tajweed, Hifz, Tafseer and more.`,
     email: 'babulquranacademy1@gmail.com',
-    telephone: '+923124810000',
+    telephone: '+923480709058',
     sameAs: [
       'https://www.facebook.com',
       'https://www.instagram.com',

@@ -40,12 +40,12 @@ export default function About() {
           <div className="rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-md p-6 flex flex-col sm:flex-row items-center gap-6">
             <img
               src={`/images/${encodeURIComponent('WhatsApp Image 2026-02-26 at 10.00.24 PM.jpeg')}`}
-              alt="Qari Abid – Founder of Babul Quran"
+              alt="Qari Muhammad Abid – Founder of Babul Quran"
               className="w-44 h-44 sm:w-52 sm:h-52 rounded-xl object-cover shrink-0"
             />
             <div className="text-center sm:text-left">
               <p className="text-sm font-medium text-primary uppercase tracking-wide mb-1">Founder</p>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Qari Abid</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Qari Muhammad Abid</h2>
               <p className="text-gray-600 mt-2">Founder of Babul Quran Academy</p>
             </div>
           </div>

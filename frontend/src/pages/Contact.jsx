@@ -117,7 +117,7 @@ export default function Contact() {
             <Input label="Your Email" name="email" type="email" required placeholder="your@email.com" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input label="Phone / WhatsApp" name="phone" type="tel" placeholder="+92 312 4810000" />
+            <Input label="Phone / WhatsApp" name="phone" type="tel" placeholder="+92 348 0709058" />
             {showCourseField && (
               <div className="space-y-2">
                 <Select

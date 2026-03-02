@@ -97,10 +97,10 @@ export default function Footer() {
           <div className="opacity-0 animate-fade-in-up animate-delay-300" style={{ animationFillMode: 'forwards' }}>
             <h4 className="text-white font-semibold text-lg mb-3">Get in touch</h4>
             <p className="flex items-center gap-2 mb-2">
-              <FaPhone className="w-4 h-4 text-primary-light flex-shrink-0" /> +923124810000
+              <FaPhone className="w-4 h-4 text-primary-light flex-shrink-0" /> +923480709058
             </p>
             <p className="flex items-center gap-2 mb-2">
-              <FaWhatsapp className="w-4 h-4 text-green-400 flex-shrink-0" /> +923124810000
+              <FaWhatsapp className="w-4 h-4 text-green-400 flex-shrink-0" /> +923480709058
             </p>
             <a
               href="mailto:babulquranacademy1@gmail.com"

@@ -98,7 +98,7 @@ export default function PrivacyPolicy() {
               </p>
               <p className="mt-2">
                 <strong>Email:</strong> babulquranacademy1@gmail.com<br />
-                <strong>Phone / WhatsApp:</strong> +923124810000
+                <strong>Phone / WhatsApp:</strong> +923480709058
               </p>
             </section>
           </div>

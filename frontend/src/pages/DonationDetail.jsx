@@ -236,7 +236,7 @@ const refLabel = donateType || DONATE_TYPE_OPTIONS[0];
               </div>
               <div className="rounded-lg bg-primary/10 border border-primary/30 p-4">
                 <p className="text-sm font-medium text-gray-700 mb-1">EasyPaisa number:</p>
-                <p className="text-xl font-bold text-primary">0312 4810000</p>
+                <p className="text-xl font-bold text-primary">0348 0709058</p>
                 <p className="text-xs text-gray-500 mt-1">
                   Send your amount to this number and mention &quot;{refLabel}&quot; in the reference.
                 </p>

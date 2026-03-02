@@ -322,9 +322,9 @@ export default function Navbar() {
               <HiMail className="w-4 h-4 flex-shrink-0" />
               <span className="hidden sm:inline">babulquranacademy1@gmail.com</span>
             </a>
-            <a href="tel:+923124810000" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+            <a href="tel:+923480709058" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
               <HiPhone className="w-4 h-4 flex-shrink-0" />
-              +923124810000
+              +923480709058
             </a>
           </div>
         </div>
