@@ -102,8 +102,8 @@ export default function Hero() {
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight animate-fade-in-up animate-delay-100" style={{ animationFillMode: 'forwards' }}>{slide.title}</h1>
               <p className="text-base md:text-lg mb-6 md:mb-8 opacity-95 max-w-2xl animate-fade-in-up animate-delay-200" style={{ animationFillMode: 'forwards' }}>{slide.tag}</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in-up animate-delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
-                <Button to="/contact" variant="primary">Register Now</Button>
-                <Button to="/contact" variant="outline" className="hover:text-primary">Start Free Trial</Button>
+                <Button to="/contact?source=register_now" variant="primary">Register Now</Button>
+                <Button to="/contact?source=free_trial" variant="outline" className="hover:text-primary">Start Free Trial</Button>
               </div>
             </div>
             {/* Mobile: 4 cards 2x2 neeche */}

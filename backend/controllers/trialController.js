@@ -9,13 +9,16 @@ export const submitTrial = async (req, res) => {
     const emailLower = String(email).trim().toLowerCase();
     const courseValue = (course || '').trim();
 
-    // Allow multiple inquiries overall, but sirf enrollment ke liye
+    const rawSource = (source || '').trim();
+    const isEnrollLike = ['enrollment', 'register_now', 'quick_admission'].includes(rawSource);
+
+    // Allow multiple inquiries overall, but sirf enrollment-type ke liye
     // ek email ek hi course ke liye dobara inquiry na bhej sake.
-    if (source === 'enrollment' && courseValue) {
+    if (isEnrollLike && courseValue) {
       const existingForCourse = await Trial.findOne({
         email: emailLower,
         course: courseValue,
-        source: 'enrollment',
+        source: { $in: ['enrollment', 'register_now', 'quick_admission'] },
       });
       if (existingForCourse) {
         return res.status(409).json({
@@ -23,10 +26,17 @@ export const submitTrial = async (req, res) => {
         });
       }
     }
-    const inquirySource = source === 'enrollment' ? 'enrollment' : 'free_trial';
-    // Free trial wali inquiries ka status by default 'free_trial' rakho;
-    // enrollment wali ko 'pending' hi rehne do (jab tak approve na karo).
-    const initialStatus = inquirySource === 'enrollment' ? 'pending' : 'free_trial';
+    // Source normalize: dashboard ke liye origin track karo
+    const inquirySource =
+      rawSource && ['free_trial', 'enrollment', 'register_now', 'quick_admission', 'contact'].includes(rawSource)
+        ? rawSource
+        : isEnrollLike
+        ? 'enrollment'
+        : 'free_trial';
+
+    // Free trial-type (button ya general) inquiries ka status by default 'free_trial' rakho;
+    // enrollment / register_now / quick_admission wali ko 'pending' hi rehne do (jab tak approve na karo).
+    const initialStatus = isEnrollLike ? 'pending' : 'free_trial';
     const trial = await Trial.create({
       name: name.trim(),
       email: emailLower,

@@ -642,7 +642,7 @@ export default function Home() {
             We are offering a free online Quran class. Delve into a personalized one-to-one, 30-minute class,
             tailored to your level and goals, all at absolutely no cost!
           </p>
-          <Button to="/contact?source=enrollment" variant="light">
+          <Button to="/contact?source=quick_admission" variant="light">
             Quick Admission
           </Button>
         </div>

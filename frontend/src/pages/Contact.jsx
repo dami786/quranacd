@@ -26,8 +26,11 @@ export default function Contact() {
   const courseFromUrl = searchParams.get('course') || '';
   const isFreeTrial = sourceFromUrl === 'free_trial';
   const isEnrollment = sourceFromUrl === 'enrollment';
+  const isRegisterNow = sourceFromUrl === 'register_now';
+  const isQuickAdmission = sourceFromUrl === 'quick_admission';
+  const isEnrollmentLike = ['enrollment', 'register_now', 'quick_admission'].includes(sourceFromUrl);
   const isPackages = sourceFromUrl === 'packages';
-  const showCourseField = isEnrollment || isPackages;
+  const showCourseField = isEnrollmentLike || isPackages;
   const lockedCourse = Boolean(courseFromUrl);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -42,7 +45,7 @@ export default function Contact() {
     const otherText = form.courseOther?.value?.trim() || '';
     let messageVal = form.message?.value?.trim() || '';
 
-    if (isEnrollment && (!courseVal || courseVal === 'Select Course')) {
+    if (isEnrollmentLike && (!courseVal || courseVal === 'Select Course')) {
       setMessage({ type: 'error', text: 'Please select a course for enrollment.' });
       return;
     }
@@ -56,7 +59,7 @@ export default function Contact() {
     const phone = form.phone?.value?.trim() || '';
     const effectivePackage = (form.package?.value?.trim() || selectedPackage || packageFromUrl || '').trim();
 
-    const trialSource = isEnrollment ? 'enrollment' : isFreeTrial ? 'free_trial' : 'contact';
+    const trialSource = sourceFromUrl || (isEnrollmentLike ? 'enrollment' : isFreeTrial ? 'free_trial' : 'contact');
 
     const trialPayload = {
       name,
@@ -82,15 +85,22 @@ export default function Contact() {
 
     request
       .then(() => {
-        if (isFreeTrial && localStorage.getItem('token')) {
+        if (isFreeTrial) {
           localStorage.setItem('hasInquiry', 'true');
           window.dispatchEvent(new Event('inquiry-change'));
         }
-        const successText = isEnrollment
-          ? 'Thank you! Your enrollment enquiry has been received. We will contact you soon.'
-          : isPackages
-          ? 'Thank you! Your package enquiry has been received. We will contact you soon.'
-          : 'Thank you! Your inquiry has been received. We will contact you soon for your free trial.';
+        let successText = 'Thank you! Your inquiry has been received. We will contact you soon.';
+        if (isRegisterNow) {
+          successText = 'Thank you! Your registration request has been received. We will contact you soon to confirm your classes.';
+        } else if (isQuickAdmission) {
+          successText = 'Thank you! Your quick admission request has been received. We will contact you soon.';
+        } else if (isEnrollment) {
+          successText = 'Thank you! Your enrollment enquiry has been received. We will contact you soon.';
+        } else if (isPackages) {
+          successText = 'Thank you! Your package enquiry has been received. We will contact you soon.';
+        } else if (isFreeTrial) {
+          successText = 'Thank you! Your inquiry has been received. We will contact you soon for your free trial.';
+        }
         setMessage({ type: 'success', text: successText });
         form.reset();
         setSelectedCourse('Select Course');
@@ -111,10 +121,13 @@ export default function Contact() {
       />
       <section className="py-14 md:py-16 max-w-container mx-auto px-5">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 text-center animate-fade-in-up flex items-center justify-center gap-2">
-          <FaEnvelope className="w-9 h-9 text-primary" /> {sourceFromUrl === 'enrollment' ? 'Enroll / Get Admission' : 'Get in Touch'}
+          <FaEnvelope className="w-9 h-9 text-primary" />{' '}
+          {isRegisterNow ? 'Register Now' : isEnrollment || isQuickAdmission ? 'Enroll / Get Admission' : 'Get in Touch'}
         </h1>
         <p className="text-gray-600 text-center max-w-xl mx-auto mb-10 animate-fade-in-up animate-delay-100 opacity-0" style={{ animationFillMode: 'forwards' }}>
-          {sourceFromUrl === 'enrollment'
+          {isRegisterNow
+            ? 'Complete the form below to register for your preferred course. Our team will contact you to confirm your schedule and details.'
+            : isEnrollment || isQuickAdmission
             ? 'Complete the form below to enroll in a course or get admission. Our team will contact you to schedule your classes.'
             : 'Send Inquiry – Experience the convenience of learning Quran online. Complete the form and our team will assist you in scheduling your trial classes.'}
         </p>
@@ -143,12 +156,12 @@ export default function Contact() {
                 ) : (
                   <>
                     <Select
-                      label={isEnrollment ? 'Select Course (required)' : 'Select Course'}
+                      label={isEnrollmentLike ? 'Select Course (required)' : 'Select Course'}
                       name="course"
                       options={courseOptions}
                       value={selectedCourse}
                       onChange={(e) => setSelectedCourse(e.target.value)}
-                      required={isEnrollment}
+                      required={isEnrollmentLike}
                     />
                     {selectedCourse === 'Any other' && (
                       <Input
@@ -162,7 +175,7 @@ export default function Contact() {
               </div>
             )}
           </div>
-          {(isEnrollment || isPackages) && (
+          {(isEnrollmentLike || isPackages) && (
             <div className="space-y-2">
               <p className="text-sm font-medium text-gray-700">Select Package (optional)</p>
               <div className="flex flex-wrap gap-3">
@@ -188,8 +201,24 @@ export default function Contact() {
               {message.text}
             </p>
           )}
+          {(() => {
+            if (loading) return null;
+            if (isRegisterNow) return null;
+            return null;
+          })()}
           <Button type="submit" variant="primary" className="w-full inline-flex items-center justify-center gap-2" disabled={loading}>
-            <FaPaperPlane className="w-4 h-4" /> {loading ? 'Sending...' : sourceFromUrl === 'enrollment' ? 'Submit Enquiry' : 'Send Inquiry / Start Free Trial'}
+            <FaPaperPlane className="w-4 h-4" />{' '}
+            {loading
+              ? 'Sending...'
+              : isRegisterNow
+              ? 'Register Now'
+              : isEnrollment || isQuickAdmission
+              ? 'Submit Enquiry'
+              : isPackages
+              ? 'Send Package Enquiry'
+              : isFreeTrial
+              ? 'Send Inquiry / Start Free Trial'
+              : 'Send Inquiry'}
           </Button>
         </form>
       </section>
