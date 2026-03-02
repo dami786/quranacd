@@ -7,11 +7,21 @@ export const submitTrial = async (req, res) => {
       return res.status(400).json({ message: 'Name and email are required.' });
     }
     const emailLower = String(email).trim().toLowerCase();
-    const existing = await Trial.findOne({ email: emailLower });
-    if (existing) {
-      return res.status(409).json({
-        message: 'An inquiry has already been submitted with this email. We will contact you soon for your free trial.',
+    const courseValue = (course || '').trim();
+
+    // Allow multiple inquiries overall, but sirf enrollment ke liye
+    // ek email ek hi course ke liye dobara inquiry na bhej sake.
+    if (source === 'enrollment' && courseValue) {
+      const existingForCourse = await Trial.findOne({
+        email: emailLower,
+        course: courseValue,
+        source: 'enrollment',
       });
+      if (existingForCourse) {
+        return res.status(409).json({
+          message: 'You have already submitted an enrollment enquiry for this course. We will contact you soon.',
+        });
+      }
     }
     const inquirySource = source === 'enrollment' ? 'enrollment' : 'free_trial';
     // Free trial wali inquiries ka status by default 'free_trial' rakho;
@@ -21,7 +31,7 @@ export const submitTrial = async (req, res) => {
       name: name.trim(),
       email: emailLower,
       phone: phone || '',
-      course: course || '',
+      course: courseValue,
       message: message || '',
       source: inquirySource,
       status: initialStatus,

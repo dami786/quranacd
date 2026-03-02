@@ -49,7 +49,7 @@ export default function StepsSection() {
         <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-8 animate-fade-in-up animate-delay-200 opacity-0" style={{ animationFillMode: 'forwards' }} />
         {/* 3 Step Cards – same hover as Why Choose Babul Quran: accent line, shadow, icon gradient, title color */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {steps.map(({ step, title, description, cta, Icon }, idx) => (
+          {steps.map(({ step, title, description, Icon }, idx) => (
             <div
               key={step}
               className="group bg-white rounded-2xl p-6 md:p-8 flex flex-col items-center text-center shadow-sm border border-gray-100 opacity-0 animate-fade-in-up relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-primary/20 hover:-translate-y-1"
@@ -62,15 +62,17 @@ export default function StepsSection() {
               </div>
               <span className="text-gray-800 font-bold text-sm uppercase tracking-wide mb-2">{step}</span>
               <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3 group-hover:text-primary transition-colors duration-300">{title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{description}</p>
-              <Link
-                to={cta === 'Quick Admission' ? '/contact?source=enrollment' : '/contact'}
-                className="inline-block w-full max-w-[200px] py-3 px-5 rounded-lg font-semibold text-white text-center bg-primary-dark hover:bg-primary transition-colors duration-300"
-              >
-                {cta}
-              </Link>
+              <p className="text-gray-600 text-sm leading-relaxed mb-2 flex-1">{description}</p>
             </div>
           ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Link
+            to="/contact"
+            className="inline-block w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-white text-center bg-primary-dark hover:bg-primary transition-colors duration-300"
+          >
+            Send Inquiry / Start Free Trial
+          </Link>
         </div>
       </div>
     </section>

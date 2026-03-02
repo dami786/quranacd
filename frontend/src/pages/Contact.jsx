@@ -17,22 +17,28 @@ const courseOptions = [
   'Any other',
 ];
 
+const packageOptions = ['Basic', 'Standard', 'Plus', 'Premium', 'Flexi'];
+
 export default function Contact() {
   const [searchParams] = useSearchParams();
   const sourceFromUrl = searchParams.get('source');
   const packageFromUrl = searchParams.get('pkg') || '';
+  const courseFromUrl = searchParams.get('course') || '';
+  const isFreeTrial = sourceFromUrl === 'free_trial';
   const isEnrollment = sourceFromUrl === 'enrollment';
   const isPackages = sourceFromUrl === 'packages';
   const showCourseField = isEnrollment || isPackages;
+  const lockedCourse = Boolean(courseFromUrl);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [selectedCourse, setSelectedCourse] = useState('Select Course');
+  const [selectedCourse, setSelectedCourse] = useState(courseFromUrl || 'Select Course');
+  const [selectedPackage, setSelectedPackage] = useState(packageFromUrl || '');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
     const form = e.target;
-    const courseVal = form.course?.value?.trim() || '';
+    const courseVal = form.course?.value?.trim() || courseFromUrl || '';
     const otherText = form.courseOther?.value?.trim() || '';
     let messageVal = form.message?.value?.trim() || '';
 
@@ -48,14 +54,18 @@ export default function Contact() {
     const name = form.name?.value?.trim() || '';
     const email = form.email?.value?.trim() || '';
     const phone = form.phone?.value?.trim() || '';
+    const effectivePackage = (form.package?.value?.trim() || selectedPackage || packageFromUrl || '').trim();
+
+    const trialSource = isEnrollment ? 'enrollment' : isFreeTrial ? 'free_trial' : 'contact';
 
     const trialPayload = {
       name,
       email,
       phone,
       course: courseVal,
+      package: effectivePackage,
       message: messageVal,
-      source: isEnrollment ? 'enrollment' : 'free_trial',
+      source: trialSource,
     };
 
     // Packages section se aaye hue enquiries Queries API pe jaayengi (package + course save hoga)
@@ -64,15 +74,15 @@ export default function Contact() {
           name,
           email,
           phone,
-          message: messageVal || `Package enquiry${packageFromUrl ? ` for ${packageFromUrl}` : ''}.`,
-          package: packageFromUrl,
+          message: messageVal || `Package enquiry${effectivePackage ? ` for ${effectivePackage}` : packageFromUrl ? ` for ${packageFromUrl}` : ''}.`,
+          package: effectivePackage || packageFromUrl,
           course: courseVal,
         })
       : submitTrial(trialPayload);
 
     request
       .then(() => {
-        if (localStorage.getItem('token')) {
+        if (isFreeTrial && localStorage.getItem('token')) {
           localStorage.setItem('hasInquiry', 'true');
           window.dispatchEvent(new Event('inquiry-change'));
         }
@@ -120,24 +130,58 @@ export default function Contact() {
             <Input label="Phone / WhatsApp" name="phone" type="tel" placeholder="+92 348 0709058" />
             {showCourseField && (
               <div className="space-y-2">
-                <Select
-                  label={isEnrollment ? 'Select Course (required)' : 'Select Course'}
-                  name="course"
-                  options={courseOptions}
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  required={isEnrollment}
-                />
-                {selectedCourse === 'Any other' && (
-                  <Input
-                    label="Specify what you want to learn"
-                    name="courseOther"
-                    placeholder="e.g. Arabic language, specific Surah, etc."
-                  />
+                {lockedCourse ? (
+                  <>
+                    <Input
+                      label="Selected Course"
+                      name="courseDisplay"
+                      value={courseFromUrl}
+                      readOnly
+                    />
+                    <input type="hidden" name="course" value={courseFromUrl} />
+                  </>
+                ) : (
+                  <>
+                    <Select
+                      label={isEnrollment ? 'Select Course (required)' : 'Select Course'}
+                      name="course"
+                      options={courseOptions}
+                      value={selectedCourse}
+                      onChange={(e) => setSelectedCourse(e.target.value)}
+                      required={isEnrollment}
+                    />
+                    {selectedCourse === 'Any other' && (
+                      <Input
+                        label="Specify what you want to learn"
+                        name="courseOther"
+                        placeholder="e.g. Arabic language, specific Surah, etc."
+                      />
+                    )}
+                  </>
                 )}
               </div>
             )}
           </div>
+          {(isEnrollment || isPackages) && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Select Package (optional)</p>
+              <div className="flex flex-wrap gap-3">
+                {packageOptions.map((pkg) => (
+                  <label key={pkg} className="inline-flex items-center gap-2 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 cursor-pointer hover:border-primary/60">
+                    <input
+                      type="radio"
+                      name="package"
+                      value={pkg}
+                      checked={selectedPackage === pkg}
+                      onChange={(e) => setSelectedPackage(e.target.value)}
+                      className="h-3.5 w-3.5 text-primary focus:ring-primary"
+                    />
+                    <span>{pkg}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <Textarea label="Your Message" name="message" rows={4} placeholder="Your message..." />
           {message.text && (
             <p className={`text-sm ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>

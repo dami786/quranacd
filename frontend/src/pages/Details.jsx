@@ -92,7 +92,7 @@ export default function Details() {
             every student feels supported, progresses step by step, and sees real improvement in their Quran journey.
           </p>
           <div className="mt-8 flex flex-wrap gap-3 animate-fade-in-up animate-delay-400 opacity-0" style={{ animationFillMode: 'forwards' }}>
-            <Button to="/contact?source=enrollment" variant="primary" className="inline-flex items-center gap-2">
+            <Button to={`/contact?source=enrollment&course=${encodeURIComponent(item.title)}`} variant="primary" className="inline-flex items-center gap-2">
               <HiAcademicCap className="w-4 h-4" /> Enroll Now
             </Button>
             <Button to="/#courses" variant="outlinePrimary" className="inline-flex items-center gap-2 hover:text-white">

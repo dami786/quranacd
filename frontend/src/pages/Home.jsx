@@ -427,22 +427,24 @@ export default function Home() {
             ].map((pkg, idx) => (
               <div
                 key={pkg.name}
-                className="bg-white rounded-2xl p-5 md:p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 text-center opacity-0 animate-fade-in-up flex flex-col min-h-[280px]"
+                className="bg-white rounded-2xl p-5 md:p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 text-center opacity-0 animate-fade-in-up flex flex-col min-h-[260px]"
                 style={{ animationDelay: `${80 * idx}ms`, animationFillMode: 'forwards' }}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3 text-xl font-bold">{pkg.icon}</div>
                 <h3 className="font-bold text-gray-800 text-lg mb-1">{pkg.name}</h3>
                 <p className="text-primary text-sm font-semibold mb-2">{pkg.days}</p>
                 <p className="text-gray-600 text-xs md:text-sm leading-relaxed flex-1">{pkg.desc}</p>
-                <Button
-                  to={`/contact?source=packages&pkg=${encodeURIComponent(pkg.name)}`}
-                  variant="primary"
-                  className="mt-4 w-full py-2 text-sm flex-shrink-0"
-                >
-                  Enquire
-                </Button>
               </div>
             ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Button
+              to="/contact?source=packages"
+              variant="primary"
+              className="px-6 py-3 text-sm md:text-base"
+            >
+              Enquire About Packages
+            </Button>
           </div>
         </div>
       </section>
@@ -552,21 +554,21 @@ export default function Home() {
                     {course.titleEn}
                   </Link>
                   <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-4 line-clamp-2">{course.description}</p>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button to={`/details/${index}`} variant="primary" className="w-fit text-sm">
-                      View Detail
-                    </Button>
-                  </div>
                 </div>
               </div>
             ))}
           </ScrollReveal>
-          {/* Know More – in courses ke ilawa parhna/janana ho to contact pe */}
-          <div className="mt-10 text-center">
-            <p className="text-gray-600 mb-4">Want to study something else or need more information?</p>
-            <Button to="/contact?source=knowmore" variant="primary" className="px-6 py-3">
-              Know More
+          <div className="mt-8 text-center flex flex-col items-center gap-4">
+            <Button to="/contact?source=enrollment" variant="primary" className="px-6 py-3">
+              Enroll Now
             </Button>
+            {/* Know More – in courses ke ilawa parhna/janana ho to contact pe */}
+            <div>
+              <p className="text-gray-600 mb-3">Want to study something else or need more information?</p>
+              <Button to="/contact?source=knowmore" variant="outlinePrimary" className="px-6 py-3">
+                Know More
+              </Button>
+            </div>
           </div>
         </div>
       </section>
