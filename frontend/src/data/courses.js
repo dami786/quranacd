@@ -10,7 +10,7 @@ export const manualCourses = [
     titleEn: 'Qiraat Sab\'ah Ashrah – 10 Imams',
     description:
       'Dedicated course for the ten authentic Qiraat styles (Sab\'ah + Ashrah). Study the readings of the famous Imams, understand their differences in pronunciation and wording, and practice each style with guidance. Ideal for advanced students who already know Tajweed and want to specialise in Qiraat.',
-    image: '/images/qiraat.jpg',
+    image: '/images/teacher.jpg',
   },
   {
     titleEn: 'Noorani Qaida',
