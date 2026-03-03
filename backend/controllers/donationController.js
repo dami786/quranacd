@@ -66,3 +66,17 @@ export const getDonations = async (req, res) => {
     res.status(500).json({ message: error.message || 'Failed to fetch donations.' });
   }
 };
+
+// Admin: delete a donation record (for dashboard)
+export const deleteDonation = async (req, res) => {
+  try {
+    const donation = await Donation.findByIdAndDelete(req.params.id);
+    if (!donation) return res.status(404).json({ message: 'Donation not found.' });
+    res.json({ message: 'Donation deleted.' });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: 'Donation not found.' });
+    }
+    res.status(500).json({ message: error.message || 'Failed to delete donation.' });
+  }
+};

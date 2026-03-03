@@ -101,12 +101,6 @@ export const updateTrialStatus = async (req, res) => {
   try {
     const trial = await Trial.findById(req.params.id);
     if (!trial) return res.status(404).json({ message: 'Inquiry not found.' });
-    // Free trial wale ka status change nahi – hamesha 'free_trial' hi rehna chahiye
-    if (trial.source === 'free_trial') {
-      return res.status(400).json({
-        message: 'Free trial inquiries have fixed status and cannot be changed.',
-      });
-    }
     const { status } = req.body;
     if (!['pending', 'approved', 'rejected'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status. Use pending, approved, or rejected.' });
