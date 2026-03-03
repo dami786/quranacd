@@ -1,4 +1,5 @@
 import Trial from '../models/Trial.js';
+import { createNotification } from './notificationController.js';
 
 export const submitTrial = async (req, res) => {
   try {
@@ -45,6 +46,18 @@ export const submitTrial = async (req, res) => {
       message: message || '',
       source: inquirySource,
       status: initialStatus,
+    });
+    // Notification: new trial / enrollment / register request
+    await createNotification({
+      type: 'trial',
+      refId: trial._id,
+      title:
+        inquirySource === 'free_trial'
+          ? 'New free trial request'
+          : 'New enrollment / registration request',
+      message: `${trial.name} (${trial.email}) requested ${courseValue || 'a course'} via ${inquirySource ||
+        'contact form'}.`,
+      source: inquirySource,
     });
     res.status(201).json(trial);
   } catch (error) {

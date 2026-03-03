@@ -1,4 +1,5 @@
 import Query from '../models/Query.js';
+import { createNotification } from './notificationController.js';
 
 export const submitQuery = async (req, res) => {
   try {
@@ -13,6 +14,13 @@ export const submitQuery = async (req, res) => {
       phone: phone ? String(phone).trim() : '',
       package: packageName ? String(packageName).trim() : '',
       course: course ? String(course).trim() : '',
+    });
+    await createNotification({
+      type: 'query',
+      refId: query._id,
+      title: 'New query received',
+      message: `${query.name} (${query.email}) sent a query about ${query.package || query.course || 'courses'}.`,
+      source: query.package || 'query',
     });
     res.status(201).json(query);
   } catch (error) {

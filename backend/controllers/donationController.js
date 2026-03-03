@@ -1,4 +1,5 @@
 import Donation, { DONATE_TYPES } from '../models/Donation.js';
+import { createNotification } from './notificationController.js';
 
 // Receipt image ke liye full URL banao – data map karte waqt img src mein use karo
 function getReceiptFullUrl(req, path) {
@@ -36,6 +37,13 @@ export const submitDonation = async (req, res) => {
 
     const doc = donation.toObject ? donation.toObject() : donation;
     doc.receiptUrl = getReceiptFullUrl(req, receiptPath); // image ke liye full URL
+    await createNotification({
+      type: 'donation',
+      refId: donation._id,
+      title: 'New donation submitted',
+      message: `${trimmedName} (${trimmedPhone}) pledged PKR ${trimmedAmount} for "${type}".`,
+      source: type,
+    });
     res.status(201).json(doc);
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to submit donation.' });

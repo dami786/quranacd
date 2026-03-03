@@ -11,6 +11,7 @@ import donationRoutes from './routes/donationRoutes.js';
 import queryRoutes from './routes/queryRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,6 +44,7 @@ app.use('/api/donations', donationRoutes);
 app.use('/api/queries', queryRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
