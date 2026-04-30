@@ -8,7 +8,7 @@ import { SITE_NAME } from './Seo';
  */
 export default function GlobalSchema() {
   const { pathname } = useLocation();
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://quranacd.vercel.app';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://babulquranacademy.com';
   const url = `${origin}${pathname || ''}`;
   const logo = `${origin}/images/image.png`;
 

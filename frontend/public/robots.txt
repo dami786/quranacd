@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://quranacd.vercel.app/sitemap.xml
+Sitemap: https://babulquranacademy.com/sitemap.xml
